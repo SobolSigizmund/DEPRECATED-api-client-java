@@ -16,206 +16,19 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
 
 	"code.google.com/p/goauth2/oauth"
+
+	genomics "github.com/GoogleCloudPlatform/genomics-tools/client-go/v1beta"
 )
-
-type GenomicsApi struct {
-	BaseUrl       string
-	Client        *http.Client // OAuth2-produced Client
-	NextPageToken string
-}
-
-func NewGenomicsApi(baseUrl string, client *http.Client) *GenomicsApi {
-	return &GenomicsApi{baseUrl, client, ""}
-}
-
-type GenomicsApiReadResource struct {
-	Id                        string
-	Name                      string
-	ReadsetId                 string
-	Flags                     int
-	ReferenceSequenceName     string
-	Position                  int
-	MappingQuality            int
-	Cigar                     string
-	MateReferenceSequenceName string
-	MatePosition              int
-	TemplateLength            int
-	OriginalBases             string
-	AlignedBases              string
-	BaseQuality               string
-	Tags                      map[string][]string
-}
-
-type GenomicsApiReadsSearchResponse struct {
-	Reads         []GenomicsApiReadResource
-	NextPageToken string
-}
-
-type GenomicsApiReadsetResource struct {
-	Id        string
-	Name      string
-	DatasetId string
-	Created   int64
-	ReadCount uint64
-	FileData  []struct {
-		FileUri string
-		Headers []struct {
-			Version      string
-			SortingOrder string
-		}
-		RefSequences []struct {
-			Name        string
-			Length      int
-			AssemblyId  string
-			Md5Checksum string
-			Species     string
-			Uri         string
-		}
-		ReadGroups []struct {
-			Id                   string
-			SequencingCenterName string
-			Description          string
-			Date                 string
-			FlowOrder            string
-			KeySequence          string
-			Library              string
-			ProcessingProgram    string
-			PredictedInsertSize  int
-			SequencingTechnology string
-			PlatformUnit         string
-			Sample               string
-		}
-		Programs []struct {
-			Id            string
-			Name          string
-			CommandLine   string
-			PrevProgramId string
-			Version       string
-		}
-		Comments []string
-	}
-}
-
-type GenomicsApiReadsetsSearchResponse struct {
-	Readsets      []GenomicsApiReadsetResource
-	NextPageToken string
-}
-
-func (api *GenomicsApi) Invoke(
-	method string,
-	endpoint string,
-	body []byte,
-	returnValue interface{}) error {
-
-	requestUrl := api.BaseUrl + endpoint
-	request, err := http.NewRequest(method, requestUrl, bytes.NewBuffer(body))
-	if err != nil {
-		return err
-	}
-	if len(body) > 0 {
-		request.Header.Set("Content-type", "application/json")
-	}
-
-	response, err := api.Client.Do(request)
-	if err != nil {
-		return err
-	}
-
-	answerBytes, err := ioutil.ReadAll(response.Body)
-	response.Body.Close()
-
-	if response.StatusCode != 200 {
-		err = fmt.Errorf("%q%q", response.Status, string(answerBytes))
-	}
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(answerBytes, returnValue)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (api *GenomicsApi) ReadsSearch(
-	datasetIds []string,
-	readsetIds []string,
-	sequenceName string,
-	sequenceStart uint64,
-	sequenceEnd uint64) (*GenomicsApiReadsSearchResponse, error) {
-
-	data := make(map[string]interface{})
-	if len(datasetIds) > 0 {
-		data["datasetIds"] = datasetIds
-	}
-	if len(readsetIds) > 0 {
-		data["readsetIds"] = readsetIds
-	}
-	data["sequenceName"] = sequenceName
-	data["sequenceStart"] = sequenceStart
-	data["sequenceEnd"] = sequenceEnd
-	if api.NextPageToken != "" {
-		data["pageToken"] = api.NextPageToken
-	}
-	body, _ := json.Marshal(data)
-
-	answer := new(GenomicsApiReadsSearchResponse)
-	err := api.Invoke("POST", "/reads/search", body, answer)
-	if err != nil {
-		return nil, err
-	}
-
-	api.NextPageToken = answer.NextPageToken
-	return answer, nil
-}
-
-func (api *GenomicsApi) ReadsetsGet(
-	readsetId string) (*GenomicsApiReadsetResource, error) {
-
-	var readset GenomicsApiReadsetResource
-	err := api.Invoke("GET", "/readsets/"+url.QueryEscape(readsetId),
-		[]byte{}, &readset)
-	if err != nil {
-		return nil, err
-	}
-	return &readset, nil
-}
-
-func (api *GenomicsApi) ReadsetsSearch(
-	datasetIds []string,
-	name string) (*GenomicsApiReadsetsSearchResponse, error) {
-
-	data := make(map[string]interface{})
-	data["datasetIds"] = datasetIds
-	data["name"] = name
-	if api.NextPageToken != "" {
-		data["pageToken"] = api.NextPageToken
-	}
-	body, _ := json.Marshal(data)
-
-	answer := new(GenomicsApiReadsetsSearchResponse)
-	err := api.Invoke("POST", "/readsets/search", body, answer)
-	if err != nil {
-		return nil, err
-	}
-
-	api.NextPageToken = answer.NextPageToken
-	return answer, nil
-}
 
 var (
 	oauthJsonFile = flag.String("use_oauth", "",
@@ -294,11 +107,15 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	baseApi := NewGenomicsApi("https://www.googleapis.com/genomics/v1beta",
-		client)
+	baseApi, err := genomics.New(client)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fmt.Println("Searching for readsets in 1000 Genomes project...")
-	readsets, err := baseApi.ReadsetsSearch([]string{"376902546192"}, "")
+	readsets, err := baseApi.Readsets.Search(&genomics.SearchReadsetsRequest{
+		DatasetIds: []string{"376902546192"},
+	}).Do()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -306,23 +123,30 @@ func main() {
 	readsetId := readset.Id
 	fmt.Printf("The first readset ID is %q.\n", readsetId)
 
-	_, err = baseApi.ReadsetsGet(readsetId)
+	_, err = baseApi.Readsets.Get(readsetId).Do()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	fmt.Println("Searching for reads in the first sequence...")
-	readsetIds := []string{readsetId}
 	sequenceName := readset.FileData[0].RefSequences[0].Name
-	baseApi.NextPageToken = ""
+	tok := ""
 	for i := 1; i <= 2; i++ {
-		reads, err := baseApi.ReadsSearch([]string{}, readsetIds,
-			sequenceName, 1, ^uint64(0))
+		resp, err := baseApi.Reads.Search(&genomics.SearchReadsRequest{
+			PageToken:     tok,
+			ReadsetIds:    []string{readsetId},
+			SequenceName:  sequenceName,
+			SequenceStart: 1,
+			SequenceEnd:   ^uint64(0),
+		}).Do()
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("Found %v reads in page %v:\n", len(reads.Reads), i)
-		for readIndex := range reads.Reads {
-			read := reads.Reads[readIndex]
+		fmt.Printf("Found %v reads in page %v:\n", len(resp.Reads), i)
+		for _, read := range resp.Reads {
 			fmt.Printf("\tId: %v\tName: %v\n", read.Id, read.Name)
 		}
-		fmt.Printf("Next page token is %q.\n", baseApi.NextPageToken)
+		tok = resp.NextPageToken
+		fmt.Printf("Next page token is %q.\n", tok)
 	}
 }
