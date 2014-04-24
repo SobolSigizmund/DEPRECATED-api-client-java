@@ -42,7 +42,7 @@ class CommandLine {
   @Option(name = "--root_url",
       metaVar = "<url>",
       usage = "set the Genomics API root URL")
-  public String rootUrl = "https://www.googleapis.com/";
+  public String rootUrl = "https://www.googleapis.com/genomics/v1beta";
 
   @Option(name = "--client_secrets_filename",
       metaVar = "<client_secrets_filename>",

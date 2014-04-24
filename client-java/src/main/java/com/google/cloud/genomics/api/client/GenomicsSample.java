@@ -78,6 +78,7 @@ public class GenomicsSample {
     return new Genomics.Builder(httpTransport, JSON_FACTORY, credential)
         .setApplicationName(APPLICATION_NAME)
         .setRootUrl(cmdLine.rootUrl)
+        .setServicePath("/")
         .setHttpRequestInitializer(new HttpRequestInitializer() {
             @Override
             public void initialize(HttpRequest httpRequest) throws IOException {
@@ -165,6 +166,7 @@ public class GenomicsSample {
   }
 
   private static void executeAndPrint(GenomicsRequest<?> req) throws IOException {
+    req.setDisableGZipContent(true);
     if (!cmdLine.fields.isEmpty()) {
       req.setFields(cmdLine.fields);
     }
