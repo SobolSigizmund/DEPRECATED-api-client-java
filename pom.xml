@@ -53,7 +53,6 @@
   <contributors/>
 
   <modules>
-    <module>benchmarker-java</module>
     <module>client-java</module>
     <module>mapreduce-java</module>
     <module>readstore-local-java</module>

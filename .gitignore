@@ -4,7 +4,6 @@
 *.iml
 client_secrets.json
 client-java/target
-benchmarker-java/target
 mapreduce-java/target
 readstore-local-java/target
 /.project
