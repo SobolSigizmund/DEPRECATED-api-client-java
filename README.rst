@@ -44,7 +44,7 @@ readstore-local-java:
 Contributing changes
 --------------------
 
-See `CONTRIB.rst <CONTRIB.rst>`__.
+See `CONTRIBUTING.rst <CONTRIBUTING.rst>`__.
 
 Licensing
 ---------
