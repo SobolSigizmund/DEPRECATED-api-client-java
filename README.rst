@@ -41,10 +41,20 @@ readstore-local-java:
 .. _PCA: http://en.wikipedia.org/wiki/Principal_coordinates_analysis
 .. _BAM file: http://samtools.sourceforge.net/SAMv1.pdf
 
+
+The mailing list
+------------
+
+The `Google Genomics Discuss mailing list <https://groups.google.com/forum/#!forum/google-genomics-discuss>`_ is a good
+way to sync up with other people who use genomics-tools including the core developers. You can subscribe
+by sending an email to ``google-genomics-discuss+subscribe@googlegroups.com`` or just post using
+the `web forum page <https://groups.google.com/forum/#!forum/google-genomics-discuss>`_.
+
+
 Contributing changes
 --------------------
 
-See `CONTRIBUTING.rst <CONTRIBUTING.rst>`__.
+See `CONTRIBUTING <CONTRIBUTING.rst>`__.
 
 Licensing
 ---------
