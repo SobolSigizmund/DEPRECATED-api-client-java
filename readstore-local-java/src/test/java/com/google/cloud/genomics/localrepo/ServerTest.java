@@ -75,6 +75,15 @@ public class ServerTest extends BaseTest {
               Arrays.asList(READ_GROUP_2, READ_GROUP_3, READ_GROUP_4, READ_GROUP_5),
               Collections.<Readset.FileData.Program>emptyList(),
               Collections.<String>emptyList()));
+  private static final List<Readset.FileData>
+      BAM3_FILE_DATA = Arrays.asList(
+          Readset.FileData.create(
+              String.format("file://%s/testdata/bam3.bam", USER_DIR),
+              HEADERS,
+              REF_SEQUENCES,
+              Arrays.asList(createReadGroup(null, "unknown")),
+              Collections.<Readset.FileData.Program>emptyList(),
+              Collections.<String>emptyList()));
   private static final long
       NOW = System.currentTimeMillis();
   private static final Map<Readset, SearchReadsResponse>
@@ -98,7 +107,16 @@ public class ServerTest extends BaseTest {
                   createRead("read7", "3", 0, "reference", 6, "2M", "readgroup4"),
                   createRead("read4", "3", 0, "reference", 7, "2M", "readgroup4"),
                   createRead("read8", "3", 0, "reference", 8, "2M", "readgroup5")),
-              null));
+              null),
+          createReadset("4", "unknown", BAM3_FILE_DATA),
+          SearchReadsResponse.create(
+              Arrays.asList(
+                  createRead("reada", "4", 0, "reference", 1, "2M", ImmutableMap.of("AA", "custom")),
+                  createRead("readb", "4", 0, "reference", 3, "2M", ImmutableMap.of("AA", "custom")),
+                  createRead("readc", "4", 0, "reference", 5, "2M", ImmutableMap.of("AA", "custom")),
+                  createRead("readd", "4", 0, "reference", 7, "2M", ImmutableMap.of("AA", "custom"))),
+              null)
+  );
   private static final List<Readset> READSETS =
       ImmutableList.copyOf(SEARCH_READS_RESPONSES.keySet());
 
@@ -170,7 +188,11 @@ public class ServerTest extends BaseTest {
   }
 
   private static Readset createReadset(String id, String sample) {
-    return Readset.create(id, sample, DATASET_ID, NOW, FILE_DATA);
+    return createReadset(id, sample, FILE_DATA);
+  }
+
+  private static Readset createReadset(String id, String sample, List<Readset.FileData> fileData) {
+    return Readset.create(id, sample, DATASET_ID, NOW, fileData);
   }
 
   private static Readset.FileData.Header createHeader(String version, String sortingOrder) {
@@ -194,6 +216,17 @@ public class ServerTest extends BaseTest {
       int position,
       String cigar,
       String readGroup) {
+    return createRead(name, readsetId, flags, referenceSequenceName, position, cigar, ImmutableMap.of("RG", readGroup));
+  }
+
+ private static Read createRead(
+      String name,
+      String readsetId,
+      int flags,
+      String referenceSequenceName,
+      int position,
+      String cigar,
+      Map<String, String> tags) {
     return Read.create(
         name,
         name,
@@ -209,6 +242,6 @@ public class ServerTest extends BaseTest {
         null,
         null,
         null,
-        ImmutableMap.of("RG", readGroup));
+        tags);
   }
 }

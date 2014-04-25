@@ -34,12 +34,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -84,6 +79,14 @@ public class DatasetDirectory {
                       return ReadGroupInfo.create(bamFile, readGroup.getSample());
                     }
                   });
+        }
+      };
+
+  public static final Comparator<Map.Entry<String,Set<IndexedBamFile>>> SORT_READSETS_BY_NAME =
+      new Comparator<Map.Entry<String, Set<IndexedBamFile>>>() {
+        @Override
+        public int compare(Map.Entry<String, Set<IndexedBamFile>> o1, Map.Entry<String, Set<IndexedBamFile>> o2) {
+          return o1.getKey().compareTo(o2.getKey());
         }
       };
 
@@ -148,15 +151,15 @@ public class DatasetDirectory {
         };
   }
 
-  private final Maps.EntryTransformer<String, Set<IndexedBamFile>, BamFilesReadset> createReadset =
-      new Maps.EntryTransformer<String, Set<IndexedBamFile>, BamFilesReadset>() {
+  private final Function<Map.Entry<String, Set<IndexedBamFile>>, BamFilesReadset> createReadset =
+      new Function<Map.Entry<String, Set<IndexedBamFile>>, BamFilesReadset>() {
         @Override
-        public BamFilesReadset transformEntry(String sample, Set<IndexedBamFile> bamFiles) {
+        public BamFilesReadset apply(Map.Entry<String, Set<IndexedBamFile>> entry) {
           return BamFilesReadset.create(
               READSET_ID_GENERATOR.get(),
-              sample,
+              entry.getKey(),
               getDataset().getId(),
-              bamFiles);
+              entry.getValue());
         }
       };
 
@@ -166,28 +169,26 @@ public class DatasetDirectory {
   private final Supplier<Map<String, BamFilesReadset>> readsets = Suppliers.memoize(
       new Supplier<Map<String, BamFilesReadset>>() {
         @Override public Map<String, BamFilesReadset> get() {
-          return FluentIterable
-              .from(Maps
-                  .transformEntries(
-                      Maps.transformValues(
-                          FluentIterable.from(Collections.singletonList(getDirectory()))
-                              .transformAndConcat(dfs(path -> {
-                                try {
-                                  return Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS) ? Files.newDirectoryStream(path)
-                                      : Collections.<Path>emptyList();
-                                } catch (Exception e) {
-                                  throw Throwables.propagate(e);
-                                }
-                              }))
-                              .transform(path -> path.toFile())
-                              .transformAndConcat(CREATE_BAM_FILE)
-                              .transformAndConcat(CREATE_INDEXED_BAM_FILE)
-                              .transformAndConcat(CREATE_READ_GROUP_INFOS)
-                              .index(info -> info.getSample())
-                              .asMap(),
-                          infos -> infos.stream().map(info -> info.getBamFile()).collect(Collectors.toSet())),
-                      createReadset)
-                  .values())
+          return FluentIterable.from(FluentIterable
+              .from(Maps.transformValues(
+                  FluentIterable.from(Collections.singletonList(getDirectory()))
+                      .transformAndConcat(dfs(path -> {
+                        try {
+                          return Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS) ? Files.newDirectoryStream(path)
+                              : Collections.<Path>emptyList();
+                        } catch (Exception e) {
+                          throw Throwables.propagate(e);
+                        }
+                      }))
+                      .transform(path -> path.toFile())
+                      .transformAndConcat(CREATE_BAM_FILE)
+                      .transformAndConcat(CREATE_INDEXED_BAM_FILE)
+                      .transformAndConcat(CREATE_READ_GROUP_INFOS)
+                      .index(info -> info.getSample())
+                      .asMap(),
+                  infos -> infos.stream().map(info -> info.getBamFile()).collect(Collectors.toSet())).entrySet())
+              .toSortedList(SORT_READSETS_BY_NAME))
+              .transform(createReadset)
               .uniqueIndex(BamFilesReadset::getReadsetId);
         }
       });

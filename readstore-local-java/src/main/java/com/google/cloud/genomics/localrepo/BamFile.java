@@ -28,6 +28,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -89,7 +90,21 @@ public class BamFile {
   private final Supplier<Readset.FileData> fileData = Suppliers.memoize(Suppliers.compose(
       new Function<SAMFileHeader, Readset.FileData>() {
         @Override public Readset.FileData apply(SAMFileHeader fileHeader) {
-        return Readset.FileData.create(
+          List<Readset.FileData.ReadGroup> readgroups = fileHeader.getReadGroups().stream()
+              .map(record -> {
+                Date runDate = record.getRunDate();
+                return Readset.FileData.ReadGroup.create(record.getId(), record.getSequencingCenter(),
+                    record.getDescription(), null == runDate ? null : DATE_FORMAT.format(runDate),
+                    record.getFlowOrder(), record.getKeySequence(), record.getLibrary(),
+                    record.getAttribute("PG"), record.getPredictedMedianInsertSize(), record.getPlatform(),
+                    record.getPlatformUnit(), record.getSample());
+              })
+              .collect(Collectors.toList());
+          if (readgroups.isEmpty()) {
+            readgroups.add(Readset.FileData.ReadGroup.createDefaultGroup());
+          }
+
+          return Readset.FileData.create(
             String.format("file://%s", file.getAbsolutePath()),
             Arrays.asList(Readset.FileData.Header.create(
                 fileHeader.getVersion(),
@@ -103,16 +118,7 @@ public class BamFile {
                     record.getSpecies(),
                     record.getAttribute(SAMSequenceRecord.URI_TAG)))
                 .collect(Collectors.toList()),
-            fileHeader.getReadGroups().stream()
-                .map(record -> {
-                  Date runDate = record.getRunDate();
-                  return Readset.FileData.ReadGroup.create(record.getId(), record.getSequencingCenter(),
-                      record.getDescription(), null == runDate ? null : DATE_FORMAT.format(runDate),
-                      record.getFlowOrder(), record.getKeySequence(), record.getLibrary(),
-                      record.getAttribute("PG"), record.getPredictedMedianInsertSize(), record.getPlatform(),
-                      record.getPlatformUnit(), record.getSample());
-                })
-                .collect(Collectors.toList()),
+              readgroups,
             fileHeader.getProgramRecords().stream()
                 .map(record -> Readset.FileData.Program.create(
                     record.getId(),

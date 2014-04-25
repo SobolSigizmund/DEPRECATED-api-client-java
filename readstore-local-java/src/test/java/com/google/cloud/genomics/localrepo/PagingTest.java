@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNull;
 import com.google.cloud.genomics.localrepo.dto.SearchReadsRequest;
 import com.google.cloud.genomics.localrepo.dto.SearchReadsResponse;
 
+import com.google.common.collect.Lists;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -62,7 +63,7 @@ public class PagingTest extends BaseTest {
   }
 
   private static SearchReadsRequest createSearchReadsRequest(SearchReadsResponse response) {
-    return SearchReadsRequest.create(null, null, "reference", null, null,
+    return SearchReadsRequest.create(null, Lists.newArrayList("1", "2", "3"), "reference", null, null,
         null == response ? null : response.getNextPageToken());
   }
 

@@ -23,7 +23,7 @@ There are two command line flags available:
   This flag can occur zero or more times. With each instance of this flag, you
   supply a dataset ID and a path to a directory on your local filesystem. When
   the server is started, each directory is recursively traversed, and all ``.bam``
-  files with a corresponding sibbling ``.bai`` file are included into the data
+  files with a corresponding sibling ``.bai`` file are included into the data
   with the given dataset ID. For example, if you have the following directory
   layout::
 
@@ -40,7 +40,7 @@ There are two command line flags available:
   ``my_directory/my_subdirectory/foo.bam`` and ``my_directory/baz.bam`` would be
   included into a dataset with ID ``my_data``, but
   ``my_directory/another_subdirectory/bar.bam`` would be excluded, due to not
-  having its sibbling ``.bai`` file.  
+  having its sibling ``.bai`` file.
 
 Go to ``http://localhost:<portnum>/datasets`` to see your data.  
 

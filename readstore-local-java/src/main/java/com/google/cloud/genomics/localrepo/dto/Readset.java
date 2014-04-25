@@ -25,6 +25,8 @@ import java.util.List;
 
 public class Readset extends DataTransferObject {
 
+  public static final String DEFAULT_SAMPLE = "unknown";
+
   public static class FileData extends DataTransferObject {
 
     public static class Header extends DataTransferObject {
@@ -165,6 +167,10 @@ public class Readset extends DataTransferObject {
             sequencingTechnology,
             platformUnit,
             sample);
+      }
+
+      public static ReadGroup createDefaultGroup() {
+        return ReadGroup.create(null, null, null, null, null, null, null, null, null, null, null, DEFAULT_SAMPLE);
       }
 
       private final String date;

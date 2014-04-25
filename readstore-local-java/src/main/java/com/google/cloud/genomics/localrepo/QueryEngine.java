@@ -15,6 +15,7 @@ package com.google.cloud.genomics.localrepo;
 
 import com.google.cloud.genomics.localrepo.BamFile.IndexedBamFile;
 import com.google.cloud.genomics.localrepo.dto.Read;
+import com.google.cloud.genomics.localrepo.dto.Readset;
 import com.google.cloud.genomics.localrepo.dto.SearchReadsRequest;
 import com.google.cloud.genomics.localrepo.dto.SearchReadsResponse;
 import com.google.cloud.genomics.localrepo.util.Functions;
@@ -266,11 +267,15 @@ public class QueryEngine {
         .map(Functions.forMap(readsets));
   }
 
+  private String getSample(SAMRecord record) {
+    return record.getReadGroup() == null ? Readset.DEFAULT_SAMPLE : record.getReadGroup().getSample();
+  }
+
   private Read read(SAMRecord record) {
     return Read.create(
         toRead(record.getReadName()),
         toRead(record.getReadName()),
-        readsetIdsBySample.get(record.getReadGroup().getSample()),
+        readsetIdsBySample.get(getSample(record)),
         record.getFlags(),
         toRead(record.getReferenceName()),
         toRead(record.getAlignmentStart(), 0),
@@ -445,6 +450,6 @@ public class QueryEngine {
             Predicates.in(getReadsets(request.getDatasetIds(), request.getReadsetIds()).map(
                 BamFilesReadset::getReadsetId).collect(Collectors.toSet())),
                 Functions.forMap(readsetIdsBySample).compose(
-                    record -> record.getReadGroup().getSample())));
+                    record -> getSample(record))));
   }
 }
