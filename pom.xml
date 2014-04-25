@@ -25,9 +25,16 @@
   <developers>
     <developer>
       <id>cassiedoll</id>
+      <name>Cassie Doll</name>
+      <organization>Google</organization>
+      <organizationUrl>http://www.google.com</organizationUrl>
+      <timezone>-7</timezone>
     </developer>
     <developer>
       <id>gkrasin</id>
+      <organization>Google</organization>
+      <organizationUrl>http://www.google.com</organizationUrl>
+      <timezone>-7</timezone>
     </developer>
     <developer>
       <id>heuermh</id>
@@ -38,15 +45,30 @@
     </developer>
     <developer>
       <id>kwestbrooks</id>
+      <organization>Google</organization>
+      <organizationUrl>http://www.google.com</organizationUrl>
+      <timezone>-7</timezone>
     </developer>
     <developer>
       <id>lucena</id>
+      <name>John Lucena</name>
+      <organization>Google</organization>
+      <organizationUrl>http://www.google.com</organizationUrl>
+      <timezone>-7</timezone>
     </developer>
     <developer>
       <id>namn</id>
+      <name>Nam Nguyen</name>
+      <organization>Google</organization>
+      <organizationUrl>http://www.google.com</organizationUrl>
+      <timezone>-7</timezone>
     </developer>
     <developer>
       <id>siddharthab</id>
+      <name>Siddhartha Bagaria</name>
+      <organization>Google</organization>
+      <organizationUrl>http://www.google.com</organizationUrl>
+      <timezone>-7</timezone>
     </developer>
   </developers>
 
