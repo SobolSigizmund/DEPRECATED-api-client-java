@@ -42,7 +42,12 @@ Code layout
 -----------
 
 Most of the Java code is a generated client library. This includes everything under
-``com/google/api/services``. There are only 2 non-generated files:
+``com/google/api/services``. Currently, the generated client library 
+(part of this `parent project <https://code.google.com/p/google-api-java-client/>`_) is only creatable by Google. 
+Very shortly though it will become a proper Maven dependency 
+(artifactId ``google-api-services-genomics`` under groupId ``com.google.apis``).
+
+There are only 2 non-generated files:
 
 CommandLine.java:
     defines all of the possible command line arguments using the `args4j library
@@ -52,4 +57,24 @@ GenomicsSample.java:
     provides the bulk of the logic. In its ``main`` method, the user's request is
     dispatched to either make a call to the Genomics API or to authenticate the
     user. Most of the code deals with OAuth.
+
+
+Project status
+--------------
+
+Goals
+~~~~~
+* Provide a command line interface to the Google Genomics APIs 
+  (to make importing, querying, and other methods more accessible)
+* Provide an example of how to use the generated Java client library.
+
+
+Current status
+~~~~~~~~~~~~~~
+This code is mostly static, there are no known feature requests. 
+All bug fixes will be addressed but it's unlikely the overall structure and 
+featureset will change much. 
+
+There is an ongoing need to integrate more API calls as they become available. 
+The work involved is small.
 
