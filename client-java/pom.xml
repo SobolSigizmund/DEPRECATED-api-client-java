@@ -3,24 +3,16 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <name>Genomics API v1beta</name>
-  <groupId>com.google.cloud.genomics</groupId>
+  <parent>
+    <groupId>com.google.cloud.genomics</groupId>
+    <artifactId>genomics-tools-multimodule</artifactId>
+    <version>v1beta</version>
+  </parent>
+
+  <name>Genomics API client-java</name>
   <artifactId>genomics-tools-client-java</artifactId>
   <packaging>jar</packaging>
   <version>v1beta</version>
-
-  <organization>
-    <name>Google</name>
-    <url>http://www.google.com/</url>
-  </organization>
-
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
 
   <dependencies>
     <dependency>
