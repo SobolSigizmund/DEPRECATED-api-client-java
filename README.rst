@@ -24,6 +24,9 @@ client-python:
 client-r:
     provides a simple R script that transforms API query results into
     GAlignments.
+mapreduce-java:
+    uses the `MapReduce Java`_ feature of Google App Engine to create a variant similarity matrix. 
+    Also includes code to run `PCA`_ over the results.
 mapreduce-python:
     uses the `MapReduce Python`_ feature of Google App Engine to do complex calculations over API data.
 protobufs:
@@ -33,7 +36,9 @@ readstore-local-java:
     `BAM file`_.
 
 .. _Google App Engine: https://developers.google.com/appengine/docs/python/gettingstartedpython27/introduction
+.. _MapReduce Java: https://developers.google.com/appengine/docs/java/dataprocessing/
 .. _MapReduce Python: https://developers.google.com/appengine/docs/python/dataprocessing/
+.. _PCA: http://en.wikipedia.org/wiki/Principal_coordinates_analysis
 .. _BAM file: http://samtools.sourceforge.net/SAMv1.pdf
 
 Contributing changes
