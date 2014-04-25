@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <name>Genomics API multimodule</name>
+  <groupId>com.google.cloud.genomics</groupId>
+  <artifactId>genomics-tools-multimodule</artifactId>
+  <packaging>pom</packaging>
+  <version>v1beta</version>
+
+  <organization>
+    <name>Google</name>
+    <url>http://www.google.com/</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>cassiedoll</id>
+    </developer>
+    <developer>
+      <id>gkrasin</id>
+    </developer>
+    <developer>
+      <id>heuermh</id>
+      <name>Michael Heuer</name>
+      <organization>dishevelled.org</organization>
+      <organizationUrl>http://www.dishevelled.org</organizationUrl>
+      <timezone>-5</timezone>
+    </developer>
+    <developer>
+      <id>kwestbrooks</id>
+    </developer>
+    <developer>
+      <id>lucena</id>
+    </developer>
+    <developer>
+      <id>namn</id>
+    </developer>
+    <developer>
+      <id>siddharthab</id>
+    </developer>
+  </developers>
+
+  <contributors/>
+
+  <modules>
+    <module>benchmarker-java</module>
+    <module>client-java</module>
+    <module>mapreduce-java</module>
+    <module>readstore-local-java</module>
+  </modules>
+</project>
