@@ -29,4 +29,3 @@ popd
 echo "Testing java components"
 mvn install -DskipTests=true
 mvn test
-done
