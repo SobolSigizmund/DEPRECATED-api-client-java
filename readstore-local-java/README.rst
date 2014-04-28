@@ -47,4 +47,19 @@ Go to ``http://localhost:<portnum>/datasets`` to see your data.
 Code layout
 -----------
 
-Under active development - coming soon!
+Coming soon!
+
+
+Project status
+--------------
+
+Goals
+~~~~~
+* Provide an example of how the Genomics APIs can be implemented directly
+  from local files.
+
+
+Current status
+~~~~~~~~~~~~~~
+This code is in stasis. All improvements are welcome, nothing is
+currently planned. (Except maybe some refactoring to take advantage of java 1.8)
