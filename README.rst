@@ -43,12 +43,59 @@ readstore-local-java:
 
 
 The mailing list
-------------
+----------------
 
 The `Google Genomics Discuss mailing list <https://groups.google.com/forum/#!forum/google-genomics-discuss>`_ is a good
 way to sync up with other people who use genomics-tools including the core developers. You can subscribe
 by sending an email to ``google-genomics-discuss+subscribe@googlegroups.com`` or just post using
 the `web forum page <https://groups.google.com/forum/#!forum/google-genomics-discuss>`_.
+
+
+Important constants
+-------------------
+
+There are currently three providers of the API:
+
+=============== =========================================== ==================================================
+API Providers   Base url                                    Documentation
+=============== =========================================== ==================================================
+Google          https://www.googleapis.com/genomics/v1beta  http://developers.google.com/genomics
+NCBI            http://trace.ncbi.nlm.nih.gov/Traces/gg     http://trace.ncbi.nlm.nih.gov/Traces/gg/index.html
+Local readstore See the `README file`_
+=============== =========================================== ==================================================
+
+Each one has certain `datasets <https://developers.google.com/genomics/v1beta/reference/datasets>`_ 
+exposed to the public. It will eventually be possibly to list all available datasets from the API directly. 
+For now, there are some common public values that can be used (in addition to private datasets):
+
+================== ================= ============
+Public Dataset IDs Name              API Provider
+================== ================= ============
+376902546192       1000 Genomes      Google
+383928317087       PGP               Google
+461916304629       Simons Foundation Google
+SRP034507          SRP034507         NCBI
+SRP029392          SRP029392         NCBI
+(Any NCBI Study)                     NCBI
+================== ================= ============
+
+Within a dataset, the API has 
+`a call <https://developers.google.com/genomics/v1beta/reference/readsets/search>`_ 
+for getting all the readsets. The IDs that come back have different 
+values based on the provider. They are always strings.
+
+========================= ============ ===========================  
+Example Readset IDs       API Provider Description
+========================= ============ ===========================  
+CJDmkYn8ChCh4IH4hOf4gacB  Google       Google generated ID
+SRR960599 or SRR960599.1  NCBI         NCBI Experiment Run or Read
+========================= ============ ===========================  
+
+
+
+
+
+.. _README file: https://github.com/GoogleCloudPlatform/genomics-tools/tree/master/readstore-local-java
 
 
 Contributing changes
