@@ -13,7 +13,7 @@ command line.
 
 * To use, first build the client using `Apache Maven`_::
 
-    cd genomics-tools/client-java
+    cd api-client-java
     mvn package
 
 * Then, follow the `authentication instructions`_ to generate a valid
@@ -137,4 +137,4 @@ SRR960599 or SRR960599.1  NCBI         NCBI Experiment Run or Read
 
 
 
-.. _README file: https://github.com/GoogleCloudPlatform/genomics-tools/tree/master/readstore-local-java
+.. _README file: https://github.com/googlegenomics/api-provider-local-java
