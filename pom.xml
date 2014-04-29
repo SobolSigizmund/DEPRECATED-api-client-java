@@ -3,16 +3,56 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>com.google.cloud.genomics</groupId>
-    <artifactId>genomics-tools-multimodule</artifactId>
-    <version>v1beta</version>
-  </parent>
-
   <name>Genomics API client-java</name>
+  <groupId>com.google.cloud.genomics</groupId>
   <artifactId>genomics-tools-client-java</artifactId>
   <packaging>jar</packaging>
   <version>v1beta</version>
+
+  <organization>
+    <name>Google</name>
+    <url>http://www.google.com/</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
+  <developers>
+    <developer>
+      <id>cassiedoll</id>
+      <name>Cassie Doll</name>
+      <organization>Google</organization>
+      <organizationUrl>http://www.google.com</organizationUrl>
+      <timezone>-7</timezone>
+    </developer>
+    <developer>
+      <id>heuermh</id>
+      <name>Michael Heuer</name>
+      <organization>dishevelled.org</organization>
+      <organizationUrl>http://www.dishevelled.org</organizationUrl>
+      <timezone>-5</timezone>
+    </developer>
+    <developer>
+      <id>kwestbrooks</id>
+      <organization>Google</organization>
+      <organizationUrl>http://www.google.com</organizationUrl>
+      <timezone>-7</timezone>
+    </developer>
+    <developer>
+      <id>namn</id>
+      <name>Nam Nguyen</name>
+      <organization>Google</organization>
+      <organizationUrl>http://www.google.com</organizationUrl>
+      <timezone>-7</timezone>
+    </developer>
+  </developers>
+
+  <contributors/>
 
   <dependencies>
     <dependency>

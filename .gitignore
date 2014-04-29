@@ -1,10 +1,6 @@
-*.pyc
+*~
 .DS_Store
 .idea
 *.iml
 client_secrets.json
-client-java/target
-mapreduce-java/target
-readstore-local-java/target
-/.project
-.pydevproject
+target
