@@ -107,11 +107,10 @@ class CommandLine {
   public Integer sequenceEnd = 0;
 
   public CommandLine() {
-    // For testing
+    parser = new CmdLineParser(this);
   }
 
-  public CommandLine(String[] args) throws CmdLineException {
-    parser = new CmdLineParser(this);
+  public void setArgs(String[] args) throws CmdLineException {
     parser.parseArgument(args);
   }
 
@@ -120,8 +119,7 @@ class CommandLine {
   }
 
   public void printHelp(String headline, Appendable out) throws IOException {
-    out.append(headline);
-    out.append(getUsage());
+    out.append(headline).append("\n").append(getUsage());
   }
 
   public String getUsage() {

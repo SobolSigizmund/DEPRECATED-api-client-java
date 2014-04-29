@@ -32,6 +32,7 @@ import com.google.api.services.genomics.GenomicsRequest;
 import com.google.api.services.genomics.model.ImportReadsetsRequest;
 import com.google.api.services.genomics.model.SearchReadsRequest;
 import com.google.api.services.genomics.model.SearchReadsetsRequest;
+import org.kohsuke.args4j.CmdLineException;
 
 import java.io.*;
 import java.math.BigInteger;
@@ -51,7 +52,7 @@ public class GenomicsSample {
   private static final String EMAIL_SCOPE = "https://www.googleapis.com/auth/userinfo.email";
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
-  private static final List<String> VALID_REQUEST_TYPES = Arrays.asList("help", "importreadsets",
+  private static final List<String> VALID_REQUEST_TYPES = Arrays.asList("importreadsets",
       "searchreadsets", "getreadset", "getjob", "searchreads");
 
   private static FileDataStoreFactory dataStoreFactory;
@@ -104,11 +105,19 @@ public class GenomicsSample {
     return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
+    cmdLine = new CommandLine();
+
     try {
       // Show help
-      cmdLine = new CommandLine(args);
+      cmdLine.setArgs(args);
       assertOrDie(!cmdLine.showHelp(), "");
+
+      // Make sure the request type is valid
+      boolean requestTypeIsValid = cmdLine.remainingArgs.size() == 1 &&
+          VALID_REQUEST_TYPES.contains(cmdLine.remainingArgs.get(0));
+      assertOrDie(requestTypeIsValid,
+          "Must specify a valid request_type, one of: " + VALID_REQUEST_TYPES + "\n");
 
       // Authorization
       httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -118,25 +127,12 @@ public class GenomicsSample {
         return;
       }
 
-      // Make sure request_type is specified
-      assertOrDie(cmdLine.remainingArgs.size() == 1,
-          "Must specify a request_type, one of: " + VALID_REQUEST_TYPES + "\n");
-
       // Route to appropriate request method
-      String requestType = cmdLine.remainingArgs.get(0);
-      switch (requestType) {
-        case "help":
-          cmdLine.printHelp("", System.err);
-          break;
-        default:
-          Genomics genomics = buildService(credential);
-          try {
-            executeAndPrint(getRequest(cmdLine, genomics, requestType));
-          } catch (IllegalArgumentException e) {
-            cmdLine.printHelp(e.getMessage() + "\n", System.err);
-            System.exit(0);
-          }
-      }
+      Genomics genomics = buildService(credential);
+      executeAndPrint(getRequest(cmdLine, genomics, cmdLine.remainingArgs.get(0)));
+
+    } catch (IllegalArgumentException | CmdLineException e) {
+      cmdLine.printHelp(e.getMessage() + "\n", System.err);
     } catch (Throwable t) {
       t.printStackTrace();
     }
@@ -156,7 +152,7 @@ public class GenomicsSample {
       case "searchreads":
         return searchReads(cmdLine, genomics);
       default:
-        throw new IllegalArgumentException("request_type must be one of: " + VALID_REQUEST_TYPES + "\n");
+        throw new RuntimeException("one of the " + VALID_REQUEST_TYPES + " isn't being handled properly. \n");
     }
   }
 
