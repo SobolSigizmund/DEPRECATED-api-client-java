@@ -1,5 +1,5 @@
 ==============
-genomics-tools
+api-client-java
 ==============
 ---------------
 |Build Status|_
@@ -96,14 +96,3 @@ SRR960599 or SRR960599.1  NCBI         NCBI Experiment Run or Read
 
 
 .. _README file: https://github.com/GoogleCloudPlatform/genomics-tools/tree/master/readstore-local-java
-
-
-Contributing changes
---------------------
-
-See `CONTRIBUTING <CONTRIBUTING.rst>`__.
-
-Licensing
----------
-
-See `LICENSE <LICENSE>`__.
