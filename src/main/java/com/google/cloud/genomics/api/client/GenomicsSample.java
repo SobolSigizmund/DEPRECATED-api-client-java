@@ -51,6 +51,9 @@ public class GenomicsSample {
   private static final String EMAIL_SCOPE = "https://www.googleapis.com/auth/userinfo.email";
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
+  private static final List<String> VALID_REQUEST_TYPES = Arrays.asList("help", "importreadsets",
+      "searchreadsets", "getreadset", "getjob", "searchreads");
+
   private static FileDataStoreFactory dataStoreFactory;
   private static NetHttpTransport httpTransport;
   private static CommandLine cmdLine;
@@ -89,8 +92,13 @@ public class GenomicsSample {
   }
 
   private static Credential authorize() throws Exception {
+    GoogleClientSecrets clientSecrets = loadClientSecrets(cmdLine.clientSecretsFilename);
+    if (clientSecrets == null) {
+      return null;
+    }
+
     GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-        httpTransport, JSON_FACTORY, loadClientSecrets(cmdLine.clientSecretsFilename),
+        httpTransport, JSON_FACTORY, clientSecrets,
         Arrays.asList(DEVSTORAGE_SCOPE, GENOMICS_SCOPE, EMAIL_SCOPE)).setDataStoreFactory(dataStoreFactory)
         .build();
     return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
@@ -98,19 +106,21 @@ public class GenomicsSample {
 
   public static void main(String[] args) {
     try {
-      httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-      dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
+      // Show help
       cmdLine = new CommandLine(args);
+      assertOrDie(!cmdLine.showHelp(), "");
 
       // Authorization
+      httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+      dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
       Credential credential = authorize();
-
-      // Show help
-      assertOrDie(!cmdLine.showHelp(), "");
+      if (credential == null) {
+        return;
+      }
 
       // Make sure request_type is specified
       assertOrDie(cmdLine.remainingArgs.size() == 1,
-          "Must specify a request_type\n");
+          "Must specify a request_type, one of: " + VALID_REQUEST_TYPES + "\n");
 
       // Route to appropriate request method
       String requestType = cmdLine.remainingArgs.get(0);
@@ -146,9 +156,7 @@ public class GenomicsSample {
       case "searchreads":
         return searchReads(cmdLine, genomics);
       default:
-        List<String> validRequestTypes = Arrays.asList("help", "importreadsets",
-            "searchreadsets", "getreadset", "getjob", "searchreads");
-        throw new IllegalArgumentException("request_type must be one of: " + validRequestTypes + "\n");
+        throw new IllegalArgumentException("request_type must be one of: " + VALID_REQUEST_TYPES + "\n");
     }
   }
 

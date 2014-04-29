@@ -37,6 +37,9 @@ command line.
 
 (Be sure to specify the fields parameter as some of the NCBI fields don't pass the strict type checking done by the Java JSON parser.)
 
+* Or see the help text::
+
+   java -jar target/genomics-tools-client-java-v1beta.jar --help
 
 .. _Google Genomics API: https://developers.google.com/genomics
 .. _Apache Maven: http://maven.apache.org/download.cgi
