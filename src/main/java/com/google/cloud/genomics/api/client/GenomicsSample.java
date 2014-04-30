@@ -139,8 +139,8 @@ public class GenomicsSample {
     }
   }
 
-  private static GenomicsRequest getRequest(CommandLine cmdLine, Genomics genomics, String requestType)
-      throws IOException, IllegalArgumentException {
+  private static GenomicsRequest<? extends GenericJson> getRequest(CommandLine cmdLine, Genomics genomics,
+      String requestType) throws IOException, IllegalArgumentException {
     switch (requestType) {
       case "importreadsets":
         return importReadsets(cmdLine, genomics);
