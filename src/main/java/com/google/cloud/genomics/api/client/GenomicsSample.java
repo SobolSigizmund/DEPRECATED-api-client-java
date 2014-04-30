@@ -24,6 +24,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.GenericJson;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
@@ -169,12 +170,13 @@ public class GenomicsSample {
     }
   }
 
-  private static void executeAndPrint(GenomicsRequest<?> req) throws IOException {
+  private static void executeAndPrint(GenomicsRequest<? extends GenericJson> req) throws IOException {
     req.setDisableGZipContent(true);
     if (!cmdLine.fields.isEmpty()) {
       req.setFields(cmdLine.fields);
     }
-    System.out.println("result: " + req.execute());
+    GenericJson result = req.execute();
+    System.out.println("result: " + (cmdLine.prettyPrint ? result.toPrettyString() : result.toString()));
   }
 
   static Genomics.Readsets.GenomicsImport importReadsets(CommandLine cmdLine, Genomics genomics)

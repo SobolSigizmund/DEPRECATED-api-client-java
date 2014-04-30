@@ -49,6 +49,10 @@ class CommandLine {
       usage = "Path to client_secrets.json")
   public String clientSecretsFilename = "client_secrets.json";
 
+  @Option(name = "--pretty_print",
+      usage = "pretty print json output")
+  public boolean prettyPrint = false;
+
   @Option(name = "--dataset_id",
       metaVar = "<dataset_id>",
       usage = "The Genomics API dataset ID.")
