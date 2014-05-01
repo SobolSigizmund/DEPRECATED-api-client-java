@@ -50,7 +50,6 @@ public class GenomicsSample {
   private static final String DEVSTORAGE_SCOPE =
       "https://www.googleapis.com/auth/devstorage.read_write";
   private static final String GENOMICS_SCOPE = "https://www.googleapis.com/auth/genomics";
-  private static final String EMAIL_SCOPE = "https://www.googleapis.com/auth/userinfo.email";
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
   private static final List<String> VALID_REQUEST_TYPES = Arrays.asList("importreadsets",
@@ -101,7 +100,7 @@ public class GenomicsSample {
 
     GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
         httpTransport, JSON_FACTORY, clientSecrets,
-        Arrays.asList(DEVSTORAGE_SCOPE, GENOMICS_SCOPE, EMAIL_SCOPE)).setDataStoreFactory(dataStoreFactory)
+        Arrays.asList(DEVSTORAGE_SCOPE, GENOMICS_SCOPE)).setDataStoreFactory(dataStoreFactory)
         .build();
     return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
   }
