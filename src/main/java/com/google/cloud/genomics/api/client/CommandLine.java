@@ -30,14 +30,17 @@ import java.util.List;
  */
 class CommandLine {
 
+  public static enum RequestType {
+    IMPORTREADSETS, SEARCHREADSETS, GETREADSET, GETJOB, SEARCHREADS
+  }
+
   CmdLineParser parser;
 
-  @Argument
-  public List<String> remainingArgs = new ArrayList<String>();
-
-  @Option(name = "--help",
-      usage = "display this help message")
-  public boolean help = false;
+  @Argument(usage = "The type of API request to perform. " +
+      "Must be one of: importreadsets, searchreadsets, getreadset, getjob, searchreads",
+      metaVar = "<request_type>",
+      required = true)
+  public RequestType requestType = null;
 
   @Option(name = "--root_url",
       metaVar = "<url>",
@@ -116,10 +119,6 @@ class CommandLine {
 
   public void setArgs(String[] args) throws CmdLineException {
     parser.parseArgument(args);
-  }
-
-  public boolean showHelp() {
-    return help;
   }
 
   public void printHelp(String headline, Appendable out) throws IOException {

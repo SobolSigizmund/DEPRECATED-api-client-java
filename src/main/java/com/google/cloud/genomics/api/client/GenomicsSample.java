@@ -52,9 +52,6 @@ public class GenomicsSample {
   private static final String GENOMICS_SCOPE = "https://www.googleapis.com/auth/genomics";
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
-  private static final List<String> VALID_REQUEST_TYPES = Arrays.asList("importreadsets",
-      "searchreadsets", "getreadset", "getjob", "searchreads");
-
   private static FileDataStoreFactory dataStoreFactory;
   private static NetHttpTransport httpTransport;
   private static CommandLine cmdLine;
@@ -92,16 +89,14 @@ public class GenomicsSample {
           }).build();
   }
 
-  private static Credential authorize() throws Exception {
+  private static Credential authorize(List<String> scopes) throws Exception {
     GoogleClientSecrets clientSecrets = loadClientSecrets(cmdLine.clientSecretsFilename);
     if (clientSecrets == null) {
       return null;
     }
 
     GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-        httpTransport, JSON_FACTORY, clientSecrets,
-        Arrays.asList(DEVSTORAGE_SCOPE, GENOMICS_SCOPE)).setDataStoreFactory(dataStoreFactory)
-        .build();
+        httpTransport, JSON_FACTORY, clientSecrets, scopes).setDataStoreFactory(dataStoreFactory).build();
     return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
   }
 
@@ -109,27 +104,20 @@ public class GenomicsSample {
     cmdLine = new CommandLine();
 
     try {
-      // Show help
+      // Parse the command line
       cmdLine.setArgs(args);
-      assertOrDie(!cmdLine.showHelp(), "");
-
-      // Make sure the request type is valid
-      boolean requestTypeIsValid = cmdLine.remainingArgs.size() == 1 &&
-          VALID_REQUEST_TYPES.contains(cmdLine.remainingArgs.get(0));
-      assertOrDie(requestTypeIsValid,
-          "Must specify a valid request_type, one of: " + VALID_REQUEST_TYPES + "\n");
 
       // Authorization
       httpTransport = GoogleNetHttpTransport.newTrustedTransport();
       dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
-      Credential credential = authorize();
+      Credential credential = authorize(Arrays.asList(DEVSTORAGE_SCOPE, GENOMICS_SCOPE));
       if (credential == null) {
         return;
       }
 
       // Route to appropriate request method
       Genomics genomics = buildService(credential);
-      executeAndPrint(getRequest(cmdLine, genomics, cmdLine.remainingArgs.get(0)));
+      executeAndPrint(getRequest(cmdLine, genomics));
 
     } catch (IllegalArgumentException | CmdLineException e) {
       cmdLine.printHelp(e.getMessage() + "\n", System.err);
@@ -138,29 +126,22 @@ public class GenomicsSample {
     }
   }
 
-  private static GenomicsRequest<? extends GenericJson> getRequest(CommandLine cmdLine, Genomics genomics,
-      String requestType) throws IOException, IllegalArgumentException {
-    switch (requestType) {
-      case "importreadsets":
+  private static GenomicsRequest<? extends GenericJson> getRequest(CommandLine cmdLine, Genomics genomics)
+      throws IOException, IllegalArgumentException {
+    switch (cmdLine.requestType) {
+      case IMPORTREADSETS:
         return importReadsets(cmdLine, genomics);
-      case "searchreadsets":
+      case SEARCHREADSETS:
         return searchReadsets(cmdLine, genomics);
-      case "getreadset":
+      case GETREADSET:
         return getReadset(cmdLine, genomics);
-      case "getjob":
+      case GETJOB:
         return getJob(cmdLine, genomics);
-      case "searchreads":
+      case SEARCHREADS:
         return searchReads(cmdLine, genomics);
-      default:
-        throw new RuntimeException("one of the " + VALID_REQUEST_TYPES + " isn't being handled properly. \n");
     }
-  }
 
-  private static void assertOrDie(boolean condition, String headline) throws IOException {
-    if (!condition) {
-      cmdLine.printHelp(headline, System.err);
-      System.exit(0);
-    }
+    throw new IllegalArgumentException();
   }
 
   private static void assertOrThrow(boolean condition, String headline) throws IllegalArgumentException {
