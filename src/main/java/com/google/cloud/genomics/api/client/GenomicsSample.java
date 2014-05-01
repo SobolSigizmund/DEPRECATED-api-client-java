@@ -27,6 +27,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.GenericJson;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.Lists;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.GenomicsRequest;
@@ -38,6 +39,7 @@ import org.kohsuke.args4j.CmdLineException;
 import java.io.*;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -97,7 +99,7 @@ public class GenomicsSample {
 
     GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
         httpTransport, JSON_FACTORY, clientSecrets, scopes).setDataStoreFactory(dataStoreFactory).build();
-    return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+    return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user" + scopes.size());
   }
 
   public static void main(String[] args) throws IOException {
@@ -108,9 +110,15 @@ public class GenomicsSample {
       cmdLine.setArgs(args);
 
       // Authorization
+      List<String> scopes = Lists.newArrayList();
+      scopes.add(GENOMICS_SCOPE);
+      if (cmdLine.requestType == CommandLine.RequestType.IMPORTREADSETS) {
+        scopes.add(DEVSTORAGE_SCOPE);
+      }
+
       httpTransport = GoogleNetHttpTransport.newTrustedTransport();
       dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
-      Credential credential = authorize(Arrays.asList(DEVSTORAGE_SCOPE, GENOMICS_SCOPE));
+      Credential credential = authorize(scopes);
       if (credential == null) {
         return;
       }
