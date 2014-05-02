@@ -33,6 +33,7 @@ import org.junit.runners.JUnit4;
 
 import java.lang.IllegalArgumentException;
 import java.util.Arrays;
+import java.util.List;
 
 @RunWith(JUnit4.class)
 public class GenomicsSampleTest {
@@ -55,7 +56,7 @@ public class GenomicsSampleTest {
       // Expected - dataset_id required
     }
 
-    cl.datasetId = "dataset";
+    cl.datasetIds = Arrays.asList("dataset");
     try {
       GenomicsSample.importReadsets(cl, null);
       fail();
@@ -93,9 +94,10 @@ public class GenomicsSampleTest {
       // Expected - readset_id required
     }
 
-    cl.readsetId = "readset";
-    Genomics.Readsets.Get request = GenomicsSample.getReadset(cl, GENOMICS);
-    assertEquals("readset", request.getReadsetId());
+    cl.readsetIds = Arrays.asList("readset", "readset2");
+    List<Genomics.Readsets.Get> requests = GenomicsSample.getReadset(cl, GENOMICS);
+    assertEquals("readset", requests.get(0).getReadsetId());
+    assertEquals("readset2", requests.get(1).getReadsetId());
   }
 
   @Test
@@ -109,9 +111,10 @@ public class GenomicsSampleTest {
       // Expected - job_id required
     }
 
-    cl.jobId = "job";
-    Genomics.Jobs.Get request = GenomicsSample.getJob(cl, GENOMICS);
-    assertEquals("job", request.getJobId());
+    cl.jobIds = Arrays.asList("job", "job2");
+    List<Genomics.Jobs.Get> requests = GenomicsSample.getJob(cl, GENOMICS);
+    assertEquals("job", requests.get(0).getJobId());
+    assertEquals("job2", requests.get(1).getJobId());
   }
 
   @Test

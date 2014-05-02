@@ -38,8 +38,6 @@ import org.kohsuke.args4j.CmdLineException;
 
 import java.io.*;
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -134,22 +132,28 @@ public class GenomicsSample {
     }
   }
 
-  private static GenomicsRequest<? extends GenericJson> getRequest(CommandLine cmdLine, Genomics genomics)
+  private static List<GenomicsRequest<? extends GenericJson>> getRequest(CommandLine cmdLine, Genomics genomics)
       throws IOException, IllegalArgumentException {
+    List<GenomicsRequest<? extends GenericJson>> requests = Lists.newArrayList();
     switch (cmdLine.requestType) {
       case IMPORTREADSETS:
-        return importReadsets(cmdLine, genomics);
+        requests.add(importReadsets(cmdLine, genomics));
+        break;
       case SEARCHREADSETS:
-        return searchReadsets(cmdLine, genomics);
+        requests.add(searchReadsets(cmdLine, genomics));
+        break;
       case GETREADSET:
-        return getReadset(cmdLine, genomics);
+        requests.addAll(getReadset(cmdLine, genomics));
+        break;
       case GETJOB:
-        return getJob(cmdLine, genomics);
+        requests.addAll(getJob(cmdLine, genomics));
+        break;
       case SEARCHREADS:
-        return searchReads(cmdLine, genomics);
+        requests.add(searchReads(cmdLine, genomics));
+        break;
     }
 
-    throw new IllegalArgumentException();
+    return requests;
   }
 
   private static void assertOrThrow(boolean condition, String headline) throws IllegalArgumentException {
@@ -158,22 +162,26 @@ public class GenomicsSample {
     }
   }
 
-  private static void executeAndPrint(GenomicsRequest<? extends GenericJson> req) throws IOException {
-    req.setDisableGZipContent(true);
-    if (!cmdLine.fields.isEmpty()) {
-      req.setFields(cmdLine.fields);
+  private static void executeAndPrint(List<GenomicsRequest<? extends GenericJson>> requests)
+      throws IOException {
+    // TODO: Use a batch request if the endpoint supports it
+    for (GenomicsRequest<? extends GenericJson> req : requests) {
+      req.setDisableGZipContent(true);
+      if (!cmdLine.fields.isEmpty()) {
+        req.setFields(cmdLine.fields);
+      }
+      GenericJson result = req.execute();
+      System.out.println("result: " + (cmdLine.prettyPrint ? result.toPrettyString() : result.toString()));
     }
-    GenericJson result = req.execute();
-    System.out.println("result: " + (cmdLine.prettyPrint ? result.toPrettyString() : result.toString()));
   }
 
   static Genomics.Readsets.GenomicsImport importReadsets(CommandLine cmdLine, Genomics genomics)
       throws IOException, IllegalArgumentException {
-    assertOrThrow(!cmdLine.datasetId.isEmpty(), "Must specify a dataset_id\n");
+    assertOrThrow(!cmdLine.datasetIds.isEmpty(), "Must specify a dataset_id\n");
     assertOrThrow(cmdLine.bamFiles.size() > 0, "Must specify at least one BAM file\n");
 
     ImportReadsetsRequest content = new ImportReadsetsRequest()
-        .setDatasetId(cmdLine.datasetId)
+        .setDatasetId(cmdLine.datasetIds.get(0))
         .setSourceUris(cmdLine.bamFiles);
     return genomics.readsets().genomicsImport(content);
   }
@@ -187,16 +195,28 @@ public class GenomicsSample {
     return genomics.readsets().search(content);
   }
 
-  static Genomics.Readsets.Get getReadset(CommandLine cmdLine, Genomics genomics)
+  static List<Genomics.Readsets.Get> getReadset(CommandLine cmdLine, Genomics genomics)
       throws IOException, IllegalArgumentException {
-    assertOrThrow(!cmdLine.readsetId.isEmpty(), "Must specify a readset_id");
-    return genomics.readsets().get(cmdLine.readsetId);
+    assertOrThrow(!cmdLine.readsetIds.isEmpty(), "Must specify at least one readset_id");
+
+    List<Genomics.Readsets.Get> requests = Lists.newArrayList();
+    for (String readsetId : cmdLine.readsetIds) {
+      requests.add(genomics.readsets().get(readsetId));
+    }
+
+    return requests;
   }
 
-  static Genomics.Jobs.Get getJob(CommandLine cmdLine, Genomics genomics)
+  static List<Genomics.Jobs.Get> getJob(CommandLine cmdLine, Genomics genomics)
       throws IOException, IllegalArgumentException {
-    assertOrThrow(!cmdLine.jobId.isEmpty(), "Must specify a job_id");
-    return genomics.jobs().get(cmdLine.jobId);
+    assertOrThrow(!cmdLine.jobIds.isEmpty(), "Must specify at least one job_id");
+
+    List<Genomics.Jobs.Get> requests = Lists.newArrayList();
+    for (String jobId : cmdLine.jobIds) {
+      requests.add(genomics.jobs().get(jobId));
+    }
+
+    return requests;
   }
 
   static Genomics.Reads.Search searchReads(CommandLine cmdLine, Genomics genomics)

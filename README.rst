@@ -25,21 +25,21 @@ command line.
 * You can then perform API queries like fetching readsets or
   reads::
 
-    java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets --dataset_ids 376902546192 --fields "readsets(id,name)"
+    java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets --dataset_id 376902546192 --fields "readsets(id,name)"
 
-    java -jar target/genomics-tools-client-java-v1beta.jar searchreads --readset_ids "CJDmkYn8ChCh4IH4hOf4gacB" --sequence_name 1 --sequence_start 10000 --sequence_end 10000
+    java -jar target/genomics-tools-client-java-v1beta.jar searchreads --readset_id "CJDmkYn8ChCh4IH4hOf4gacB" --sequence_name 1 --sequence_start 10000 --sequence_end 10000
 
 * The default API provider is Google, but you can also query against NCBI.::
 
-    java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets --root_url "http://trace.ncbi.nlm.nih.gov/Traces/gg/" --dataset_ids "SRP034507" --fields "readsets(id,name,fileData),pageToken"
+    java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets --root_url "http://trace.ncbi.nlm.nih.gov/Traces/gg/" --dataset_id "SRP034507" --fields "readsets(id,name,fileData),pageToken"
 
-    java -jar target/genomics-tools-client-java-v1beta.jar searchreads --root_url "http://trace.ncbi.nlm.nih.gov/Traces/gg/" --readset_ids "SRR1050536" --sequence_name "gi|333959|gb|M74568.1|RSHSEQ" --sequence_start 1 --sequence_end 100 --fields "pageToken,reads(name,position,flags)"
+    java -jar target/genomics-tools-client-java-v1beta.jar searchreads --root_url "http://trace.ncbi.nlm.nih.gov/Traces/gg/" --readset_id "SRR1050536" --sequence_name "gi|333959|gb|M74568.1|RSHSEQ" --sequence_start 1 --sequence_end 100 --fields "pageToken,reads(name,position,flags)"
 
 (Be sure to specify the fields parameter as some of the NCBI fields don't pass the strict type checking done by the Java JSON parser.)
 
 * Or see the help text::
 
-   java -jar target/genomics-tools-client-java-v1beta.jar --help
+   java -jar target/genomics-tools-client-java-v1beta.jar
 
 .. _Google Genomics API: https://developers.google.com/genomics
 .. _Apache Maven: http://maven.apache.org/download.cgi

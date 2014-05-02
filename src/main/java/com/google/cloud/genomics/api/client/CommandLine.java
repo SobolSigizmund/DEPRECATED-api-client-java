@@ -59,17 +59,17 @@ class CommandLine {
   @Option(name = "--dataset_id",
       metaVar = "<dataset_id>",
       usage = "The Genomics API dataset ID.")
-  public String datasetId = "";
+  public List<String> datasetIds = new ArrayList<String>();
 
   @Option(name = "--job_id",
       metaVar = "<job_id>",
       usage = "The Genomics API job ID.")
-  public String jobId = "";
+  public List<String> jobIds = new ArrayList<String>();
 
   @Option(name = "--readset_id",
       metaVar = "<readsetId>",
       usage = "The Genomics API readset ID.")
-  public String readsetId = "";
+  public List<String> readsetIds = new ArrayList<String>();
 
   @Option(name = "--page_token",
       metaVar = "<page_token>",
@@ -81,16 +81,6 @@ class CommandLine {
       usage = "The fields to be returned with this query. " +
       "Leaving this blank returns all fields.")
   public String fields = "";
-
-  @Option(name = "--dataset_ids",
-      metaVar = "<datasetIds>",
-      usage = "The list of dataset ids whose readsets are returned by this query.")
-  public List<String> datasetIds = new ArrayList<String>();
-
-  @Option(name = "--readset_ids",
-      metaVar = "<readsetIds>",
-      usage = "The list of readset ids whose reads are returned by this query.")
-  public List<String> readsetIds = new ArrayList<String>();
 
   @Option(name = "--bam_file",
       metaVar = "<bamFile>",
