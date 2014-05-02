@@ -29,17 +29,17 @@ command line.
 
     java -jar target/genomics-tools-client-java-v1beta.jar searchreads --readset_id "CJDmkYn8ChCh4IH4hOf4gacB" --sequence_name 1 --sequence_start 10000 --sequence_end 10000
 
-* The default API provider is Google, but you can also query against NCBI.::
+* The default API provider is Google, but you can also query against NCBI.
+  (Be sure to specify the fields parameter as some of the NCBI fields don't pass the strict type checking done by the Java JSON parser.)::
 
     java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets --root_url "http://trace.ncbi.nlm.nih.gov/Traces/gg/" --dataset_id "SRP034507" --fields "readsets(id,name,fileData),pageToken"
 
     java -jar target/genomics-tools-client-java-v1beta.jar searchreads --root_url "http://trace.ncbi.nlm.nih.gov/Traces/gg/" --readset_id "SRR1050536" --sequence_name "gi|333959|gb|M74568.1|RSHSEQ" --sequence_start 1 --sequence_end 100 --fields "pageToken,reads(name,position,flags)"
 
-(Be sure to specify the fields parameter as some of the NCBI fields don't pass the strict type checking done by the Java JSON parser.)
+    
 
-* Or see the help text::
+* See `the docs <http://google-genomics.readthedocs.org/en/latest/api-client-java/usage.html>`_ for the full set of options
 
-   java -jar target/genomics-tools-client-java-v1beta.jar
 
 .. _Google Genomics API: https://developers.google.com/genomics
 .. _Apache Maven: http://maven.apache.org/download.cgi
