@@ -34,6 +34,7 @@ import com.google.api.services.genomics.GenomicsRequest;
 import com.google.api.services.genomics.model.ImportReadsetsRequest;
 import com.google.api.services.genomics.model.SearchReadsRequest;
 import com.google.api.services.genomics.model.SearchReadsetsRequest;
+import com.google.api.services.genomics.model.SearchVariantsRequest;
 import org.kohsuke.args4j.CmdLineException;
 
 import java.io.*;
@@ -151,6 +152,12 @@ public class GenomicsSample {
       case SEARCHREADS:
         requests.add(searchReads(cmdLine, genomics));
         break;
+      case SEARCHVARIANTS:
+        requests.add(searchVariants(cmdLine, genomics));
+        break;
+      case GETVARIANT:
+        requests.addAll(getVariant(cmdLine, genomics));
+        break;
     }
 
     return requests;
@@ -174,6 +181,8 @@ public class GenomicsSample {
       System.out.println("result: " + (cmdLine.prettyPrint ? result.toPrettyString() : result.toString()));
     }
   }
+
+  // Readsets
 
   static Genomics.Readsets.GenomicsImport importReadsets(CommandLine cmdLine, Genomics genomics)
       throws IOException, IllegalArgumentException {
@@ -207,6 +216,8 @@ public class GenomicsSample {
     return requests;
   }
 
+  // Jobs
+
   static List<Genomics.Jobs.Get> getJob(CommandLine cmdLine, Genomics genomics)
       throws IOException, IllegalArgumentException {
     assertOrThrow(!cmdLine.jobIds.isEmpty(), "Must specify at least one job_id");
@@ -219,6 +230,8 @@ public class GenomicsSample {
     return requests;
   }
 
+  // Reads
+
   static Genomics.Reads.Search searchReads(CommandLine cmdLine, Genomics genomics)
       throws IOException, IllegalArgumentException {
     SearchReadsRequest content = new SearchReadsRequest()
@@ -229,7 +242,6 @@ public class GenomicsSample {
     if (!cmdLine.sequenceName.isEmpty() || cmdLine.sequenceStart > 0 || cmdLine.sequenceEnd > 0) {
       assertOrThrow(!cmdLine.sequenceName.isEmpty(), "Must specify a sequence_name");
       assertOrThrow(cmdLine.sequenceStart > 0, "sequence_start must be greater than 0");
-      // getting this far implies target_start is greater than 0
       assertOrThrow(cmdLine.sequenceEnd >= cmdLine.sequenceStart,
           "sequence_end must be greater than sequence_start");
 
@@ -239,5 +251,39 @@ public class GenomicsSample {
           .setSequenceEnd(BigInteger.valueOf(cmdLine.sequenceEnd));
     }
     return genomics.reads().search(content);
+  }
+
+
+  // Variants
+
+  static List<Genomics.Variants.Get> getVariant(CommandLine cmdLine, Genomics genomics)
+      throws IOException, IllegalArgumentException {
+    assertOrThrow(!cmdLine.variantIds.isEmpty(), "Must specify at least one variant_id");
+
+    List<Genomics.Variants.Get> requests = Lists.newArrayList();
+    for (String variantId : cmdLine.variantIds) {
+      requests.add(genomics.variants().get(variantId));
+    }
+
+    return requests;
+  }
+
+  static Genomics.Variants.Search searchVariants(CommandLine cmdLine, Genomics genomics)
+      throws IOException, IllegalArgumentException {
+
+    assertOrThrow(cmdLine.datasetIds.size() == 1, "Search variants requires exactly one dataset ID");
+
+    assertOrThrow(!cmdLine.sequenceName.isEmpty(), "Must specify a contig");
+    assertOrThrow(cmdLine.sequenceStart > 0, "Must specify a start_position greater than 0");
+    assertOrThrow(cmdLine.sequenceEnd >= cmdLine.sequenceStart, "end_position must be greater than start_position");
+
+    SearchVariantsRequest content = new SearchVariantsRequest()
+        .setDatasetId(cmdLine.datasetIds.get(0))
+        .setPageToken(cmdLine.pageToken)
+        .setContig(cmdLine.sequenceName)
+        .setStartPosition(Long.valueOf(cmdLine.sequenceStart))
+        .setEndPosition(Long.valueOf(cmdLine.sequenceEnd));
+
+    return genomics.variants().search(content);
   }
 }

@@ -143,5 +143,61 @@ public class GenomicsSampleTest {
     assertNotNull(GenomicsSample.searchReads(cl, GENOMICS));
   }
 
+  @Test
+  public void testGetVariant() throws Exception {
+    CommandLine cl = new CommandLine();
+
+    try {
+      GenomicsSample.getVariant(cl, null);
+      fail();
+    } catch (IllegalArgumentException e) {
+      // Expected - variant_id required
+    }
+
+    cl.variantIds = Arrays.asList("variant", "variant2");
+    List<Genomics.Variants.Get> requests = GenomicsSample.getVariant(cl, GENOMICS);
+    assertEquals("variant", requests.get(0).getVariantId());
+    assertEquals("variant2", requests.get(1).getVariantId());
+  }
+
+  @Test
+  public void testSearchVariants() throws Exception {
+    CommandLine cl = new CommandLine();
+
+    try {
+      GenomicsSample.searchVariants(cl, null);
+      fail();
+    } catch (IllegalArgumentException e) {
+      // Expected - dataset_id required
+    }
+
+    cl.datasetIds = Arrays.asList("dataset");
+    try {
+      GenomicsSample.searchVariants(cl, null);
+      fail();
+    } catch (IllegalArgumentException e) {
+      // Expected - sequence_name required
+    }
+
+    cl.sequenceName = "1";
+    try {
+      GenomicsSample.searchVariants(cl, null);
+      fail();
+    } catch (IllegalArgumentException e) {
+      // Expected - sequence start and end required
+    }
+
+    cl.sequenceStart = 5;
+    try {
+      GenomicsSample.searchVariants(cl, null);
+      fail();
+    } catch (IllegalArgumentException e) {
+      // Expected - sequence end required
+    }
+
+    cl.sequenceEnd = 6;
+    assertNotNull(GenomicsSample.searchVariants(cl, GENOMICS));
+  }
+
 
 }

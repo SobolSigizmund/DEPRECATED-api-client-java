@@ -31,13 +31,14 @@ import java.util.List;
 class CommandLine {
 
   public static enum RequestType {
-    IMPORTREADSETS, SEARCHREADSETS, GETREADSET, GETJOB, SEARCHREADS
+    IMPORTREADSETS, SEARCHREADSETS, GETREADSET, GETJOB, SEARCHREADS, SEARCHVARIANTS, GETVARIANT
   }
 
   CmdLineParser parser;
 
   @Argument(usage = "The type of API request to perform. " +
-      "Must be one of: importreadsets, searchreadsets, getreadset, getjob, searchreads",
+      "Must be one of: importreadsets, searchreadsets, getreadset, getjob, searchreads, " +
+      "searchvariants, getvariant",
       metaVar = "<request_type>",
       required = true)
   public RequestType requestType = null;
@@ -71,6 +72,11 @@ class CommandLine {
       usage = "The Genomics API readset ID.")
   public List<String> readsetIds = new ArrayList<String>();
 
+  @Option(name = "--variant_id",
+      metaVar = "<variantId>",
+      usage = "The Genomics API variant ID.")
+  public List<String> variantIds = new ArrayList<String>();
+
   @Option(name = "--page_token",
       metaVar = "<page_token>",
       usage = "The token used to retrieve additional pages in paginated API methods.")
@@ -90,16 +96,19 @@ class CommandLine {
 
   @Option(name = "--sequence_name",
       metaVar = "<sequenceName>",
+      aliases = "--contig",
       usage = "The sequence name to query over (e.g. 'X', '23')")
   public String sequenceName = "";
 
   @Option(name = "--sequence_start",
       metaVar = "<sequenceStart>",
+      aliases = "--start_position",
       usage = "The start position (1-based) of this query.")
   public Integer sequenceStart = 0;
 
   @Option(name = "--sequence_end",
       metaVar = "<sequenceEnd>",
+      aliases = "--end_position",
       usage = "The end position (1-based, inclusive) of this query.")
   public Integer sequenceEnd = 0;
 
