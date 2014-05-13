@@ -26,6 +26,7 @@ import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.GenericJson;
 import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.JsonParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.store.FileDataStoreFactory;
@@ -158,6 +159,9 @@ public class GenomicsSample {
       case GETVARIANT:
         requests.addAll(getVariant(cmdLine, genomics));
         break;
+      case CUSTOM:
+        requests.add(getCustomRequest(cmdLine, genomics));
+        break;
     }
 
     return requests;
@@ -180,6 +184,18 @@ public class GenomicsSample {
       GenericJson result = req.execute();
       System.out.println("result: " + (cmdLine.prettyPrint ? result.toPrettyString() : result.toString()));
     }
+  }
+
+  // Custom request
+  static GenomicsRequest<GenericJson> getCustomRequest(CommandLine cmdLine, Genomics genomics)
+      throws IOException, IllegalArgumentException {
+    assertOrThrow(!cmdLine.customEndpoint.isEmpty(), "Must specify a custom_endpoint\n");
+    assertOrThrow(!cmdLine.customMethod.isEmpty(), "Must specify a custom_method\n");
+
+    GenericJson json = cmdLine.customBody == null ? null :
+        JSON_FACTORY.createJsonParser(cmdLine.customBody).parseAndClose(GenericJson.class);
+    return new GenomicsRequest<GenericJson>(genomics, cmdLine.customMethod, cmdLine.customEndpoint,
+        json, GenericJson.class) {};
   }
 
   // Readsets

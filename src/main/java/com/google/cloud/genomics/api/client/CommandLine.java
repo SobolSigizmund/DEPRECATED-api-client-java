@@ -31,14 +31,14 @@ import java.util.List;
 class CommandLine {
 
   public static enum RequestType {
-    IMPORTREADSETS, SEARCHREADSETS, GETREADSET, GETJOB, SEARCHREADS, SEARCHVARIANTS, GETVARIANT
+    IMPORTREADSETS, SEARCHREADSETS, GETREADSET, GETJOB, SEARCHREADS, SEARCHVARIANTS, GETVARIANT, CUSTOM
   }
 
   CmdLineParser parser;
 
   @Argument(usage = "The type of API request to perform. " +
       "Must be one of: importreadsets, searchreadsets, getreadset, getjob, searchreads, " +
-      "searchvariants, getvariant",
+      "searchvariants, getvariant, custom",
       metaVar = "<request_type>",
       required = true)
   public RequestType requestType = null;
@@ -111,6 +111,21 @@ class CommandLine {
       aliases = "--end_position",
       usage = "The end position (1-based, inclusive) of this query.")
   public Integer sequenceEnd = 0;
+
+  @Option(name = "--custom_endpoint",
+      metaVar = "<URL path>",
+      usage = "set the Genomics API endpoint for custom requests (e.g. 'readsets/search')")
+  public String customEndpoint = "";
+
+  @Option(name = "--custom_body",
+      metaVar = "<JSON blob>",
+      usage = "set the JSON POST body for custom requests (e.g. {'datasetId': '5'})")
+  public String customBody = null;
+
+  @Option(name = "--custom_method",
+      metaVar = "<http method>",
+      usage = "set the http method for custom requests (e.g. 'POST', 'GET') Defaults to POST.")
+  public String customMethod = "POST";
 
   public CommandLine() {
     parser = new CmdLineParser(this);
