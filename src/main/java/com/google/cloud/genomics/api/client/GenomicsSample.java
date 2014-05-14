@@ -112,7 +112,7 @@ public class GenomicsSample {
       // Authorization
       List<String> scopes = Lists.newArrayList();
       scopes.add(GENOMICS_SCOPE);
-      if (cmdLine.requestType == CommandLine.RequestType.IMPORTREADSETS) {
+      if (cmdLine.requestType == CommandLine.RequestType.IMPORTREADSETS || cmdLine.requireAllScopes) {
         scopes.add(DEVSTORAGE_SCOPE);
       }
 

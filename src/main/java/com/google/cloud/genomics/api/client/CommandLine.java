@@ -127,6 +127,10 @@ class CommandLine {
       usage = "set the http method for custom requests (e.g. 'POST', 'GET') Defaults to POST.")
   public String customMethod = "POST";
 
+  @Option(name = "--require_all_scopes",
+      usage = "Uncommon. If specified, the user will be asked for all Genomics related OAuth scopes.")
+  public boolean requireAllScopes = false;
+
   public CommandLine() {
     parser = new CmdLineParser(this);
   }
