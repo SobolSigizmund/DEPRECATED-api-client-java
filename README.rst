@@ -48,14 +48,6 @@ command line.
 Code layout
 -----------
 
-Most of the Java code is a generated client library. This includes everything under
-``com/google/api/services``. Currently, the generated client library 
-(part of this `parent project <https://code.google.com/p/google-api-java-client/>`_) is only creatable by Google. 
-Very shortly though it will become a proper Maven dependency 
-(artifactId ``google-api-services-genomics`` under groupId ``com.google.apis``).
-
-There are only 2 non-generated files:
-
 CommandLine.java:
     defines all of the possible command line arguments using the `args4j library
     <http://args4j.kohsuke.org/index.html>`_.
@@ -83,7 +75,8 @@ All bug fixes will be addressed but it's unlikely the overall structure and
 featureset will change much. 
 
 There is an ongoing need to integrate more API calls as they become available. 
-The work involved is small.
+The work involved is small. The ``custom`` request type can always be used to call
+a method that has not been fully integrated.
 
 
 
