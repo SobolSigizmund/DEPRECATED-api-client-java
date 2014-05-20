@@ -20,7 +20,7 @@ command line.
   ``client_secrets.json`` file.
 
 * Move the ``client_secrets.json`` file into the client-java directory.
-(Authentication will take place the first time you make an API call.)
+  (Authentication will take place the first time you make an API call.)
 
 * You can then perform API queries like fetching readsets or
   reads::
