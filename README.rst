@@ -48,11 +48,11 @@ command line.
 Code layout
 -----------
 
-CommandLine.java:
+`CommandLine.java <src/main/java/com/google/cloud/genomics/api/client/CommandLine.java>`_:
     defines all of the possible command line arguments using the `args4j library
     <http://args4j.kohsuke.org/index.html>`_.
 
-GenomicsSample.java:
+`GenomicsSample.java <src/main/java/com/google/cloud/genomics/api/client/GenomicsSample.java>`_:
     provides the bulk of the logic. In its ``main`` method, the user's request is
     dispatched to either make a call to the Genomics API or to authenticate the
     user. Most of the code deals with OAuth.
