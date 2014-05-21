@@ -123,6 +123,15 @@ public class GenomicsSample {
         return;
       }
 
+      try {
+        credential.refreshToken();
+      } catch (NullPointerException e) {
+        System.err.append("Couldn't refresh the OAuth token. Are you using a different client secrets file?\n" +
+            "If you want to use a different file, first clear your stored credentials: " +
+            "http://google-genomics.readthedocs.org/en/latest/api-client-java/resetting_auth.html \n\n");
+        return;
+      }
+
       // Route to appropriate request method
       Genomics genomics = buildService(credential);
       executeAndPrint(getRequest(cmdLine, genomics));
