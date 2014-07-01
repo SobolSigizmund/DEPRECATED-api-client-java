@@ -16,7 +16,7 @@ command line.
     cd api-client-java
     mvn package
 
-* Then, follow the `authentication instructions`_ to generate a valid
+* Then, follow the `sign up instructions`_ to generate a valid
   ``client_secrets.json`` file.
 
 * Move the ``client_secrets.json`` file into the client-java directory.
@@ -43,7 +43,7 @@ command line.
 
 .. _Google Genomics API: https://developers.google.com/genomics
 .. _Apache Maven: http://maven.apache.org/download.cgi
-.. _authentication instructions: https://developers.google.com/genomics#authenticate
+.. _sign up instructions: https://developers.google.com/genomics
 
 Code layout
 -----------
