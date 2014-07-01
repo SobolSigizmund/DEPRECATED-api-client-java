@@ -49,6 +49,7 @@ public class GenomicsSample {
   private static final String APPLICATION_NAME = "Google-GenomicsSample/1.0";
   private static final java.io.File DATA_STORE_DIR =
       new java.io.File(System.getProperty("user.home"), ".store/genomics_java_client");
+  private static final String BIGQUERY_SCOPE = "https://www.googleapis.com/auth/bigquery";
   private static final String DEVSTORAGE_SCOPE =
       "https://www.googleapis.com/auth/devstorage.read_write";
   private static final String GENOMICS_SCOPE = "https://www.googleapis.com/auth/genomics";
@@ -114,6 +115,9 @@ public class GenomicsSample {
       scopes.add(GENOMICS_SCOPE);
       if (cmdLine.requestType == CommandLine.RequestType.IMPORTREADSETS || cmdLine.requireAllScopes) {
         scopes.add(DEVSTORAGE_SCOPE);
+      }
+      if (cmdLine.requireAllScopes) {
+        scopes.add(BIGQUERY_SCOPE);
       }
 
       httpTransport = GoogleNetHttpTransport.newTrustedTransport();
