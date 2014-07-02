@@ -40,6 +40,9 @@ command line.
 
 * See `the docs <http://google-genomics.readthedocs.org/en/latest/api-client-java/usage.html>`_ for the full set of options
 
+* Note that not all of Google's APIs are callable at this time. The docs have 
+  `a list <http://google-genomics.readthedocs.org/en/latest/auth_requirements.html>`_ 
+  of which APIs are available.
 
 .. _Google Genomics API: https://developers.google.com/genomics
 .. _Apache Maven: http://maven.apache.org/download.cgi
