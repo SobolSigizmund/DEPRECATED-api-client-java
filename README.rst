@@ -37,8 +37,14 @@ command line.
     java -jar target/genomics-tools-client-java-v1beta.jar searchreads --root_url "http://trace.ncbi.nlm.nih.gov/Traces/gg/" --readset_id "SRR1050536" --sequence_name "gi|333959|gb|M74568.1|RSHSEQ" --sequence_start 1 --sequence_end 100 --fields "pageToken,reads(name,position,flags)"
 
     
+* You can get a list of valid commands by running::
 
-* See `the docs <http://google-genomics.readthedocs.org/en/latest/api-client-java/usage.html>`_ for the full set of options
+   java -jar target/genomics-tools-client-java-v1beta.jar
+
+* Or get help on a specific command with::
+
+   java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets
+
 
 * Note that not all of Google's APIs are callable at this time. The docs have 
   `a list <http://google-genomics.readthedocs.org/en/latest/auth_requirements.html>`_ 

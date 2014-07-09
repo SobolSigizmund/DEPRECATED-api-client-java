@@ -15,139 +15,64 @@ limitations under the License.
 */
 package com.google.cloud.genomics.api.client;
 
-import org.kohsuke.args4j.Argument;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Option;
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.MissingCommandException;
+import com.google.api.client.repackaged.com.google.common.base.Strings;
+import com.google.api.client.util.Maps;
+import com.google.cloud.genomics.api.client.commands.*;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 /**
  * Command line options handler for GenomicsSample
  */
 class CommandLine {
 
-  public static enum RequestType {
-    IMPORTREADSETS, SEARCHREADSETS, GETREADSET, GETJOB, SEARCHREADS, SEARCHVARIANTS, GETVARIANT, CUSTOM
-  }
-
-  CmdLineParser parser;
-
-  @Argument(usage = "The type of API request to perform. " +
-      "Must be one of: importreadsets, searchreadsets, getreadset, getjob, searchreads, " +
-      "searchvariants, getvariant, custom",
-      metaVar = "<request_type>",
-      required = true)
-  public RequestType requestType = null;
-
-  @Option(name = "--root_url",
-      metaVar = "<url>",
-      usage = "set the Genomics API root URL")
-  public String rootUrl = "https://www.googleapis.com/genomics/v1beta";
-
-  @Option(name = "--client_secrets_filename",
-      metaVar = "<client_secrets_filename>",
-      usage = "Path to client_secrets.json")
-  public String clientSecretsFilename = "client_secrets.json";
-
-  @Option(name = "--pretty_print",
-      usage = "pretty print json output")
-  public boolean prettyPrint = false;
-
-  @Option(name = "--dataset_id",
-      metaVar = "<dataset_id>",
-      usage = "The Genomics API dataset ID.")
-  public List<String> datasetIds = new ArrayList<String>();
-
-  @Option(name = "--job_id",
-      metaVar = "<job_id>",
-      usage = "The Genomics API job ID.")
-  public List<String> jobIds = new ArrayList<String>();
-
-  @Option(name = "--readset_id",
-      metaVar = "<readsetId>",
-      usage = "The Genomics API readset ID.")
-  public List<String> readsetIds = new ArrayList<String>();
-
-  @Option(name = "--variant_id",
-      metaVar = "<variantId>",
-      usage = "The Genomics API variant ID.")
-  public List<String> variantIds = new ArrayList<String>();
-
-  @Option(name = "--page_token",
-      metaVar = "<page_token>",
-      usage = "The token used to retrieve additional pages in paginated API methods.")
-  public String pageToken = "";
-
-  @Option(name = "--fields",
-      metaVar = "<field>",
-      usage = "The fields to be returned with this query. " +
-      "Leaving this blank returns all fields.")
-  public String fields = "";
-
-  @Option(name = "--bam_file",
-      metaVar = "<bamFile>",
-      usage = "A BAM file (as Google Cloud Storage gs:// URL) to be be imported." +
-          " Use the flag multiple times to import multiple BAM files at a time.")
-  public List<String> bamFiles = new ArrayList<String>();
-
-  @Option(name = "--sequence_name",
-      metaVar = "<sequenceName>",
-      aliases = "--contig",
-      usage = "The sequence name to query over (e.g. 'X', '23')")
-  public String sequenceName = "";
-
-  @Option(name = "--sequence_start",
-      metaVar = "<sequenceStart>",
-      aliases = "--start_position",
-      usage = "The start position (1-based) of this query.")
-  public Integer sequenceStart = 0;
-
-  @Option(name = "--sequence_end",
-      metaVar = "<sequenceEnd>",
-      aliases = "--end_position",
-      usage = "The end position (1-based, inclusive) of this query.")
-  public Integer sequenceEnd = 0;
-
-  @Option(name = "--custom_endpoint",
-      metaVar = "<URL path>",
-      usage = "set the Genomics API endpoint for custom requests (e.g. 'readsets/search')")
-  public String customEndpoint = "";
-
-  @Option(name = "--custom_body",
-      metaVar = "<JSON blob>",
-      usage = "set the JSON POST body for custom requests (e.g. {'datasetId': '5'})")
-  public String customBody = null;
-
-  @Option(name = "--custom_method",
-      metaVar = "<http method>",
-      usage = "set the http method for custom requests (e.g. 'POST', 'GET') Defaults to POST.")
-  public String customMethod = "POST";
-
-  @Option(name = "--require_all_scopes",
-      usage = "Uncommon. If specified, the user will be asked for all Genomics related OAuth scopes.")
-  public boolean requireAllScopes = false;
+  private JCommander parser;
+  private BaseCommand command;
+  private Map<String, BaseCommand> registeredCommands = Maps.newHashMap();
 
   public CommandLine() {
-    parser = new CmdLineParser(this);
+    parser = new JCommander();
+    parser.setProgramName("genomics-tools-client-java");
+
+    addCommand("importreadsets", new ImportReadsetsCommand());
+    addCommand("searchreadsets", new SearchReadsetsCommand());
+    addCommand("getreadset", new GetReadsetsCommand());
+    addCommand("getjob", new GetJobsCommand());
+    addCommand("searchreads", new SearchReadsCommand());
+    addCommand("getvariant", new GetVariantsCommand());
+    addCommand("searchvariants", new SearchVariantsCommand());
+    addCommand("custom", new CustomCommand());
   }
 
-  public void setArgs(String[] args) throws CmdLineException {
-    parser.parseArgument(args);
+  private void addCommand(String name, BaseCommand command) {
+    registeredCommands.put(name, command);
+    parser.addCommand(name, command);
+  }
+
+  public BaseCommand getCommand() {
+    return command;
+  }
+
+  public void setArgs(String[] args) {
+    parser.parse(args);
+
+    if (Strings.isNullOrEmpty(parser.getParsedCommand())) {
+      throw new MissingCommandException("A command is required");
+    } else {
+      command = registeredCommands.get(parser.getParsedCommand());
+    }
   }
 
   public void printHelp(String headline, Appendable out) throws IOException {
-    out.append(headline).append("\n").append(getUsage());
+    out.append(headline).append("\n");
+    if (Strings.isNullOrEmpty(parser.getParsedCommand())) {
+      out.append("Valid commands are: importreadsets searchreadsets getreadset getjob " +
+          "searchreads getvariant searchvariants custom").append("\n\n");
+    } else {
+      parser.usage(parser.getParsedCommand());
+    }
   }
-
-  public String getUsage() {
-    StringWriter sw = new StringWriter();
-    sw.append("Usage: GenomicsSample request_type [flags...]\n");
-    parser.printUsage(sw, null);
-    return sw.toString();
-  }
-
 }

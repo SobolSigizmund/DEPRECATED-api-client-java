@@ -94,12 +94,12 @@
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-genomics</artifactId>
-      <version>v1beta-rev10-1.18.0-rc</version>
+      <version>v1beta-rev12-1.18.0-rc</version>
     </dependency>
     <dependency>
-      <groupId>args4j</groupId>
-      <artifactId>args4j</artifactId>
-      <version>${args4j.version}</version>
+      <groupId>com.beust</groupId>
+      <artifactId>jcommander</artifactId>
+      <version>${jcommander.version}</version>
     </dependency>
   </dependencies>
 
@@ -186,7 +186,7 @@
   </build>
 
   <properties>
-    <args4j.version>2.0.25</args4j.version>
+    <jcommander.version>1.35</jcommander.version>
     <junit.version>4.11</junit.version>
     <google.api.version>1.17.0-rc</google.api.version>
     <maven.enforcer.jdk-version>[1.7,)</maven.enforcer.jdk-version>
