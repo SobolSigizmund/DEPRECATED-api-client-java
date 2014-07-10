@@ -18,6 +18,7 @@ package com.google.cloud.genomics.api.client.commands;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.api.services.genomics.Genomics;
+import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.SearchVariantsRequest;
 
 import java.io.IOException;
@@ -56,6 +57,12 @@ public class SearchVariantsCommand extends SimpleCommand {
 
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
+    Dataset dataset = getDataset(genomics, datasetId);
+    if (dataset == null) {
+      return;
+    }
+    System.out.println("Getting variants from: " + dataset.getName());
+
     SearchVariantsRequest request = new SearchVariantsRequest()
         .setDatasetId(datasetId)
         .setPageToken(pageToken)

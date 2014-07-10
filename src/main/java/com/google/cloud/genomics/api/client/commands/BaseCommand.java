@@ -17,10 +17,12 @@ package com.google.cloud.genomics.api.client.commands;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.internal.Maps;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.store.DataStore;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.genomics.Genomics;
+import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.Job;
 
 import java.io.IOException;
@@ -42,6 +44,7 @@ public abstract class BaseCommand {
   public static final String JOB_FAILURE = "failure";
 
   public static final String JOB_HISTORY_ID = "JobHistory";
+  public static final String DATASET_HISTORY_ID = "DatasetHistory";
 
   @Parameter(names = "--root_url",
       description = "set the Genomics API root URL",
@@ -66,24 +69,60 @@ public abstract class BaseCommand {
 
   public abstract void handleRequest(Genomics genomics) throws IOException;
 
-  // Helper functions
+
+  protected void addItemToHistory(String datastore, String key, String value) throws IOException {
+    DataStore<Serializable> history = dataStoreFactory.getDataStore(datastore);
+    history.set(key, value);
+  }
+
+  protected Map<String, String> getHistoryItems(String datastore) throws IOException {
+    DataStore<Serializable> jobHistory = dataStoreFactory.getDataStore(datastore);
+
+    Map<String, String> items = Maps.newHashMap();
+
+    Set<String> keys = jobHistory.keySet();
+    for (String key : keys) {
+      items.put(key, (String) jobHistory.get(key));
+    }
+
+    return items;
+  }
+
+  // Dataset methods
+
+  protected void addDatasetToHistory(Dataset dataset) throws IOException {
+    addItemToHistory(DATASET_HISTORY_ID, dataset.getId(), dataset.getName());
+  }
+
+  protected Map<String, String> getPreviousDatasets() throws IOException {
+    return getHistoryItems(DATASET_HISTORY_ID);
+  }
+
+  protected Dataset getDataset(Genomics genomics, String datasetId) throws IOException {
+    try {
+      Dataset dataset = genomics.datasets().get(datasetId).execute();
+      addDatasetToHistory(dataset);
+      return dataset;
+    } catch (GoogleJsonResponseException e) {
+      System.err.println("That datasetId won't work: " + e.getDetails().getMessage());
+
+      // TODO: This call won't do what we want right now
+      // ListDatasetsResponse allDatasets = genomics.datasets().list().execute();
+      // System.err.println("These are the datasets you have access to: " + allDatasets);
+      // TODO: If there aren't any datasets, help the user make a new one
+      return null;
+    }
+  }
+
+
+  // Job methods
 
   protected void addJobToHistory(String jobId, String description) throws IOException {
-    DataStore<Serializable> jobHistory = dataStoreFactory.getDataStore(JOB_HISTORY_ID);
-    jobHistory.set(jobId, description);
+    addItemToHistory(JOB_HISTORY_ID, jobId, description);
   }
 
   protected Map<String, String> getLaunchedJobs() throws IOException {
-    DataStore<Serializable> jobHistory = dataStoreFactory.getDataStore(JOB_HISTORY_ID);
-
-    Map<String, String> jobs = Maps.newHashMap();
-
-    Set<String> keys = jobHistory.keySet();
-    for (String jobId : keys) {
-      jobs.put(jobId, (String) jobHistory.get(jobId));
-    }
-
-    return jobs;
+    return getHistoryItems(JOB_HISTORY_ID);
   }
 
   protected boolean isJobFinished(Job job) {

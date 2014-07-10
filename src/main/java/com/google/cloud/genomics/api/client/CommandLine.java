@@ -41,6 +41,7 @@ class CommandLine {
     parser = new JCommander();
     parser.setProgramName("genomics-tools-client-java");
 
+    // API wrappers
     addCommand("importreadsets", new ImportReadsetsCommand());
     addCommand("searchreadsets", new SearchReadsetsCommand());
     addCommand("getreadset", new GetReadsetsCommand());
@@ -48,8 +49,13 @@ class CommandLine {
     addCommand("searchreads", new SearchReadsCommand());
     addCommand("getvariant", new GetVariantsCommand());
     addCommand("searchvariants", new SearchVariantsCommand());
+
+    // Custom escape hatch
     addCommand("custom", new CustomCommand());
+
+    // History-based commands
     addCommand("listjobs", new ListJobsCommand());
+    addCommand("listdatasets", new ListDatasetsCommand());
   }
 
   private void addCommand(String name, BaseCommand command) {

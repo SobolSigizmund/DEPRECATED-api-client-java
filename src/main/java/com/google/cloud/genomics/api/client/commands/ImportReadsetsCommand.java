@@ -17,7 +17,6 @@ package com.google.cloud.genomics.api.client.commands;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.util.Joiner;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.model.Dataset;
@@ -61,12 +60,14 @@ public class ImportReadsetsCommand extends BaseCommand {
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
     // TODO: Validate the GCS files first?
+    // TODO: Allow specifying a gcs bucket, list all the contents, and start jobs for each set of x
 
     // Validate the dataset
     Dataset dataset = getDataset(genomics, datasetId);
     if (dataset == null) {
       return;
     }
+    System.out.println("Importing readsets into: " + dataset.getName());
 
     // Start the import
     Genomics.Readsets.GenomicsImport req = genomics.readsets().genomicsImport(
@@ -87,22 +88,6 @@ public class ImportReadsetsCommand extends BaseCommand {
             .setFields("id,name,fileData(fileUri)").execute();
         System.out.println("Imported readset:" + readset.toPrettyString());
       }
-    }
-  }
-
-  private Dataset getDataset(Genomics genomics, String datasetId) throws IOException {
-    try {
-      Dataset dataset = genomics.datasets().get(datasetId).execute();
-      System.out.println("Importing readsets into: " + dataset.getName());
-      return dataset;
-    } catch (GoogleJsonResponseException e) {
-      System.err.println("That datasetId won't work: " + e.getDetails().getMessage());
-
-      // TODO: This call won't do what we want right now
-      // ListDatasetsResponse allDatasets = genomics.datasets().list().execute();
-      // System.err.println("These are the datasets you have access to: " + allDatasets);
-      // TODO: If there aren't any datasets, help the user make a new one
-      return null;
     }
   }
 }

@@ -18,6 +18,7 @@ package com.google.cloud.genomics.api.client.commands;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.api.services.genomics.Genomics;
+import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.SearchReadsetsRequest;
 
 import java.io.IOException;
@@ -38,6 +39,13 @@ public class SearchReadsetsCommand extends SimpleCommand {
 
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
+
+    Dataset dataset = getDataset(genomics, datasetId);
+    if (dataset == null) {
+      return;
+    }
+    System.out.println("Getting readsets from: " + dataset.getName());
+
     List<String> datasetIds = new ArrayList<>();
     datasetIds.add(datasetId);
 

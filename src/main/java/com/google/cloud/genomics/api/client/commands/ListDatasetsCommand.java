@@ -22,24 +22,23 @@ import com.google.api.services.genomics.Genomics;
 import java.io.IOException;
 import java.util.Map;
 
-@Parameters(commandDescription = "List past jobs run by this command line")
-public class ListJobsCommand extends BaseCommand {
+@Parameters(commandDescription = "List past datasets used by this command line")
+public class ListDatasetsCommand extends BaseCommand {
 
-  @Parameter(names = "--status",
-      description = "Whether to look up the Job statuses")
-  public boolean includeStatus = false;
+  @Parameter(names = "--details",
+      description = "Whether to look up each Dataset in the API to get its full details.")
+  public boolean includeDetails = false;
 
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
 
-    Map<String, String> launchedJobs = getLaunchedJobs();
-    for (Map.Entry<String, String> job : launchedJobs.entrySet()) {
-      System.out.println(job.getKey() + ": " + job.getValue());
+    Map<String, String> datasets = getPreviousDatasets();
+    for (Map.Entry<String, String> dataset : datasets.entrySet()) {
+      System.out.println(dataset.getKey() + ": " + dataset.getValue());
 
-      if (includeStatus) {
-        System.out.println(getJob(genomics, job.getKey(), false).toPrettyString() + "\n");
+      if (includeDetails) {
+        System.out.println(getDataset(genomics, dataset.getKey()).toPrettyString() + "\n");
       }
-
     }
   }
 }
