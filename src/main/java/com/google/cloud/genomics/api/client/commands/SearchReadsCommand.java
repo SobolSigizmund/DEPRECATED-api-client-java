@@ -28,7 +28,7 @@ import java.util.List;
 public class SearchReadsCommand extends SimpleCommand {
 
   @Parameter(names = "--readset_id",
-      description = "The Genomics API readset ID.",
+      description = "The IDs of readsets you want to get reads for.",
       required = true)
   public List<String> readsetIds;
 

@@ -17,11 +17,15 @@ package com.google.cloud.genomics.api.client;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.MissingCommandException;
+import com.beust.jcommander.internal.Lists;
 import com.google.api.client.repackaged.com.google.common.base.Strings;
+import com.google.api.client.util.Joiner;
 import com.google.api.client.util.Maps;
 import com.google.cloud.genomics.api.client.commands.*;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,6 +49,7 @@ class CommandLine {
     addCommand("getvariant", new GetVariantsCommand());
     addCommand("searchvariants", new SearchVariantsCommand());
     addCommand("custom", new CustomCommand());
+    addCommand("listjobs", new ListJobsCommand());
   }
 
   private void addCommand(String name, BaseCommand command) {
@@ -69,10 +74,15 @@ class CommandLine {
   public void printHelp(String headline, Appendable out) throws IOException {
     out.append(headline).append("\n");
     if (Strings.isNullOrEmpty(parser.getParsedCommand())) {
-      out.append("Valid commands are: importreadsets searchreadsets getreadset getjob " +
-          "searchreads getvariant searchvariants custom").append("\n\n");
+      out.append("Valid commands are: ").append(getCommands()).append("\n\n");
     } else {
       parser.usage(parser.getParsedCommand());
     }
+  }
+
+  private String getCommands() {
+    List<String> commands = Lists.newArrayList(registeredCommands.keySet());
+    Collections.sort(commands);
+    return Joiner.on(' ').join(commands);
   }
 }

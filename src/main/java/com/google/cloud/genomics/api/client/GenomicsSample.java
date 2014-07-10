@@ -76,14 +76,14 @@ public class GenomicsSample {
           }).build();
   }
 
-  private static Credential authorize(NetHttpTransport httpTransport, List<String> scopes,
-      String clientSecretsFilename) throws Exception {
+  private static Credential authorize(NetHttpTransport httpTransport,
+      FileDataStoreFactory dataStoreFactory, List<String> scopes, String clientSecretsFilename)
+      throws Exception {
     GoogleClientSecrets clientSecrets = loadClientSecrets(clientSecretsFilename);
     if (clientSecrets == null) {
       return null;
     }
 
-    FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
     GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
         httpTransport, JacksonFactory.getDefaultInstance(), clientSecrets, scopes)
         .setDataStoreFactory(dataStoreFactory).build();
@@ -99,10 +99,13 @@ public class GenomicsSample {
       cmdLine.setArgs(args);
 
       // Authorization
-      BaseCommand command = cmdLine.getCommand();
-
       NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-      Credential credential = authorize(httpTransport, command.getScopes(),
+      FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
+
+      BaseCommand command = cmdLine.getCommand();
+      command.setDataStoreFactory(dataStoreFactory);
+
+      Credential credential = authorize(httpTransport, dataStoreFactory, command.getScopes(),
           command.clientSecretsFilename);
       if (credential == null) {
         return;

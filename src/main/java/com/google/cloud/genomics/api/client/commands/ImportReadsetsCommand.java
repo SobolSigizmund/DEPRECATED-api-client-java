@@ -18,8 +18,12 @@ package com.google.cloud.genomics.api.client.commands;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.util.Joiner;
 import com.google.api.services.genomics.Genomics;
-import com.google.api.services.genomics.model.*;
+import com.google.api.services.genomics.model.Dataset;
+import com.google.api.services.genomics.model.ImportReadsetsRequest;
+import com.google.api.services.genomics.model.Job;
+import com.google.api.services.genomics.model.Readset;
 
 import java.io.IOException;
 import java.util.List;
@@ -59,16 +63,8 @@ public class ImportReadsetsCommand extends BaseCommand {
     // TODO: Validate the GCS files first?
 
     // Validate the dataset
-    try {
-      Dataset dataset = genomics.datasets().get(datasetId).execute();
-      System.out.println("Importing readsets into: " + dataset.getName());
-    } catch (GoogleJsonResponseException e) {
-      System.err.println("That datasetId won't work: " + e.getDetails().getMessage());
-
-      // TODO: This call won't do what we want right now
-      // ListDatasetsResponse allDatasets = genomics.datasets().list().execute();
-      // System.err.println("These are the datasets you have access to: " + allDatasets);
-      // TODO: If there aren't any datasets, help the user make a new one
+    Dataset dataset = getDataset(genomics, datasetId);
+    if (dataset == null) {
       return;
     }
 
@@ -81,6 +77,8 @@ public class ImportReadsetsCommand extends BaseCommand {
     // Get the resulting job
     Job job = getJob(genomics, jobId, pollForStatus);
     System.out.println("Import job:" + job.toPrettyString());
+    addJobToHistory(jobId, "Import readsets to " + dataset.getName() + " from "
+        + Joiner.on(',').join(bamFiles));
 
     // If the job is finished, get the imported ids
     if (job.getImportedIds() != null) {
@@ -89,6 +87,22 @@ public class ImportReadsetsCommand extends BaseCommand {
             .setFields("id,name,fileData(fileUri)").execute();
         System.out.println("Imported readset:" + readset.toPrettyString());
       }
+    }
+  }
+
+  private Dataset getDataset(Genomics genomics, String datasetId) throws IOException {
+    try {
+      Dataset dataset = genomics.datasets().get(datasetId).execute();
+      System.out.println("Importing readsets into: " + dataset.getName());
+      return dataset;
+    } catch (GoogleJsonResponseException e) {
+      System.err.println("That datasetId won't work: " + e.getDetails().getMessage());
+
+      // TODO: This call won't do what we want right now
+      // ListDatasetsResponse allDatasets = genomics.datasets().list().execute();
+      // System.err.println("These are the datasets you have access to: " + allDatasets);
+      // TODO: If there aren't any datasets, help the user make a new one
+      return null;
     }
   }
 }

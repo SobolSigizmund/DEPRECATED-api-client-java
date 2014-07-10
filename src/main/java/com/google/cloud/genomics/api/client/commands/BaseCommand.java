@@ -16,12 +16,18 @@ limitations under the License.
 package com.google.cloud.genomics.api.client.commands;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.internal.Maps;
 import com.google.api.client.util.Lists;
+import com.google.api.client.util.store.DataStore;
+import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.model.Job;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * All commands supported by the GenomicsSample must extend this class
@@ -35,6 +41,8 @@ public abstract class BaseCommand {
   public static final String JOB_SUCCESS = "success";
   public static final String JOB_FAILURE = "failure";
 
+  public static final String JOB_HISTORY_ID = "JobHistory";
+
   @Parameter(names = "--root_url",
       description = "set the Genomics API root URL",
       hidden = true)
@@ -44,16 +52,39 @@ public abstract class BaseCommand {
       description = "Path to client_secrets.json")
   public String clientSecretsFilename = "client_secrets.json";
 
+  FileDataStoreFactory dataStoreFactory;
+
   public List<String> getScopes() {
     List<String> scopes = Lists.newArrayList();
     scopes.add(GENOMICS_SCOPE);
     return scopes;
   }
 
+  public void setDataStoreFactory(FileDataStoreFactory dataStoreFactory) {
+    this.dataStoreFactory = dataStoreFactory;
+  }
+
   public abstract void handleRequest(Genomics genomics) throws IOException;
 
-
   // Helper functions
+
+  protected void addJobToHistory(String jobId, String description) throws IOException {
+    DataStore<Serializable> jobHistory = dataStoreFactory.getDataStore(JOB_HISTORY_ID);
+    jobHistory.set(jobId, description);
+  }
+
+  protected Map<String, String> getLaunchedJobs() throws IOException {
+    DataStore<Serializable> jobHistory = dataStoreFactory.getDataStore(JOB_HISTORY_ID);
+
+    Map<String, String> jobs = Maps.newHashMap();
+
+    Set<String> keys = jobHistory.keySet();
+    for (String jobId : keys) {
+      jobs.put(jobId, (String) jobHistory.get(jobId));
+    }
+
+    return jobs;
+  }
 
   protected boolean isJobFinished(Job job) {
     String status = job.getStatus();
