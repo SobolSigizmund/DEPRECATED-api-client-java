@@ -21,6 +21,7 @@ import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.model.SearchVariantsRequest;
 
 import java.io.IOException;
+import java.util.List;
 
 @Parameters(commandDescription = "Search over variants in Google Genomics")
 public class SearchVariantsCommand extends SimpleCommand {
@@ -29,6 +30,10 @@ public class SearchVariantsCommand extends SimpleCommand {
       description = "The Genomics API dataset ID to get variants for.",
       required = true)
   public String datasetId;
+
+  @Parameter(names = "--callset_id",
+      description = "Only return calls from these callsets.")
+  public List<String> callsetIds;
 
   @Parameter(names = "--page_token",
       description = "The token used to retrieve additional pages in paginated API methods.")
@@ -51,13 +56,17 @@ public class SearchVariantsCommand extends SimpleCommand {
 
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
-    SearchVariantsRequest content = new SearchVariantsRequest()
+    SearchVariantsRequest request = new SearchVariantsRequest()
         .setDatasetId(datasetId)
         .setPageToken(pageToken)
         .setContig(sequenceName)
         .setStartPosition(sequenceStart)
         .setEndPosition(sequenceEnd);
 
-    executeAndPrint(genomics.variants().search(content));
+    if (callsetIds != null) {
+      request.setCallsetIds(callsetIds);
+    }
+
+    executeAndPrint(genomics.variants().search(request));
   }
 }
