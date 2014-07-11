@@ -17,9 +17,9 @@ package com.google.cloud.genomics.api.client.commands;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.beust.jcommander.internal.Lists;
 import com.google.api.services.genomics.Genomics;
-import com.google.api.services.genomics.model.Dataset;
-import com.google.api.services.genomics.model.SearchVariantsRequest;
+import com.google.api.services.genomics.model.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,6 +35,11 @@ public class SearchVariantsCommand extends SimpleCommand {
   @Parameter(names = "--callset_id",
       description = "Only return calls from these callsets.")
   public List<String> callsetIds;
+
+  @Parameter(names = "--callset_name",
+      description = "An alternative to callset_id, only return calls from callsets " +
+          "with these names.")
+  public List<String> callsetNames;
 
   @Parameter(names = "--page_token",
       description = "The token used to retrieve additional pages in paginated API methods.")
@@ -63,6 +68,14 @@ public class SearchVariantsCommand extends SimpleCommand {
     }
     System.out.println("Getting variants from: " + dataset.getName());
 
+    if (callsetNames != null) {
+      getCallsetsByName(genomics);
+      if (callsetIds.isEmpty()) {
+        // We couldn't find any valid callsets to query
+        return;
+      }
+    }
+
     SearchVariantsRequest request = new SearchVariantsRequest()
         .setDatasetId(datasetId)
         .setPageToken(pageToken)
@@ -75,5 +88,27 @@ public class SearchVariantsCommand extends SimpleCommand {
     }
 
     executeAndPrint(genomics.variants().search(request));
+  }
+
+  private void getCallsetsByName(Genomics genomics) throws IOException {
+    List<String> datasetIds = Lists.newArrayList();
+    datasetIds.add(datasetId);
+
+    if (callsetIds == null) {
+      callsetIds = Lists.newArrayList();
+    }
+
+    for (String name : callsetNames) {
+      SearchCallsetsRequest request = new SearchCallsetsRequest()
+          .setDatasetIds(datasetIds).setName(name);
+      List<Callset> callsets = genomics.callsets().search(request).execute().getCallsets();
+      if (callsets == null || callsets.isEmpty()) {
+        System.out.println("No callsets found with the name " + name);
+        continue;
+      }
+      for (Callset callset : callsets) {
+        callsetIds.add(callset.getId());
+      }
+    }
   }
 }
