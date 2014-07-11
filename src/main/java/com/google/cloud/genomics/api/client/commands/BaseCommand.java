@@ -51,6 +51,11 @@ public abstract class BaseCommand {
       hidden = true)
   public String rootUrl = "https://www.googleapis.com/genomics/v1beta";
 
+  @Parameter(names = "--nolocalserver",
+      description = "Disable the starting up of a local server for the auth flows",
+      hidden = true)
+  public boolean noLocalServer = false;
+
   @Parameter(names = "--client_secrets_filename",
       description = "Path to client_secrets.json")
   public String clientSecretsFilename = "client_secrets.json";

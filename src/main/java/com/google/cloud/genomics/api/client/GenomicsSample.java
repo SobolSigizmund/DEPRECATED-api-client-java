@@ -18,9 +18,11 @@ package com.google.cloud.genomics.api.client;
 import com.beust.jcommander.ParameterException;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.java6.auth.oauth2.VerificationCodeReceiver;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.extensions.java6.auth.oauth2.GooglePromptReceiver;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpRequest;
@@ -77,8 +79,8 @@ public class GenomicsSample {
   }
 
   private static Credential authorize(NetHttpTransport httpTransport,
-      FileDataStoreFactory dataStoreFactory, List<String> scopes, String clientSecretsFilename)
-      throws Exception {
+      FileDataStoreFactory dataStoreFactory, List<String> scopes, String clientSecretsFilename,
+      boolean noLocalServer) throws Exception {
     GoogleClientSecrets clientSecrets = loadClientSecrets(clientSecretsFilename);
     if (clientSecrets == null) {
       return null;
@@ -87,7 +89,9 @@ public class GenomicsSample {
     GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
         httpTransport, JacksonFactory.getDefaultInstance(), clientSecrets, scopes)
         .setDataStoreFactory(dataStoreFactory).build();
-    return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver())
+    VerificationCodeReceiver receiver = noLocalServer ? new GooglePromptReceiver() :
+        new LocalServerReceiver();
+    return new AuthorizationCodeInstalledApp(flow, receiver)
         .authorize("user" + scopes.size());
   }
 
@@ -106,7 +110,7 @@ public class GenomicsSample {
       command.setDataStoreFactory(dataStoreFactory);
 
       Credential credential = authorize(httpTransport, dataStoreFactory, command.getScopes(),
-          command.clientSecretsFilename);
+          command.clientSecretsFilename, command.noLocalServer);
       if (credential == null) {
         return;
       }
