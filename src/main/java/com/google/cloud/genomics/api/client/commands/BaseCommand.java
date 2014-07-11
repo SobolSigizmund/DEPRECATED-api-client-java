@@ -115,6 +115,7 @@ public abstract class BaseCommand {
       if (previousDatasets.isEmpty()) {
         System.err.println("There aren't any recently used datasets, " +
             "if you want to make a new one try the 'createdataset' command.");
+        System.err.println("You can also try the public 1000 Genomes dataset ID: 376902546192");
 
       } else {
         System.err.println("In the past, you've used these datasets: ");
