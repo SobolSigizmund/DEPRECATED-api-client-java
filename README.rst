@@ -29,13 +29,9 @@ command line.
 
     java -jar target/genomics-tools-client-java-v1beta.jar searchreads --readset_id "CJDmkYn8ChCh4IH4hOf4gacB" --sequence_name 1 --sequence_start 10000 --sequence_end 10000
 
-* The default API provider is Google, but you can also query against NCBI.
-  (Be sure to specify the fields parameter as some of the NCBI fields don't pass the strict type checking done by the Java JSON parser.)::
 
-    java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets --root_url "http://trace.ncbi.nlm.nih.gov/Traces/gg/" --dataset_id "SRP034507" --fields "readsets(id,name,fileData),pageToken"
-
-    java -jar target/genomics-tools-client-java-v1beta.jar searchreads --root_url "http://trace.ncbi.nlm.nih.gov/Traces/gg/" --readset_id "SRR1050536" --sequence_name "gi|333959|gb|M74568.1|RSHSEQ" --sequence_start 1 --sequence_end 100 --fields "pageToken,reads(name,position,flags)"
-
+Troubleshooting
+---------------
     
 * You can get a list of valid commands by running::
 
@@ -45,14 +41,35 @@ command line.
 
    java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets
 
+* If your environment isn’t capable of running a local server, and then
+  seeing that server on `localhost` with a browser, then you can use the ``--nolocalserver``
+  flag to go back to the more manual auth process::
+  
+    java -jar target/genomics-tools-client-java-v1beta.jar listjobs --nolocalserver 
 
 * Note that not all of Google's APIs are callable at this time. The docs have 
   `a list <http://google-genomics.readthedocs.org/en/latest/auth_requirements.html>`_ 
   of which APIs are available.
+  
+* If you wish to call an API that has not yet been fully integrated into 
+  the command line, use the ``custom`` command.
 
 .. _Google Genomics API: https://developers.google.com/genomics
 .. _Apache Maven: http://maven.apache.org/download.cgi
 .. _sign up instructions: https://developers.google.com/genomics
+
+
+Other backends
+--------------
+Some of the commands can be used against GA4GH providers other than Google. 
+For example, you can search both readsets and reads at NCBI.
+(Be sure to specify the fields parameter as some of the NCBI fields don't pass the strict type checking done by the Java JSON parser)::
+
+  java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets --root_url "http://trace.ncbi.nlm.nih.gov/Traces/gg/" --dataset_id "SRP034507" --fields "readsets(id,name,fileData),pageToken"
+
+  java -jar target/genomics-tools-client-java-v1beta.jar searchreads --root_url "http://trace.ncbi.nlm.nih.gov/Traces/gg/" --readset_id "SRR1050536" --sequence_name "gi|333959|gb|M74568.1|RSHSEQ" --sequence_start 1 --sequence_end 100 --fields "pageToken,reads(name,position,flags)"
+
+
 
 Code layout
 -----------
@@ -79,14 +96,15 @@ Goals
 
 Current status
 ~~~~~~~~~~~~~~
-This code is mostly static, there are no known feature requests. 
-All bug fixes will be addressed but it's unlikely the overall structure and 
-featureset will change much. 
+This code is getting improvements!
 
-There is an ongoing need to integrate more API calls as they become available. 
-The work involved is small. The ``custom`` request type can always be used to call
-a method that has not been fully integrated.
+Instead of being just a simple wrapper around API calls, the command line
+will start providing additional functionality to make things simpler for callers. 
 
+For example, the command line is now validating datasetIds, keeping track of 
+past jobs, storing recently used datasets and more. 
+
+Please file feature requests for additional things the command line can do to make your life easier!
 
 
 The mailing list
