@@ -25,8 +25,8 @@ import com.google.api.services.genomics.GenomicsRequest;
 import java.io.IOException;
 import java.util.List;
 
-@Parameters(commandDescription = "Execute an API against Google Genomics by specifying the URL, " +
-        "method, and post body explicitly.")
+@Parameters(commandDescription = "Execute any API against Google Genomics by specifying the URL, " +
+        "method, and post body explicitly")
 public class CustomCommand extends SimpleCommand {
 
   @Parameter(names = "--custom_endpoint",

@@ -22,7 +22,7 @@ import com.google.api.services.genomics.Genomics;
 import java.io.IOException;
 import java.util.List;
 
-@Parameters(commandDescription = "Get readsets from Google Genomics")
+@Parameters(commandDescription = "Get readsets by ID")
 public class GetReadsetsCommand extends SimpleCommand {
 
   @Parameter(names = "--readset_id",

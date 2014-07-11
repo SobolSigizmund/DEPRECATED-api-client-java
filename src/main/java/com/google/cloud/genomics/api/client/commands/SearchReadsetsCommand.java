@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Parameters(commandDescription = "Search over readsets in Google Genomics")
+@Parameters(commandDescription = "Search over readsets")
 public class SearchReadsetsCommand extends SimpleCommand {
 
   @Parameter(names = "--dataset_id",

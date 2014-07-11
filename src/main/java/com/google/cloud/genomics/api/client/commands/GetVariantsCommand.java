@@ -22,7 +22,7 @@ import com.google.api.services.genomics.Genomics;
 import java.io.IOException;
 import java.util.List;
 
-@Parameters(commandDescription = "Get variants from Google Genomics")
+@Parameters(commandDescription = "Get variants by ID")
 public class GetVariantsCommand extends SimpleCommand {
 
   @Parameter(names = "--variant_id",

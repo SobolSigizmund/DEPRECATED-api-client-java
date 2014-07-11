@@ -24,7 +24,7 @@ import com.google.api.services.genomics.model.SearchVariantsRequest;
 import java.io.IOException;
 import java.util.List;
 
-@Parameters(commandDescription = "Search over variants in Google Genomics")
+@Parameters(commandDescription = "Search over variants")
 public class SearchVariantsCommand extends SimpleCommand {
 
   @Parameter(names = "--dataset_id",

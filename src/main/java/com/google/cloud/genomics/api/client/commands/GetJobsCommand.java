@@ -23,7 +23,7 @@ import com.google.api.services.genomics.model.Job;
 import java.io.IOException;
 import java.util.List;
 
-@Parameters(commandDescription = "Get jobs from Google Genomics")
+@Parameters(commandDescription = "Get jobs by ID and optionally poll until they complete")
 public class GetJobsCommand extends BaseCommand {
 
   @Parameter(names = "--job_id",
