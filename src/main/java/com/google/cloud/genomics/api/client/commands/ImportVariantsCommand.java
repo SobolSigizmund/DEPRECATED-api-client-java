@@ -19,33 +19,30 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.api.client.util.Joiner;
 import com.google.api.services.genomics.Genomics;
-import com.google.api.services.genomics.model.Dataset;
-import com.google.api.services.genomics.model.ImportReadsetsRequest;
-import com.google.api.services.genomics.model.Job;
-import com.google.api.services.genomics.model.Readset;
+import com.google.api.services.genomics.model.*;
 
 import java.io.IOException;
 import java.util.List;
 
 /**
- * Imports readsets from bam files, fetches the resulting job, and optionally polls for its status.
- * Fetches the imported readsets if the job completes.
+ * Imports variants from bam files, fetches the resulting job, and optionally polls for its status.
+ * Fetches the variant summary if the job completes.
 */
-@Parameters(commandDescription = "Import readsets from Google Cloud Storage")
-public class ImportReadsetsCommand extends BaseCommand {
+@Parameters(commandDescription = "Import variants from Google Cloud Storage")
+public class ImportVariantsCommand extends BaseCommand {
 
   @Parameter(names = "--dataset_id",
       description = "The Genomics API dataset ID to import into.",
       required = true)
   public String datasetId;
 
-  @Parameter(names = "--bam_file",
-      description = "A BAM file (as Google Cloud Storage gs:// URL) to be be imported." +
+  @Parameter(names = "--vcf_file",
+      description = "A VCF file (as Google Cloud Storage gs:// URL) to be be imported." +
           " You can use a wildcard in this flag to specify multiple files at once" +
-          " (e.g. gs://mybucket/myfiles/*.bam) or use the flag multiple times if a wildcard" +
+          " (e.g. gs://mybucket/myfiles/*.vcf) or use the flag multiple times if a wildcard" +
           " won't work.",
       required = true)
-  public List<String> bamFiles;
+  public List<String> vcfFiles;
 
   @Parameter(names = "--poll",
       description = "If set, the client will query for job status " +
@@ -68,27 +65,25 @@ public class ImportReadsetsCommand extends BaseCommand {
     if (dataset == null) {
       return;
     }
-    System.out.println("Importing readsets into: " + dataset.getName());
+    System.out.println("Importing variants into: " + dataset.getName());
 
     // Start the import
-    Genomics.Readsets.GenomicsImport req = genomics.readsets().genomicsImport(
-        new ImportReadsetsRequest().setDatasetId(datasetId)
-            .setSourceUris(bamFiles));
+    Genomics.Variants.GenomicsImport req = genomics.variants().genomicsImport(
+        new ImportVariantsRequest().setDatasetId(datasetId)
+            .setSourceUris(vcfFiles));
     String jobId = req.execute().getJobId();
 
     // Get the resulting job
-    addJobToHistory(jobId, "Import readsets to " + dataset.getName() + " from "
-        + Joiner.on(',').join(bamFiles));
+    addJobToHistory(jobId, "Import variants to " + dataset.getName() + " from "
+        + Joiner.on(',').join(vcfFiles));
     Job job = getJob(genomics, jobId, pollForStatus);
-    System.out.println("Import job:" + job.toPrettyString());
+    System.out.println("Import job: " + job.toPrettyString());
 
-    // If the job is finished, get the imported ids
-    if (job.getImportedIds() != null) {
-      for (String readsetId : job.getImportedIds()) {
-        Readset readset = genomics.readsets().get(readsetId)
-            .setFields("id,name,fileData(fileUri)").execute();
-        System.out.println("Imported readset:" + readset.toPrettyString());
-      }
+    // If the job is finished, get the variant summary
+    if (isJobFinished(job)) {
+      GetVariantsSummaryResponse summary = genomics.variants().getSummary()
+          .setDatasetId(datasetId).execute();
+      System.out.println("Imported variant summary: " + summary.toPrettyString() + "\n");
     }
   }
 }

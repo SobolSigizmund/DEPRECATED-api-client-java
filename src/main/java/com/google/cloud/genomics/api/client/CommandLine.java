@@ -54,6 +54,7 @@ class CommandLine {
 
     addCommand("searchvariants", new SearchVariantsCommand());
     addCommand("getvariant", new GetVariantsCommand());
+    addCommand("importvariants", new ImportVariantsCommand());
 
     // Custom escape hatch
     addCommand("custom", new CustomCommand());
