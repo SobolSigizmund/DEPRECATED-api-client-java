@@ -19,12 +19,10 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.MissingCommandException;
 import com.beust.jcommander.internal.Lists;
 import com.google.api.client.repackaged.com.google.common.base.Strings;
-import com.google.api.client.util.Joiner;
 import com.google.api.client.util.Maps;
 import com.google.cloud.genomics.api.client.commands.*;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -35,27 +33,30 @@ class CommandLine {
 
   private JCommander parser;
   private BaseCommand command;
-  private Map<String, BaseCommand> registeredCommands = Maps.newHashMap();
+  private Map<String, BaseCommand> registeredCommands = Maps.newLinkedHashMap();
 
   public CommandLine() {
     parser = new JCommander();
     parser.setProgramName("genomics-tools-client-java");
 
-    // API wrappers
-    addCommand("importreadsets", new ImportReadsetsCommand());
+    // The ordering of these commands is preserved in help messages
+    addCommand("listdatasets", new ListDatasetsCommand());
+    addCommand("createdataset", new CreateDatasetCommand());
+
     addCommand("searchreadsets", new SearchReadsetsCommand());
     addCommand("getreadset", new GetReadsetsCommand());
+    addCommand("importreadsets", new ImportReadsetsCommand());
+
+    addCommand("listjobs", new ListJobsCommand());
     addCommand("getjob", new GetJobsCommand());
+
     addCommand("searchreads", new SearchReadsCommand());
-    addCommand("getvariant", new GetVariantsCommand());
+
     addCommand("searchvariants", new SearchVariantsCommand());
+    addCommand("getvariant", new GetVariantsCommand());
 
     // Custom escape hatch
     addCommand("custom", new CustomCommand());
-
-    // History-based commands
-    addCommand("listjobs", new ListJobsCommand());
-    addCommand("listdatasets", new ListDatasetsCommand());
   }
 
   private void addCommand(String name, BaseCommand command) {
@@ -80,15 +81,19 @@ class CommandLine {
   public void printHelp(String headline, Appendable out) throws IOException {
     out.append(headline).append("\n");
     if (Strings.isNullOrEmpty(parser.getParsedCommand())) {
-      out.append("Valid commands are: ").append(getCommands()).append("\n\n");
+      out.append("Valid commands are:\n");
+      describeCommands(out);
+      out.append("\n");
     } else {
       parser.usage(parser.getParsedCommand());
     }
   }
 
-  private String getCommands() {
+  private void describeCommands(Appendable out) throws IOException {
     List<String> commands = Lists.newArrayList(registeredCommands.keySet());
-    Collections.sort(commands);
-    return Joiner.on(' ').join(commands);
+
+    for (String command : commands) {
+      out.append(String.format("%-20s%s%n", command, parser.getCommandDescription(command)));
+    }
   }
 }

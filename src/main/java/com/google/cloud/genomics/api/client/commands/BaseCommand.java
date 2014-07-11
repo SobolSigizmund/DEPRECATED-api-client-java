@@ -109,12 +109,23 @@ public abstract class BaseCommand {
       addDatasetToHistory(dataset);
       return dataset;
     } catch (GoogleJsonResponseException e) {
-      System.err.println("That datasetId won't work: " + e.getDetails().getMessage());
+      System.err.println("That datasetId won't work: " + e.getDetails().getMessage() + "\n");
+
+      Map<String, String> previousDatasets = getPreviousDatasets();
+      if (previousDatasets.isEmpty()) {
+        System.err.println("There aren't any recently used datasets, " +
+            "if you want to make a new one try the 'createdataset' command.");
+
+      } else {
+        System.err.println("In the past, you've used these datasets: ");
+        for (Map.Entry<String, String> dataset : previousDatasets.entrySet()) {
+          System.out.println(dataset.getKey() + ": " + dataset.getValue());
+        }
+      }
 
       // TODO: This call won't do what we want right now
       // ListDatasetsResponse allDatasets = genomics.datasets().list().execute();
       // System.err.println("These are the datasets you have access to: " + allDatasets);
-      // TODO: If there aren't any datasets, help the user make a new one
       return null;
     }
   }

@@ -45,6 +45,13 @@ public class ListDatasetsCommand extends BaseCommand {
     }
 
     Map<String, String> datasets = getPreviousDatasets();
+    if (datasets.isEmpty()) {
+      System.out.println("There aren't any recently used datasets. " +
+          "Specify a --project_id flag to get datasets for a specific project, or use the " +
+          "'createdataset' command to make a new dataset.");
+      return;
+    }
+
     for (Map.Entry<String, String> dataset : datasets.entrySet()) {
       System.out.println(dataset.getKey() + ": " + dataset.getValue());
 
