@@ -131,7 +131,8 @@ public class GenomicsSample {
     } catch (IllegalArgumentException | ParameterException e) {
       cmdLine.printHelp(e.getMessage() + "\n", System.err);
     } catch (GoogleJsonResponseException e) {
-      System.err.println("API request failed: " + e.getDetails().getMessage());
+      System.err.println("API request failed: " +
+          (e.getDetails() == null ? e.getStatusMessage() : e.getDetails().getMessage()));
     } catch (Throwable t) {
       t.printStackTrace();
     }

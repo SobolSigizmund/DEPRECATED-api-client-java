@@ -41,6 +41,11 @@ public abstract class SimpleCommand extends BaseCommand {
       req.setFields(fields);
     }
     GenericJson result = req.execute();
-    System.out.println("result: " + (prettyPrint ? result.toPrettyString() : result.toString()));
+    if (result == null) {
+      // Not all API calls have responses.
+      System.out.println("success");
+    } else {
+      System.out.println("result: " + (prettyPrint ? result.toPrettyString() : result.toString()));
+    }
   }
 }
