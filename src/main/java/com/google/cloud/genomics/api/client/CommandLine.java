@@ -41,6 +41,7 @@ class CommandLine {
 
     // The ordering of these commands is preserved in help messages
     addCommand("listdatasets", new ListDatasetsCommand());
+    addCommand("getdataset", new GetDatasetsCommand());
     addCommand("createdataset", new CreateDatasetCommand());
     addCommand("updatedataset", new UpdateDatasetCommand());
 
