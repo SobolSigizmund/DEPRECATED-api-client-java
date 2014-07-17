@@ -72,11 +72,15 @@ public class ListDatasetsCommand extends BaseCommand {
     }
 
     if (dataset == null) {
-      dataset = getDataset(genomics, id);
+      try {
+        dataset = getDataset(genomics, id, false);
+      } catch (GoogleJsonResponseException e) {
+        System.out.println("Dataset not found - it may have been deleted.\n");
+        return;
+      }
     }
-    if (dataset != null) {
-      System.out.println(dataset.toPrettyString() + "\n");
-    }
+
+    System.out.println(dataset.toPrettyString() + "\n");
 
     try {
       GetVariantsSummaryResponse summary = genomics.variants().getSummary()

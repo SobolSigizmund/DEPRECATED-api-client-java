@@ -104,11 +104,20 @@ public abstract class BaseCommand {
   }
 
   protected Dataset getDataset(Genomics genomics, String datasetId) throws IOException {
+    return getDataset(genomics, datasetId, true);
+  }
+
+  protected Dataset getDataset(Genomics genomics, String datasetId, boolean handleException)
+      throws IOException {
     try {
       Dataset dataset = genomics.datasets().get(datasetId).execute();
       addDatasetToHistory(dataset);
       return dataset;
     } catch (GoogleJsonResponseException e) {
+      if (!handleException) {
+        throw e;
+      }
+
       System.err.println("That datasetId won't work: " + e.getDetails().getMessage() + "\n");
 
       Map<String, String> previousDatasets = getPreviousDatasets();
