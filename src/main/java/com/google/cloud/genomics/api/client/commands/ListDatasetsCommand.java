@@ -18,12 +18,14 @@ package com.google.cloud.genomics.api.client.commands;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.services.genomics.Genomics;
-import com.google.api.services.genomics.model.Dataset;
-import com.google.api.services.genomics.model.GetVariantsSummaryResponse;
-import com.google.api.services.genomics.model.ListDatasetsResponse;
+import com.google.api.services.genomics.model.*;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Parameters(commandDescription = "List recent datasets used by this command line, or list them " +
@@ -80,14 +82,17 @@ public class ListDatasetsCommand extends BaseCommand {
       }
     }
 
-    System.out.println(dataset.toPrettyString() + "\n");
+    System.out.println(dataset.toPrettyString());
+    System.out.print("Readsets: ");
+    System.out.println(getReadsetCount(genomics, id));
 
+    // Variant summary
     try {
       GetVariantsSummaryResponse summary = genomics.variants().getSummary()
           .setDatasetId(id).execute();
       if (summary != null && summary.getContigBounds() != null) {
         // Only print out a variant summary if one exists
-        System.out.println("variant summary: " + summary.toPrettyString() + "\n");
+        System.out.println("Variant summary: " + summary.toPrettyString());
       }
     } catch (GoogleJsonResponseException e) {
       if (e.getDetails().getCode() != 403) {
@@ -96,6 +101,28 @@ public class ListDatasetsCommand extends BaseCommand {
         // TODO: Remove this if block once the variant APIs are widely available
         throw e;
       }
+    }
+
+    System.out.println();
+  }
+
+  private String getReadsetCount(Genomics genomics, String datasetId) throws IOException {
+    List<String> datasetIds = new ArrayList<>();
+    datasetIds.add(datasetId);
+    SearchReadsetsRequest readsetSearch = new SearchReadsetsRequest()
+        .setDatasetIds(datasetIds)
+        .setMaxResults(BigInteger.valueOf(100L));
+
+    SearchReadsetsResponse readsets = genomics.readsets()
+        .search(readsetSearch).setFields("nextPageToken,readsets(id)").execute();
+    if (readsets.getReadsets() == null) {
+      return "0";
+    }
+
+    if (Strings.isNullOrEmpty(readsets.getNextPageToken())) {
+      return String.valueOf(readsets.getReadsets().size());
+    } else {
+      return "More than 100";
     }
   }
 }
