@@ -80,14 +80,14 @@ public class ImportReadsetsCommand extends BaseCommand {
     addJobToHistory(jobId, "Import readsets to " + dataset.getName() + " from "
         + Joiner.on(',').join(bamFiles));
     Job job = getJob(genomics, jobId, pollForStatus);
-    System.out.println("Import job:" + job.toPrettyString());
+    System.out.println("Import job: " + job.toPrettyString());
 
     // If the job is finished, get the imported ids
     if (job.getImportedIds() != null) {
       for (String readsetId : job.getImportedIds()) {
         Readset readset = genomics.readsets().get(readsetId)
             .setFields("id,name,fileData(fileUri)").execute();
-        System.out.println("Imported readset:" + readset.toPrettyString());
+        System.out.println("Imported readset: " + readset.toPrettyString());
       }
     }
   }
