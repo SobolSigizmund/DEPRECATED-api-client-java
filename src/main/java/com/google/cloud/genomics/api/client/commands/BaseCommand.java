@@ -20,8 +20,9 @@ import com.beust.jcommander.internal.Maps;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.store.DataStore;
-import com.google.api.client.util.store.FileDataStoreFactory;
+import com.google.api.client.util.store.DataStoreFactory;
 import com.google.api.services.genomics.Genomics;
+import com.google.api.services.genomics.GenomicsScopes;
 import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.Job;
 
@@ -35,11 +36,6 @@ import java.util.Set;
  * All commands supported by the GenomicsSample must extend this class
  */
 public abstract class BaseCommand {
-  private static final String GENOMICS_SCOPE = "https://www.googleapis.com/auth/genomics";
-  protected static final String BIGQUERY_SCOPE = "https://www.googleapis.com/auth/bigquery";
-  protected static final String DEVSTORAGE_SCOPE =
-      "https://www.googleapis.com/auth/devstorage.read_write";
-
   public static final String JOB_SUCCESS = "success";
   public static final String JOB_FAILURE = "failure";
 
@@ -60,15 +56,15 @@ public abstract class BaseCommand {
       description = "Path to client_secrets.json")
   public String clientSecretsFilename = "client_secrets.json";
 
-  FileDataStoreFactory dataStoreFactory;
+  DataStoreFactory dataStoreFactory;
 
   public List<String> getScopes() {
     List<String> scopes = Lists.newArrayList();
-    scopes.add(GENOMICS_SCOPE);
+    scopes.add(GenomicsScopes.GENOMICS);
     return scopes;
   }
 
-  public void setDataStoreFactory(FileDataStoreFactory dataStoreFactory) {
+  public void setDataStoreFactory(DataStoreFactory dataStoreFactory) {
     this.dataStoreFactory = dataStoreFactory;
   }
 

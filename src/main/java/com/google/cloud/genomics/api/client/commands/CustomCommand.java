@@ -21,6 +21,7 @@ import com.google.api.client.json.GenericJson;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.GenomicsRequest;
+import com.google.api.services.genomics.GenomicsScopes;
 
 import java.io.IOException;
 import java.util.List;
@@ -51,8 +52,8 @@ public class CustomCommand extends SimpleCommand {
   public List<String> getScopes() {
     List<String> scopes = super.getScopes();
     if (requireAllScopes) {
-      scopes.add(DEVSTORAGE_SCOPE);
-      scopes.add(BIGQUERY_SCOPE);
+      scopes.add(GenomicsScopes.DEVSTORAGE_READ_WRITE);
+      scopes.add(GenomicsScopes.BIGQUERY);
     }
     return scopes;
   }

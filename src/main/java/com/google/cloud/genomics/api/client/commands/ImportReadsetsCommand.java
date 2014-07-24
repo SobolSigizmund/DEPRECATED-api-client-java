@@ -19,6 +19,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.api.client.util.Joiner;
 import com.google.api.services.genomics.Genomics;
+import com.google.api.services.genomics.GenomicsScopes;
 import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.ImportReadsetsRequest;
 import com.google.api.services.genomics.model.Job;
@@ -55,7 +56,7 @@ public class ImportReadsetsCommand extends BaseCommand {
   @Override
   public List<String> getScopes() {
     List<String> scopes = super.getScopes();
-    scopes.add(DEVSTORAGE_SCOPE);
+    scopes.add(GenomicsScopes.DEVSTORAGE_READ_WRITE);
     return scopes;
   }
 
