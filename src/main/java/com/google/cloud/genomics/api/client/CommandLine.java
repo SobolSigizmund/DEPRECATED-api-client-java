@@ -58,6 +58,8 @@ class CommandLine {
     addCommand("getvariant", new GetVariantsCommand());
     addCommand("importvariants", new ImportVariantsCommand());
 
+    addCommand("searchcallsets", new SearchCallsetsCommand());
+
     // Custom escape hatch
     addCommand("custom", new CustomCommand());
   }
