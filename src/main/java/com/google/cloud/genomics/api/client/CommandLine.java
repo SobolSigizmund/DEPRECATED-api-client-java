@@ -48,6 +48,7 @@ class CommandLine {
     addCommand("searchreadsets", new SearchReadsetsCommand());
     addCommand("getreadset", new GetReadsetsCommand());
     addCommand("importreadsets", new ImportReadsetsCommand());
+    addCommand("exportreadsets", new ExportReadsetsCommand());
 
     addCommand("listjobs", new ListJobsCommand());
     addCommand("getjob", new GetJobsCommand());
