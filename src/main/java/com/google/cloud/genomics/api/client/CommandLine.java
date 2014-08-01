@@ -58,6 +58,7 @@ class CommandLine {
     addCommand("searchvariants", new SearchVariantsCommand());
     addCommand("getvariant", new GetVariantsCommand());
     addCommand("importvariants", new ImportVariantsCommand());
+    addCommand("exportvariants", new ExportVariantsCommand());
 
     addCommand("searchcallsets", new SearchCallsetsCommand());
 
