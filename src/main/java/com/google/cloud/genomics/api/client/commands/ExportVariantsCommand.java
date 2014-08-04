@@ -85,7 +85,7 @@ public class ExportVariantsCommand extends BaseCommand {
     }
 
     System.out.println("Exporting variants for dataset " + dataset.getName());
-    if ((callsetIds != null) && !callsetIds.isEmpty()) {
+    if (callsetIds != null && !callsetIds.isEmpty()) {
       System.out.println(Joiner.on(',').join(callsetIds));
     }
 
@@ -99,8 +99,8 @@ public class ExportVariantsCommand extends BaseCommand {
     String jobId = genomics.variants().export(request).execute().getJobId();
 
     // Get the resulting job
-    addJobToHistory(jobId, "Exporting variants: to "
-        + bigqueryDataset + "." + bigqueryTable);
+    addJobToHistory(jobId, "Exporting variants: from " + dataset.getName() +
+        " to " + bigqueryDataset + "." + bigqueryTable);
     Job job = getJob(genomics, jobId, pollForStatus);
     System.out.println("Export job: " + job.toPrettyString());
   }
