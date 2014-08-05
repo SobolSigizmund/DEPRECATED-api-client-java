@@ -1,9 +1,13 @@
 ==============
-api-client-java |Build Status|_
+api-client-java |Build Status|_ |Build Coverage|_
 ==============
 
 .. |Build Status| image:: https://travis-ci.org/googlegenomics/api-client-java.png?branch=master
 .. _Build Status: https://travis-ci.org/googlegenomics/api-client-java
+
+.. |Build Coverage| image:: https://coveralls.io/repos/googlegenomics/api-client-java/badge.png?branch=master
+.. _Build Coverage: https://coveralls.io/r/googlegenomics/api-client-java?branch=master
+
 
 Getting started
 ---------------
