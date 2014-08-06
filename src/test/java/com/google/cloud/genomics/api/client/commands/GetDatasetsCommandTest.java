@@ -15,6 +15,7 @@ limitations under the License.
 */
 package com.google.cloud.genomics.api.client.commands;
 
+import com.beust.jcommander.internal.Lists;
 import com.google.api.client.util.store.MemoryDataStoreFactory;
 import com.google.api.services.genomics.model.Dataset;
 import org.junit.Test;
@@ -27,26 +28,28 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
-public class CreateDatasetCommandTest extends CommandTest {
+public class GetDatasetsCommandTest extends CommandTest {
 
   @Test
-  public void testCreateDataset() throws Exception {
-    CreateDatasetCommand command = new CreateDatasetCommand();
+  public void testGetDatasets() throws Exception {
+    GetDatasetsCommand command = new GetDatasetsCommand();
     command.setDataStoreFactory(new MemoryDataStoreFactory());
 
-    command.projectId = 5L;
-    command.name = "dataset";
+    command.datasetIds = Lists.newArrayList("d1", "d2");
 
-    Dataset expectedDataset = new Dataset().setName("dataset").setProjectId(5L).setIsPublic(false);
+    Dataset dataset1 = new Dataset().setId("d1").setName("name1");
+    Dataset dataset2 = new Dataset().setId("d2").setName("name2");
 
-    Mockito.when(datasets.create(expectedDataset)).thenReturn(datasetCreate);
-    Mockito.when(datasetCreate.execute()).thenReturn(expectedDataset.clone().setId("id"));
+    Mockito.when(datasets.get("d1")).thenReturn(datasetGet);
+    Mockito.when(datasets.get("d2")).thenReturn(datasetGet);
+    Mockito.when(datasetGet.execute()).thenReturn(dataset1, dataset2);
 
     command.handleRequest(genomics);
 
     Map<String,String> previousDatasets = command.getPreviousDatasets();
-    assertEquals(1, previousDatasets.size());
-    assertEquals("dataset", previousDatasets.get("id"));
+    assertEquals(2, previousDatasets.size());
+    assertEquals("name1", previousDatasets.get("d1"));
+    assertEquals("name2", previousDatasets.get("d2"));
   }
 
 }
