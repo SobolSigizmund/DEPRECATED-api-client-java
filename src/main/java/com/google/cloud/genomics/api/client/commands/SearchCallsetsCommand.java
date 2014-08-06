@@ -20,10 +20,9 @@ import com.beust.jcommander.Parameters;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.SearchCallsetsRequest;
+import com.google.common.collect.Lists;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Parameters(commandDescription = "Search over callsets")
 public class SearchCallsetsCommand extends SimpleCommand {
@@ -46,11 +45,8 @@ public class SearchCallsetsCommand extends SimpleCommand {
     }
     System.out.println("Getting callsets from: " + dataset.getName());
 
-    List<String> datasetIds = new ArrayList<>();
-    datasetIds.add(datasetId);
-
     SearchCallsetsRequest content = new SearchCallsetsRequest()
-        .setDatasetIds(datasetIds)
+        .setDatasetIds(Lists.newArrayList(datasetId))
         .setName(name);
     executeAndPrint(genomics.callsets().search(content));
   }

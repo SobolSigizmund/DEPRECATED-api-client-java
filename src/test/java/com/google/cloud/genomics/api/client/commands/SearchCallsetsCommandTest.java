@@ -17,41 +17,40 @@ package com.google.cloud.genomics.api.client.commands;
 
 import com.google.api.client.util.store.MemoryDataStoreFactory;
 import com.google.api.services.genomics.model.Dataset;
+import com.google.api.services.genomics.model.SearchCallsetsRequest;
+import com.google.api.services.genomics.model.SearchCallsetsResponse;
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
-public class CreateDatasetCommandTest extends CommandTest {
+public class SearchCallsetsCommandTest extends CommandTest {
 
   @Test
-  public void testCreateDataset() throws Exception {
-    CreateDatasetCommand command = new CreateDatasetCommand();
+  public void testCommand() throws Exception {
+    SearchCallsetsCommand command = new SearchCallsetsCommand();
     command.setDataStoreFactory(new MemoryDataStoreFactory());
 
-    command.projectId = 5L;
-    command.name = "dataset";
+    command.datasetId = "dataset";
+    command.name = "12878";
 
-    Dataset expectedDataset = new Dataset().setName("dataset").setProjectId(5L).setIsPublic(false);
+    Mockito.when(datasets.get("dataset")).thenReturn(datasetGet);
+    Mockito.when(datasetGet.execute()).thenReturn(new Dataset().setId("id").setName("1kg"));
 
-    Mockito.when(datasets.create(expectedDataset)).thenReturn(datasetCreate);
-    Mockito.when(datasetCreate.execute()).thenReturn(expectedDataset.clone().setId("id"));
+    Mockito.when(callsets.search(new SearchCallsetsRequest()
+        .setDatasetIds(Lists.newArrayList("dataset"))
+        .setName("12878")))
+        .thenReturn(callsetSearch);
+    Mockito.when(callsetSearch.execute()).thenReturn(new SearchCallsetsResponse());
 
     command.handleRequest(genomics);
 
-    Map<String,String> previousDatasets = command.getPreviousDatasets();
-    assertEquals(1, previousDatasets.size());
-    assertEquals("dataset", previousDatasets.get("id"));
-
     String output = outContent.toString();
-    assertTrue(output, output.contains("The new dataset was created"));
-    assertTrue(output, output.contains("id"));
+    assertTrue(output, output.contains("Getting callsets from: 1kg"));
   }
 
 }

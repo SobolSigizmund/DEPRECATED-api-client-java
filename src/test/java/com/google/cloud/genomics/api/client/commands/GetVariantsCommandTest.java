@@ -16,7 +16,7 @@ limitations under the License.
 package com.google.cloud.genomics.api.client.commands;
 
 import com.beust.jcommander.internal.Lists;
-import com.google.api.services.genomics.model.Readset;
+import com.google.api.services.genomics.model.Variant;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -25,24 +25,24 @@ import org.mockito.Mockito;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
-public class GetReadsetsCommandTest extends CommandTest {
+public class GetVariantsCommandTest extends CommandTest {
 
   @Test
-  public void testGetReadsets() throws Exception {
-    GetReadsetsCommand command = new GetReadsetsCommand();
-    command.readsetIds = Lists.newArrayList("r1", "r2");
+  public void testGetVariants() throws Exception {
+    GetVariantsCommand command = new GetVariantsCommand();
+    command.variantIds = Lists.newArrayList("v1", "v2");
 
-    Mockito.when(readsets.get("r1")).thenReturn(readsetGet);
-    Mockito.when(readsets.get("r2")).thenReturn(readsetGet);
-    Mockito.when(readsetGet.execute()).thenReturn(
-        new Readset().setName("name1"),
-        new Readset().setName("name2"));
+    Mockito.when(variants.get("v1")).thenReturn(variantGet);
+    Mockito.when(variants.get("v2")).thenReturn(variantGet);
+    Mockito.when(variantGet.execute()).thenReturn(
+        new Variant().setContig("contig1"),
+        new Variant().setContig("contig2"));
 
     command.handleRequest(genomics);
 
     String output = outContent.toString();
-    assertTrue(output, output.contains("name1"));
-    assertTrue(output, output.contains("name2"));
+    assertTrue(output, output.contains("contig1"));
+    assertTrue(output, output.contains("contig2"));
   }
 
 }
