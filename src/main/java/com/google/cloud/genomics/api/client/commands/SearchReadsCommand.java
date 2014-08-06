@@ -50,12 +50,16 @@ public class SearchReadsCommand extends SimpleCommand {
 
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
-    SearchReadsRequest content = new SearchReadsRequest()
+    SearchReadsRequest request = new SearchReadsRequest()
         .setReadsetIds(readsetIds)
         .setPageToken(pageToken)
-        .setSequenceName(sequenceName)
-        .setSequenceStart(BigInteger.valueOf(sequenceStart))
-        .setSequenceEnd(BigInteger.valueOf(sequenceEnd));
-    executeAndPrint(genomics.reads().search(content));
+        .setSequenceName(sequenceName);
+    if (sequenceStart != null) {
+        request.setSequenceStart(BigInteger.valueOf(sequenceStart));
+    }
+    if (sequenceEnd != null) {
+        request.setSequenceEnd(BigInteger.valueOf(sequenceEnd));
+    }
+    executeAndPrint(genomics.reads().search(request));
   }
 }

@@ -25,6 +25,7 @@ import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.GenomicsScopes;
 import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.Job;
+import com.google.common.annotations.VisibleForTesting;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -57,6 +58,7 @@ public abstract class BaseCommand {
   public String clientSecretsFilename = "client_secrets.json";
 
   DataStoreFactory dataStoreFactory;
+  @VisibleForTesting int pollingDelay = 10000;
 
   public List<String> getScopes() {
     List<String> scopes = Lists.newArrayList();
@@ -161,7 +163,7 @@ public abstract class BaseCommand {
       System.out.println("Waiting for job: " + job.getId());
       while (!isJobFinished(job)) {
         try {
-          Thread.sleep(10000);
+          Thread.sleep(pollingDelay);
         } catch (InterruptedException ex) {
           Thread.currentThread().interrupt();
         }
