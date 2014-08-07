@@ -83,7 +83,7 @@ Code layout
     <https://github.com/cbeust/jcommander>`_.
 
 `GenomicsSample.java <src/main/java/com/google/cloud/genomics/api/client/GenomicsSample.java>`_:
-    uses the `GenomicsFactory` from [utils-java](https://github.com/googlegenomics/utils-java)
+    uses the `GenomicsFactory` from `utils-java <https://github.com/googlegenomics/utils-java>`_
     to set up a valid `Genomics` object. It then dispatches to one of the command classes to 
     handle the user's request.
     
