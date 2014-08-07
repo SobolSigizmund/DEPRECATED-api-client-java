@@ -34,6 +34,7 @@ public abstract class CommandTest {
   @Mock Genomics.Datasets datasets;
   @Mock Genomics.Datasets.Create datasetCreate;
   @Mock Genomics.Datasets.Get datasetGet;
+  @Mock Genomics.Datasets.List datasetList;
   @Mock Genomics.Datasets.Patch datasetPatch;
 
   @Mock Genomics.Jobs jobs;
@@ -43,11 +44,15 @@ public abstract class CommandTest {
   @Mock Genomics.Reads.Search readSearch;
 
   @Mock Genomics.Readsets readsets;
+  @Mock Genomics.Readsets.Export readsetExport;
   @Mock Genomics.Readsets.Get readsetGet;
   @Mock Genomics.Readsets.Search readsetSearch;
 
   @Mock Genomics.Variants variants;
+  @Mock Genomics.Variants.Export variantExport;
   @Mock Genomics.Variants.Get variantGet;
+  @Mock Genomics.Variants.GetSummary variantSummary;
+  @Mock Genomics.Variants.Search variantSearch;
 
   ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 

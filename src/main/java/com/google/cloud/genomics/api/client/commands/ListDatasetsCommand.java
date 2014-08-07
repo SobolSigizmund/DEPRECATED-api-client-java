@@ -21,11 +21,10 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.model.*;
+import com.google.common.collect.Lists;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Parameters(commandDescription = "List recent datasets used by this command line, or list them " +
@@ -107,10 +106,8 @@ public class ListDatasetsCommand extends BaseCommand {
   }
 
   private String getReadsetCount(Genomics genomics, String datasetId) throws IOException {
-    List<String> datasetIds = new ArrayList<>();
-    datasetIds.add(datasetId);
     SearchReadsetsRequest readsetSearch = new SearchReadsetsRequest()
-        .setDatasetIds(datasetIds)
+        .setDatasetIds(Lists.newArrayList(datasetId))
         .setMaxResults(BigInteger.valueOf(100L));
 
     SearchReadsetsResponse readsets = genomics.readsets()
