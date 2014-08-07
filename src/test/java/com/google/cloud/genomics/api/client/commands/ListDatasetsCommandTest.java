@@ -69,7 +69,6 @@ public class ListDatasetsCommandTest extends CommandTest {
     Mockito.when(readsets.search(new SearchReadsetsRequest()
         .setDatasetIds(Lists.newArrayList("id1")).setMaxResults(BigInteger.valueOf(100L))))
         .thenReturn(readsetSearch);
-    Mockito.when(readsetSearch.setFields(Mockito.anyString())).thenReturn(readsetSearch);
     Mockito.when(readsetSearch.execute()).thenReturn(new SearchReadsetsResponse()
         .setReadsets(Lists.newArrayList(new Readset(), new Readset())));
 

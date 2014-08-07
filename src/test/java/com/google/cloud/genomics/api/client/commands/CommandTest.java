@@ -45,11 +45,13 @@ public abstract class CommandTest {
 
   @Mock Genomics.Readsets readsets;
   @Mock Genomics.Readsets.Export readsetExport;
+  @Mock Genomics.Readsets.GenomicsImport readsetImport;
   @Mock Genomics.Readsets.Get readsetGet;
   @Mock Genomics.Readsets.Search readsetSearch;
 
   @Mock Genomics.Variants variants;
   @Mock Genomics.Variants.Export variantExport;
+  @Mock Genomics.Variants.GenomicsImport variantImport;
   @Mock Genomics.Variants.Get variantGet;
   @Mock Genomics.Variants.GetSummary variantSummary;
   @Mock Genomics.Variants.Search variantSearch;
@@ -66,6 +68,9 @@ public abstract class CommandTest {
     Mockito.when(genomics.reads()).thenReturn(reads);
     Mockito.when(genomics.readsets()).thenReturn(readsets);
     Mockito.when(genomics.variants()).thenReturn(variants);
+
+    Mockito.when(readsetGet.setFields(Mockito.anyString())).thenReturn(readsetGet);
+    Mockito.when(readsetSearch.setFields(Mockito.anyString())).thenReturn(readsetSearch);
   }
 
   @Before
