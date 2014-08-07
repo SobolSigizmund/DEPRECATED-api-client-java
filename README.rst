@@ -79,13 +79,17 @@ Code layout
 -----------
 
 `CommandLine.java <src/main/java/com/google/cloud/genomics/api/client/CommandLine.java>`_:
-    defines all of the possible command line arguments using the `args4j library
-    <http://args4j.kohsuke.org/index.html>`_.
+    sets up the command line options using the `jcommander library
+    <https://github.com/cbeust/jcommander>`_.
 
 `GenomicsSample.java <src/main/java/com/google/cloud/genomics/api/client/GenomicsSample.java>`_:
-    provides the bulk of the logic. In its ``main`` method, the user's request is
-    dispatched to either make a call to the Genomics API or to authenticate the
-    user. Most of the code deals with OAuth.
+    uses the `GenomicsFactory` from [utils-java](https://github.com/googlegenomics/utils-java)
+    to set up a valid `Genomics` object. It then dispatches to one of the command classes to 
+    handle the user's request.
+    
+`commands <src/main/java/com/google/cloud/genomics/api/client/commands>`_:
+    This directory contains one java file for each command line option, 
+    which translates the user's command line arguments into API calls.
 
 
 Project status
@@ -99,15 +103,7 @@ Goals
 
 
 Current status
-~~~~~~~~~~~~~~
-This code is getting improvements!
-
-Instead of being just a simple wrapper around API calls, the command line
-will start providing additional functionality to make things simpler for callers. 
-
-For example, the command line is now validating datasetIds, keeping track of 
-past jobs, storing recently used datasets and more. 
-
+~~~~~~~~~~~~~~       
 Please file feature requests for additional things the command line can do to make your life easier!
 
 
