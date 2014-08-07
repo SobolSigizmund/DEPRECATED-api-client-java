@@ -94,7 +94,7 @@ public class ListDatasetsCommand extends BaseCommand {
         System.out.println("Variant summary: " + summary.toPrettyString());
       }
     } catch (GoogleJsonResponseException e) {
-      if (e.getDetails().getCode() != 403) {
+      if (e.getDetails() != null && e.getDetails().getCode() != 403) {
         // The variants APIs aren't fully public, so 403s are common
         // Only display errors which aren't an authorization fail
         // TODO: Remove this if block once the variant APIs are widely available

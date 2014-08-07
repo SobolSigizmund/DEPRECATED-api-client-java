@@ -16,6 +16,7 @@ limitations under the License.
 package com.google.cloud.genomics.api.client.commands;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.util.store.MemoryDataStoreFactory;
 import com.google.api.services.genomics.model.*;
 import org.junit.Test;
@@ -86,6 +87,38 @@ public class ListDatasetsCommandTest extends CommandTest {
     assertTrue(output, output.contains("Readsets: 2"));
     assertTrue(output, output.contains("Variant summary:"));
     assertTrue(output, output.contains("contigX"));
+  }
+
+  @Test
+  public void testListDatasets_withDeletedData() throws Exception {
+    ListDatasetsCommand command = new ListDatasetsCommand();
+    command.setDataStoreFactory(new MemoryDataStoreFactory());
+
+    Dataset dataset = new Dataset().setName("name1").setId("id");
+    command.addDatasetToHistory(dataset);
+    command.addDatasetToHistory(new Dataset().setName("name2").setId("deleted"));
+    command.includeDetails = true;
+
+
+    Mockito.when(datasets.get(Mockito.anyString())).thenReturn(datasetGet);
+    Mockito.when(datasetGet.execute())
+        .thenReturn(dataset)
+        .thenThrow(GoogleJsonResponseException.class);
+
+    // Readset summary
+    Mockito.when(readsets.search(Mockito.any(SearchReadsetsRequest.class)))
+        .thenReturn(readsetSearch);
+    Mockito.when(readsetSearch.execute()).thenReturn(new SearchReadsetsResponse());
+
+    // Variant summary
+    Mockito.when(variants.getSummary()).thenThrow(GoogleJsonResponseException.class);
+
+    command.handleRequest(genomics);
+
+    String output = outContent.toString();
+    assertTrue(output, output.contains("id: name1"));
+    assertTrue(output, output.contains("deleted: name2"));
+    assertTrue(output, output.contains("Dataset not found"));
   }
 
 }

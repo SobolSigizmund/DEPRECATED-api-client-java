@@ -16,25 +16,29 @@ limitations under the License.
 package com.google.cloud.genomics.api.client.commands;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.util.store.MemoryDataStoreFactory;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.GenomicsScopes;
 import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.Job;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.Map;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
-public class BaseCommandTest {
+public class BaseCommandTest extends CommandTest {
   private BaseCommand command;
 
   @Before
@@ -43,6 +47,8 @@ public class BaseCommandTest {
       @Override
       public void handleRequest(Genomics genomics) throws IOException {}
     };
+    MemoryDataStoreFactory factory = new MemoryDataStoreFactory();
+    command.setDataStoreFactory(factory);
   }
 
   @Test
@@ -67,9 +73,6 @@ public class BaseCommandTest {
 
   @Test
   public void testDatasetHistory() throws Exception {
-    MemoryDataStoreFactory factory = new MemoryDataStoreFactory();
-    command.setDataStoreFactory(factory);
-
     assertTrue(command.getPreviousDatasets().isEmpty());
 
     Dataset dataset = new Dataset();
@@ -84,9 +87,6 @@ public class BaseCommandTest {
 
   @Test
   public void testJobHistory() throws Exception {
-    MemoryDataStoreFactory factory = new MemoryDataStoreFactory();
-    command.setDataStoreFactory(factory);
-
     assertTrue(command.getLaunchedJobs().isEmpty());
 
     command.addJobToHistory("j1", "name1");
@@ -94,5 +94,49 @@ public class BaseCommandTest {
     Map<String,String> jobs = command.getLaunchedJobs();
     assertEquals(1, jobs.size());
     assertEquals("name1", jobs.get("j1"));
+  }
+
+  @Test
+  public void testGetBadDataset_noHistory() throws Exception {
+    Mockito.when(datasets.get("d1")).thenReturn(datasetGet);
+    Mockito.when(datasetGet.execute()).thenThrow(GoogleJsonResponseException.class);
+
+    assertEquals(null, command.getDataset(genomics, "d1"));
+
+    String output = outContent.toString();
+    Assert.assertTrue(output, output.contains("That datasetId won't work"));
+    Assert.assertTrue(output, output.contains("1000 Genomes dataset ID"));
+  }
+
+  @Test
+  public void testGetBadDataset_withHistory() throws Exception {
+    Dataset dataset = new Dataset();
+    dataset.setId("d1");
+    dataset.setName("name1");
+    command.addDatasetToHistory(dataset);
+
+    Mockito.when(datasets.get("d2")).thenReturn(datasetGet);
+    Mockito.when(datasetGet.execute()).thenThrow(GoogleJsonResponseException.class);
+
+    assertEquals(null, command.getDataset(genomics, "d2"));
+
+    String output = outContent.toString();
+    Assert.assertTrue(output, output.contains("That datasetId won't work"));
+    Assert.assertTrue(output, output.contains("d1: name1"));
+  }
+
+  @Test
+  public void testGetBadDataset_withException() throws Exception {
+    Mockito.when(datasets.get("d1")).thenReturn(datasetGet);
+    Mockito.when(datasetGet.execute()).thenThrow(GoogleJsonResponseException.class);
+
+    try {
+     command.getDataset(genomics, "d1", false);
+    } catch (GoogleJsonResponseException e) {
+      // expected
+      return;
+    }
+
+    fail();
   }
 }

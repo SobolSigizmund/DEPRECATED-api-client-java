@@ -116,16 +116,17 @@ public abstract class BaseCommand {
         throw e;
       }
 
-      System.err.println("That datasetId won't work: " + e.getDetails().getMessage() + "\n");
+      String message = e.getDetails() == null ? "unknown failure" : e.getDetails().getMessage();
+      System.out.println("That datasetId won't work: " + message + "\n");
 
       Map<String, String> previousDatasets = getPreviousDatasets();
       if (previousDatasets.isEmpty()) {
-        System.err.println("There aren't any recently used datasets, " +
+        System.out.println("There aren't any recently used datasets, " +
             "if you want to make a new one try the 'createdataset' command.");
-        System.err.println("You can also try the public 1000 Genomes dataset ID: 376902546192");
+        System.out.println("You can also try the public 1000 Genomes dataset ID: 376902546192");
 
       } else {
-        System.err.println("In the past, you've used these datasets: ");
+        System.out.println("In the past, you've used these datasets: ");
         for (Map.Entry<String, String> dataset : previousDatasets.entrySet()) {
           System.out.println(dataset.getKey() + ": " + dataset.getValue());
         }
