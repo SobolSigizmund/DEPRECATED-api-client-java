@@ -21,6 +21,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
@@ -45,5 +48,26 @@ public class CommandLineTest {
     CommandLine commandLine = new CommandLine();
     commandLine.setArgs(new String[]{"listjobs"});
     assertTrue(commandLine.getCommand() instanceof ListJobsCommand);
+  }
+
+  @Test
+  public void testHelpMessage_noCommand() throws Exception {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    new CommandLine().printHelp("test", new PrintStream(out));
+
+    String output = out.toString();
+    assertTrue(output, output.contains("Valid commands are"));
+  }
+
+  @Test
+  public void testHelpMessage_command() throws Exception {
+    CommandLine commandLine = new CommandLine();
+    commandLine.setArgs(new String[]{"listjobs"});
+
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    commandLine.printHelp("test", new PrintStream(out));
+
+    String output = out.toString();
+    assertTrue(output, output.contains("Whether to look up the Job statuses"));
   }
 }

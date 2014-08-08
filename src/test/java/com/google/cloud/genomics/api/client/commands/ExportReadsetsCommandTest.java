@@ -16,6 +16,7 @@ limitations under the License.
 package com.google.cloud.genomics.api.client.commands;
 
 import com.beust.jcommander.internal.Lists;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.util.store.MemoryDataStoreFactory;
 import com.google.api.services.genomics.GenomicsScopes;
 import com.google.api.services.genomics.model.ExportReadsetsRequest;
@@ -70,6 +71,19 @@ public class ExportReadsetsCommandTest extends CommandTest {
     assertTrue(output, output.contains("Exporting readsets name1,name2"));
     assertTrue(output, output.contains("Export job:"));
     assertTrue(output, output.contains("description1"));
+  }
+
+  @Test
+  public void testExportReadsets_badIds() throws Exception {
+    ExportReadsetsCommand command = new ExportReadsetsCommand();
+    command.readsetIds = Lists.newArrayList("bad");
+
+    // Get the readsets
+    Mockito.when(readsets.get(Mockito.anyString())).thenThrow(GoogleJsonResponseException.class);
+    command.handleRequest(genomics);
+
+    String output = outContent.toString();
+    assertTrue(output, output.contains("The readset ID bad won't work"));
   }
 
 }

@@ -67,12 +67,12 @@ public class GenomicsSample {
       command.handleRequest(genomicsFactory.fromClientSecretsFile(clientSecrets));
 
     } catch (IllegalArgumentException | ParameterException e) {
-      cmdLine.printHelp(e.getMessage() + "\n", System.err);
+      cmdLine.printHelp(e.getMessage() + "\n", System.out);
     } catch (GoogleJsonResponseException e) {
-      System.err.println("API request failed: " +
+      System.out.println("API request failed: " +
           (e.getDetails() == null ? e.getStatusMessage() : e.getDetails().getMessage()));
     } catch (IllegalStateException e) {
-      System.err.println(e.getMessage());
+      System.out.println(e.getMessage());
     } catch (Throwable t) {
       t.printStackTrace();
     }

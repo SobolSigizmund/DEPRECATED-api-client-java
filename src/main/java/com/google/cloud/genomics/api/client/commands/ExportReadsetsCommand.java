@@ -78,8 +78,9 @@ public class ExportReadsetsCommand extends BaseCommand {
       try {
         readsets.add(genomics.readsets().get(readsetId).execute());
       } catch (GoogleJsonResponseException e) {
-        System.err.println("The readset ID " + readsetId + " won't work: "
-            + e.getDetails().getMessage() + "\n");
+        String message = e.getDetails() == null ? "" : e.getDetails().getMessage();
+        System.out.println("The readset ID " + readsetId + " won't work: "
+            + message + "\n");
         return;
       }
     }

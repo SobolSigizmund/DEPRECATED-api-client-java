@@ -15,7 +15,6 @@ limitations under the License.
 */
 package com.google.cloud.genomics.api.client.commands;
 
-import com.google.api.client.util.store.MemoryDataStoreFactory;
 import com.google.api.services.genomics.model.SearchReadsRequest;
 import com.google.api.services.genomics.model.SearchReadsResponse;
 import org.junit.Test;
@@ -27,9 +26,20 @@ import org.mockito.Mockito;
 public class SearchReadsCommandTest extends CommandTest {
 
   @Test
-  public void testCommand() throws Exception {
+  public void testCommand_noRange() throws Exception {
     SearchReadsCommand command = new SearchReadsCommand();
-    command.setDataStoreFactory(new MemoryDataStoreFactory());
+
+    Mockito.when(reads.search(Mockito.any(SearchReadsRequest.class))).thenReturn(readSearch);
+    Mockito.when(readSearch.execute()).thenReturn(new SearchReadsResponse());
+
+    command.handleRequest(genomics);
+  }
+
+  @Test
+  public void testCommand_withRange() throws Exception {
+    SearchReadsCommand command = new SearchReadsCommand();
+    command.sequenceStart = 1;
+    command.sequenceEnd = 10;
 
     Mockito.when(reads.search(Mockito.any(SearchReadsRequest.class))).thenReturn(readSearch);
     Mockito.when(readSearch.execute()).thenReturn(new SearchReadsResponse());

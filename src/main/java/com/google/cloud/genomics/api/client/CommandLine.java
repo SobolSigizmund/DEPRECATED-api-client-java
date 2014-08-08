@@ -92,7 +92,9 @@ class CommandLine {
       describeCommands(out);
       out.append("\n");
     } else {
-      parser.usage(parser.getParsedCommand());
+      StringBuilder sb = new StringBuilder();
+      parser.usage(parser.getParsedCommand(), sb);
+      out.append(sb.toString());
     }
   }
 

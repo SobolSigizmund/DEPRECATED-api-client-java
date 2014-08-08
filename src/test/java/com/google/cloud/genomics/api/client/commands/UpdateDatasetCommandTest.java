@@ -57,4 +57,13 @@ public class UpdateDatasetCommandTest extends CommandTest {
     assertFalse(output, output.contains("old"));
   }
 
+  @Test
+  public void testCommand_nofields() throws Exception {
+    UpdateDatasetCommand command = new UpdateDatasetCommand();
+    command.handleRequest(null);
+
+    String output = outContent.toString();
+    assertTrue(output, output.contains("No new field values were specified"));
+  }
+
 }
