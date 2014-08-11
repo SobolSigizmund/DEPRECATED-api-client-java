@@ -159,10 +159,16 @@ public abstract class BaseCommand {
       throws IOException {
     Genomics.Jobs.Get jobRequest = genomics.jobs().get(jobId);
     Job job = jobRequest.execute();
+    String oldStatus = job.getStatus();
 
     if (pollForStatus && !isJobFinished(job)) {
       System.out.println("Waiting for job: " + job.getId());
       while (!isJobFinished(job)) {
+        if (!job.getStatus().equals(oldStatus)) {
+          System.out.println("Job status changed: " + job.toPrettyString());
+        }
+        oldStatus = job.getStatus();
+
         try {
           Thread.sleep(pollingDelay);
         } catch (InterruptedException ex) {
