@@ -28,6 +28,7 @@ import org.mockito.Mockito;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
@@ -114,6 +115,26 @@ public class ListJobsCommandTest extends CommandTest {
     String output = outContent.toString();
     assertTrue(output, output.contains("Filtering jobs by date is only supported " +
         "when searching by project."));
+  }
+
+  @Test
+  public void testListJobs_withEmptyDescription() throws Exception {
+    ListJobsCommand command = new ListJobsCommand();
+    command.setDataStoreFactory(new MemoryDataStoreFactory());
+
+    command.addJobToHistory("jobid", "");
+    command.includeStatus = true;
+
+    Mockito.when(jobs.get("jobid")).thenReturn(jobGet);
+    Mockito.when(jobGet.execute()).thenReturn(new Job()
+        .setStatus("pending").setDescription(""));
+
+    command.handleRequest(genomics);
+
+    String output = outContent.toString();
+    assertTrue(output, output.contains("jobid: "));
+    // The empty description field tag should not be shown
+    assertFalse(output, output.contains("description"));
   }
 
 }

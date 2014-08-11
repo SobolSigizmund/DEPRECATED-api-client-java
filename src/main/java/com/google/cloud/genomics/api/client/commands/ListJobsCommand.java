@@ -20,6 +20,7 @@ import com.beust.jcommander.Parameters;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.model.Job;
 import com.google.api.services.genomics.model.SearchJobsRequest;
+import com.google.common.base.Strings;
 
 import java.io.IOException;
 import java.util.Date;
@@ -102,6 +103,12 @@ public class ListJobsCommand extends BaseCommand {
 
     if (job == null) {
       job = getJob(genomics, id, false);
+    }
+
+    // Description is a confusing field. If it's an empty string, we null it out so
+    // that it doesn't get displayed to the user.
+    if (Strings.isNullOrEmpty(job.getDescription())) {
+      job.setDescription(null);
     }
 
     System.out.println(job.toPrettyString() + "\n");
