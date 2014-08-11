@@ -20,9 +20,10 @@ import com.beust.jcommander.Parameters;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.model.Job;
 import com.google.api.services.genomics.model.SearchJobsRequest;
-import com.google.api.services.genomics.model.SearchJobsResponse;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Parameters(commandDescription = "List past jobs run by this command line, or list them " +
@@ -38,18 +39,45 @@ public class ListJobsCommand extends BaseCommand {
           "(By default only jobs created from this command line will be shown)")
   public Long projectId;
 
+  @Parameter(names = {"--created_after", "--after"},
+      description = "When searching by project, get jobs created after this date " +
+          "(Format: yyyy-MM-dd)")
+  public Date createdAfter;
+
+  @Parameter(names = {"--created_before", "--before"},
+      description = "When searching by project, get jobs created before this date " +
+          "(Format: yyyy-MM-dd)")
+  public Date createdBefore;
+
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
     Map<String, String> launchedJobs = getLaunchedJobs();
 
     if (projectId != null) {
-      SearchJobsResponse jobs = genomics.jobs().search(
-          new SearchJobsRequest().setProjectId(projectId)).execute();
-      for (Job job : jobs.getJobs()) {
+      SearchJobsRequest request = new SearchJobsRequest().setProjectId(projectId);
+      if (createdAfter != null) {
+        request.setCreatedAfter(createdAfter.getTime());
+      }
+      if (createdBefore != null) {
+        request.setCreatedBefore(createdBefore.getTime());
+      }
+
+      List<Job> jobs = genomics.jobs().search(request).execute().getJobs();
+      if (jobs == null || jobs.isEmpty()) {
+        System.out.println("No jobs found");
+        return;
+      }
+
+      for (Job job : jobs) {
         printJob(genomics, job.getId(), getDescription(job, launchedJobs), job);
       }
 
     } else {
+      if (createdAfter != null || createdBefore != null) {
+        System.out.println("Filtering jobs by date is only supported when searching by project.");
+        return;
+      }
+
       for (Map.Entry<String, String> job : launchedJobs.entrySet()) {
         printJob(genomics, job.getKey(), job.getValue(), null);
       }

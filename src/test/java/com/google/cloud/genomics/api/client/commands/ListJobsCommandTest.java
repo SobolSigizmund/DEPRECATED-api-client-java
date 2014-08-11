@@ -25,6 +25,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -80,6 +82,38 @@ public class ListJobsCommandTest extends CommandTest {
     String output = outContent.toString();
     assertTrue(output, output.contains("previousJob: previousDescription"));
     assertTrue(output, output.contains("newjob: Unknown job type"));
+  }
+
+  @Test
+  public void testListJobsByDate() throws Exception {
+    ListJobsCommand command = new ListJobsCommand();
+    command.setDataStoreFactory(new MemoryDataStoreFactory());
+
+    command.projectId = 9L;
+    command.createdAfter = new Date(123L);
+    command.createdBefore = new Date(456L);
+
+    Mockito.when(jobs.search(new SearchJobsRequest().setProjectId(9L)
+        .setCreatedAfter(123L).setCreatedBefore(456L))).thenReturn(jobSearch);
+    Mockito.when(jobSearch.execute()).thenReturn(new SearchJobsResponse());
+
+    command.handleRequest(genomics);
+
+    String output = outContent.toString();
+    assertTrue(output, output.contains("No jobs found"));
+  }
+
+  @Test
+  public void testListJobsByDate_noProject() throws Exception {
+    ListJobsCommand command = new ListJobsCommand();
+    command.setDataStoreFactory(new MemoryDataStoreFactory());
+
+    command.createdBefore = new Date();
+    command.handleRequest(genomics);
+
+    String output = outContent.toString();
+    assertTrue(output, output.contains("Filtering jobs by date is only supported " +
+        "when searching by project."));
   }
 
 }
