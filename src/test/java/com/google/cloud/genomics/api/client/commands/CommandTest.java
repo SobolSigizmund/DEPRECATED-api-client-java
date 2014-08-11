@@ -39,6 +39,7 @@ public abstract class CommandTest {
 
   @Mock Genomics.Jobs jobs;
   @Mock Genomics.Jobs.Get jobGet;
+  @Mock Genomics.Jobs.Search jobSearch;
 
   @Mock Genomics.Reads reads;
   @Mock Genomics.Reads.Search readSearch;

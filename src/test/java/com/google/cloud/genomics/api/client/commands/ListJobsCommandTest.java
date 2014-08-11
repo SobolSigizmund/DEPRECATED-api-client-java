@@ -17,6 +17,9 @@ package com.google.cloud.genomics.api.client.commands;
 
 import com.google.api.client.util.store.MemoryDataStoreFactory;
 import com.google.api.services.genomics.model.Job;
+import com.google.api.services.genomics.model.SearchJobsRequest;
+import com.google.api.services.genomics.model.SearchJobsResponse;
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -58,6 +61,25 @@ public class ListJobsCommandTest extends CommandTest {
     String output = outContent.toString();
     assertTrue(output, output.contains("jobid: description"));
     assertTrue(output, output.contains("pending"));
+  }
+
+  @Test
+  public void testListJobs_byProjectId() throws Exception {
+    ListJobsCommand command = new ListJobsCommand();
+    command.setDataStoreFactory(new MemoryDataStoreFactory());
+    command.addJobToHistory("previousJob", "previousDescription");
+
+    command.projectId = 9L;
+
+    Mockito.when(jobs.search(new SearchJobsRequest().setProjectId(9L))).thenReturn(jobSearch);
+    Mockito.when(jobSearch.execute()).thenReturn(new SearchJobsResponse().setJobs(
+        Lists.newArrayList(new Job().setId("previousJob"), new Job().setId("newjob"))));
+
+    command.handleRequest(genomics);
+
+    String output = outContent.toString();
+    assertTrue(output, output.contains("previousJob: previousDescription"));
+    assertTrue(output, output.contains("newjob: Unknown job type"));
   }
 
 }
