@@ -19,6 +19,7 @@ import com.beust.jcommander.ParameterException;
 import com.google.api.client.extensions.java6.auth.oauth2.VerificationCodeReceiver;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.extensions.java6.auth.oauth2.GooglePromptReceiver;
+import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.cloud.genomics.api.client.commands.BaseCommand;
 import com.google.cloud.genomics.utils.GenomicsFactory;
@@ -69,8 +70,13 @@ public class GenomicsSample {
     } catch (IllegalArgumentException | ParameterException e) {
       cmdLine.printHelp(e.getMessage() + "\n", System.out);
     } catch (GoogleJsonResponseException e) {
-      System.out.println("API request failed: " +
-          (e.getDetails() == null ? e.getStatusMessage() : e.getDetails().getMessage()));
+      String message = e.getStatusMessage();
+      GoogleJsonError details = e.getDetails();
+      if (details != null) {
+        message = details.getMessage() + " (" + details.getCode() + ")";
+      }
+      System.out.println("API request failed: " + message);
+
     } catch (IllegalStateException e) {
       System.out.println(e.getMessage());
     } catch (Throwable t) {
