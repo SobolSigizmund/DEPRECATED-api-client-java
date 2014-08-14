@@ -17,6 +17,7 @@ package com.google.cloud.genomics.api.client.commands;
 
 import com.google.api.client.util.store.MemoryDataStoreFactory;
 import com.google.api.services.genomics.model.Dataset;
+import com.google.api.services.genomics.model.Readset;
 import com.google.api.services.genomics.model.SearchReadsetsRequest;
 import com.google.api.services.genomics.model.SearchReadsetsResponse;
 import com.google.common.collect.Lists;
@@ -24,6 +25,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
+
+import java.math.BigInteger;
 
 import static org.junit.Assert.assertTrue;
 
@@ -43,9 +46,11 @@ public class SearchReadsetsCommandTest extends CommandTest {
 
     Mockito.when(readsets.search(new SearchReadsetsRequest()
         .setDatasetIds(Lists.newArrayList("dataset"))
-        .setName("12878")))
+        .setName("12878")
+        .setMaxResults(BigInteger.TEN)))
         .thenReturn(readsetSearch);
-    Mockito.when(readsetSearch.execute()).thenReturn(new SearchReadsetsResponse());
+    Mockito.when(readsetSearch.execute()).thenReturn(new SearchReadsetsResponse()
+        .setReadsets(Lists.<Readset>newArrayList()));
 
     command.handleRequest(genomics);
 

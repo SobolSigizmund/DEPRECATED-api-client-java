@@ -23,6 +23,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
+import java.math.BigInteger;
+
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
@@ -43,7 +45,8 @@ public class SearchVariantsCommandTest extends CommandTest {
 
     Mockito.when(variants.search(Mockito.any(SearchVariantsRequest.class)))
         .thenReturn(variantSearch);
-    Mockito.when(variantSearch.execute()).thenReturn(new SearchVariantsResponse());
+    Mockito.when(variantSearch.execute()).thenReturn(new SearchVariantsResponse()
+        .setVariants(Lists.<Variant>newArrayList()));
 
     command.handleRequest(genomics);
 
@@ -83,16 +86,28 @@ public class SearchVariantsCommandTest extends CommandTest {
         .setContig("chr1")
         .setStartPosition(1L)
         .setEndPosition(5L)
-        .setCallsetIds(Lists.newArrayList("id1"))))
+        .setCallsetIds(Lists.newArrayList("id1"))
+        .setMaxResults(BigInteger.TEN)))
         .thenReturn(variantSearch);
     Mockito.when(variantSearch.execute()).thenReturn(
-        new SearchVariantsResponse().setNextPageToken("pageToken"));
+        new SearchVariantsResponse().setVariants(
+            Lists.newArrayList(new Variant().setContig("contig"))));
 
     command.handleRequest(genomics);
 
     String output = outContent.toString();
     assertTrue(output, output.contains("No callsets found with the name c2"));
-    assertTrue(output, output.contains("pageToken"));
+    assertTrue(output, output.contains("contig"));
+  }
+
+  @Test
+  public void testDeprecationWarning() throws Exception {
+    SearchVariantsCommand command = new SearchVariantsCommand();
+    command.pageToken = "xyz";
+
+    command.handleRequest(null);
+    String output = outContent.toString();
+    assertTrue(output, output.contains("--page_token is now deprecated"));
   }
 
 }

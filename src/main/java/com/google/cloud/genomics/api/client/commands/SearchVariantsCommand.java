@@ -20,12 +20,13 @@ import com.beust.jcommander.Parameters;
 import com.beust.jcommander.internal.Lists;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.model.*;
+import com.google.cloud.genomics.utils.Paginator;
 
 import java.io.IOException;
 import java.util.List;
 
 @Parameters(commandDescription = "Search over variants")
-public class SearchVariantsCommand extends SimpleCommand {
+public class SearchVariantsCommand extends SearchCommand {
 
   @Parameter(names = "--dataset_id",
       description = "The Genomics API dataset ID to get variants for.",
@@ -42,7 +43,8 @@ public class SearchVariantsCommand extends SimpleCommand {
   public List<String> callsetNames;
 
   @Parameter(names = "--page_token",
-      description = "The token used to retrieve additional pages in paginated API methods.")
+      description = "Deprecated. Use --count instead.",
+      hidden = true)
   public String pageToken = "";
 
   @Parameter(names = { "--sequence_name", "--contig" },
@@ -62,6 +64,11 @@ public class SearchVariantsCommand extends SimpleCommand {
 
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
+    if (!pageToken.isEmpty()) {
+      System.out.println("--page_token is now deprecated. Use --count instead.");
+      return;
+    }
+
     Dataset dataset = getDataset(genomics, datasetId);
     if (dataset == null) {
       return;
@@ -81,13 +88,14 @@ public class SearchVariantsCommand extends SimpleCommand {
         .setPageToken(pageToken)
         .setContig(sequenceName)
         .setStartPosition(sequenceStart)
-        .setEndPosition(sequenceEnd);
+        .setEndPosition(sequenceEnd)
+        .setMaxResults(getMaxResults());
 
     if (callsetIds != null) {
       request.setCallsetIds(callsetIds);
     }
 
-    executeAndPrint(genomics.variants().search(request));
+    printResults(Paginator.Variants.create(genomics), request);
   }
 
   private void getCallsetsByName(Genomics genomics) throws IOException {

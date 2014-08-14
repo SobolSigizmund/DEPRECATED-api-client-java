@@ -16,6 +16,7 @@ limitations under the License.
 package com.google.cloud.genomics.api.client.commands;
 
 import com.google.api.client.util.store.MemoryDataStoreFactory;
+import com.google.api.services.genomics.model.Callset;
 import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.SearchCallsetsRequest;
 import com.google.api.services.genomics.model.SearchCallsetsResponse;
@@ -24,6 +25,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
+
+import java.math.BigInteger;
 
 import static org.junit.Assert.assertTrue;
 
@@ -43,9 +46,11 @@ public class SearchCallsetsCommandTest extends CommandTest {
 
     Mockito.when(callsets.search(new SearchCallsetsRequest()
         .setDatasetIds(Lists.newArrayList("dataset"))
-        .setName("12878")))
+        .setName("12878")
+        .setMaxResults(BigInteger.TEN)))
         .thenReturn(callsetSearch);
-    Mockito.when(callsetSearch.execute()).thenReturn(new SearchCallsetsResponse());
+    Mockito.when(callsetSearch.execute()).thenReturn(new SearchCallsetsResponse()
+        .setCallsets(Lists.<Callset>newArrayList()));
 
     command.handleRequest(genomics);
 

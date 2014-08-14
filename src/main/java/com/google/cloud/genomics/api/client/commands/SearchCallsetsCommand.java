@@ -20,12 +20,13 @@ import com.beust.jcommander.Parameters;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.SearchCallsetsRequest;
+import com.google.cloud.genomics.utils.Paginator;
 import com.google.common.collect.Lists;
 
 import java.io.IOException;
 
 @Parameters(commandDescription = "Search over callsets")
-public class SearchCallsetsCommand extends SimpleCommand {
+public class SearchCallsetsCommand extends SearchCommand {
 
   @Parameter(names = "--dataset_id",
       description = "The Genomics API dataset ID to get callsets for.",
@@ -45,9 +46,10 @@ public class SearchCallsetsCommand extends SimpleCommand {
     }
     System.out.println("Getting callsets from: " + dataset.getName());
 
-    SearchCallsetsRequest content = new SearchCallsetsRequest()
+    SearchCallsetsRequest request = new SearchCallsetsRequest()
         .setDatasetIds(Lists.newArrayList(datasetId))
-        .setName(name);
-    executeAndPrint(genomics.callsets().search(content));
+        .setName(name)
+        .setMaxResults(getMaxResults());
+    printResults(Paginator.Callsets.create(genomics), request);
   }
 }
