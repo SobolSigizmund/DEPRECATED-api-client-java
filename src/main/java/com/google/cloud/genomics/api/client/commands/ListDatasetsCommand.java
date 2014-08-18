@@ -46,6 +46,9 @@ public class ListDatasetsCommand extends BaseCommand {
 
     if (projectId != null) {
       ListDatasetsResponse datasets = genomics.datasets().list().setProjectId(projectId).execute();
+      if (datasets.getDatasets() == null) {
+        return;
+      }
       for (Dataset dataset : datasets.getDatasets()) {
         printDataset(genomics, dataset.getId(), dataset.getName(), dataset);
       }

@@ -121,4 +121,15 @@ public class ListDatasetsCommandTest extends CommandTest {
     assertTrue(output, output.contains("Dataset not found"));
   }
 
+  @Test
+  public void testLisDatasets_fromEmptyProject() throws Exception {
+    ListDatasetsCommand command = new ListDatasetsCommand();
+    command.projectId = 10L;
+
+    Mockito.when(datasets.list()).thenReturn(datasetList);
+    Mockito.when(datasetList.setProjectId(10L)).thenReturn(datasetList);
+    Mockito.when(datasetList.execute()).thenReturn(new ListDatasetsResponse());
+    command.handleRequest(genomics);
+  }
+
 }
