@@ -48,7 +48,7 @@ public class GenomicsSample {
 
       GenomicsFactory genomicsFactory = GenomicsFactory.builder("genomics_java_client")
           .setScopes(scopes)
-          .setUserName("user" + scopes.size())
+          .setUserName("user" + scopes.toString())
           .setVerificationCodeReceiver(Suppliers.ofInstance(receiver))
           .setRootUrl(command.rootUrl)
           .setServicePath("/")
