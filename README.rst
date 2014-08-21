@@ -63,18 +63,6 @@ Troubleshooting
 .. _sign up instructions: https://developers.google.com/genomics
 
 
-Other backends
---------------
-Some of the commands can be used against GA4GH providers other than Google. 
-For example, you can search both readsets and reads at NCBI.
-(Be sure to specify the fields parameter as some of the NCBI fields don't pass the strict type checking done by the Java JSON parser)::
-
-  java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets --root_url "http://trace.ncbi.nlm.nih.gov/Traces/gg/" --dataset_id "SRP034507" --fields "readsets(id,name,fileData),pageToken"
-
-  java -jar target/genomics-tools-client-java-v1beta.jar searchreads --root_url "http://trace.ncbi.nlm.nih.gov/Traces/gg/" --readset_id "SRR1050536" --sequence_name "gi|333959|gb|M74568.1|RSHSEQ" --sequence_start 1 --sequence_end 100 --fields "pageToken,reads(name,position,flags)"
-
-
-
 Code layout
 -----------
 
