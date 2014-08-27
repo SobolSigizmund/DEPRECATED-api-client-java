@@ -22,7 +22,6 @@ import com.google.api.client.util.Joiner;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.GenomicsScopes;
 import com.google.api.services.genomics.model.ExportReadsetsRequest;
-import com.google.api.services.genomics.model.Job;
 import com.google.api.services.genomics.model.Readset;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -97,7 +96,7 @@ public class ExportReadsetsCommand extends BaseCommand {
     // Get the resulting job
     addJobToHistory(jobId, "Exporting readsets: " + readsetNames + " to "
         + exportUri);
-    Job job = getJob(genomics, jobId, pollForStatus);
-    System.out.println("Export job: " + job.toPrettyString());
+    System.out.println("Export job: ");
+    printJob(getJob(genomics, jobId, pollForStatus));
   }
 }

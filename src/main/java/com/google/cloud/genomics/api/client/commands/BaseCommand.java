@@ -17,6 +17,7 @@ package com.google.cloud.genomics.api.client.commands;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.internal.Maps;
+import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.store.DataStore;
@@ -26,9 +27,13 @@ import com.google.api.services.genomics.GenomicsScopes;
 import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.Job;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +47,8 @@ public abstract class BaseCommand {
 
   public static final String JOB_HISTORY_ID = "JobHistory";
   public static final String DATASET_HISTORY_ID = "DatasetHistory";
+
+  private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
   @Parameter(names = "--root_url",
       description = "set the Genomics API root URL",
@@ -59,6 +66,15 @@ public abstract class BaseCommand {
 
   DataStoreFactory dataStoreFactory;
   @VisibleForTesting int pollingDelay = 10000;
+
+  public static String getErrorMessage(GoogleJsonResponseException e) {
+    String message = e.getStatusMessage();
+    GoogleJsonError details = e.getDetails();
+    if (details != null) {
+      message = details.getMessage() + " (" + details.getCode() + ")";
+    }
+    return message;
+  }
 
   public List<String> getScopes() {
     List<String> scopes = Lists.newArrayList();
@@ -153,6 +169,19 @@ public abstract class BaseCommand {
   protected boolean isJobFinished(Job job) {
     String status = job.getStatus();
     return JOB_SUCCESS.equals(status) || JOB_FAILURE.equals(status);
+  }
+
+  protected void printJob(Job job) throws IOException {
+    // Description is a confusing field. If it's an empty string, we null it out so
+    // that it doesn't get displayed to the user.
+    if (Strings.isNullOrEmpty(job.getDescription())) {
+      job.setDescription(null);
+    }
+
+    if (job.getCreated() != null) {
+      job.set("createdString", DATE_FORMAT.format(new Date(job.getCreated())));
+    }
+    System.out.println(job.toPrettyString() + "\n");
   }
 
   protected Job getJob(Genomics genomics, String jobId, boolean pollForStatus)

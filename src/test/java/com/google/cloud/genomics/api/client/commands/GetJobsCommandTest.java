@@ -37,13 +37,14 @@ public class GetJobsCommandTest extends CommandTest {
     Mockito.when(jobs.get("j2")).thenReturn(jobGet);
     Mockito.when(jobGet.execute()).thenReturn(
         new Job().setDescription("description1"),
-        new Job().setDescription("description2"));
+        new Job().setDescription("description2").setCreated(1405719531000L));
 
     command.handleRequest(genomics);
 
     String output = outContent.toString();
     assertTrue(output, output.contains("description1"));
     assertTrue(output, output.contains("description2"));
+    assertTrue(output, output.contains("2014-07"));
   }
 
   @Test

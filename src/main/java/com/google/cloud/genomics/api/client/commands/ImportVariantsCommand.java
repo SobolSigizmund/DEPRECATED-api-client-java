@@ -78,7 +78,8 @@ public class ImportVariantsCommand extends BaseCommand {
     addJobToHistory(jobId, "Import variants to " + dataset.getName() + " from "
         + Joiner.on(',').join(vcfFiles));
     Job job = getJob(genomics, jobId, pollForStatus);
-    System.out.println("Import job: " + job.toPrettyString());
+    System.out.println("Import job: ");
+    printJob(job);
 
     // If the job is finished, get the variant summary
     if (isJobFinished(job)) {

@@ -20,10 +20,8 @@ import com.beust.jcommander.Parameters;
 import com.google.api.client.util.Joiner;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.GenomicsScopes;
-import com.google.api.services.genomics.model.ExportVariantsRequest;
 import com.google.api.services.genomics.model.Dataset;
-import com.google.api.services.genomics.model.Job;
-import com.google.common.collect.Lists;
+import com.google.api.services.genomics.model.ExportVariantsRequest;
 
 import java.io.IOException;
 import java.util.List;
@@ -101,7 +99,7 @@ public class ExportVariantsCommand extends BaseCommand {
     // Get the resulting job
     addJobToHistory(jobId, "Exporting variants: from " + dataset.getName() +
         " to " + bigqueryDataset + "." + bigqueryTable);
-    Job job = getJob(genomics, jobId, pollForStatus);
-    System.out.println("Export job: " + job.toPrettyString());
+    System.out.println("Export job: ");
+    printJob(getJob(genomics, jobId, pollForStatus));
   }
 }

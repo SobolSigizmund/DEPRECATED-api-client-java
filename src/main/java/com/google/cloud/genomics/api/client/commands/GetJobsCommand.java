@@ -18,7 +18,6 @@ package com.google.cloud.genomics.api.client.commands;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.api.services.genomics.Genomics;
-import com.google.api.services.genomics.model.Job;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,8 +38,7 @@ public class GetJobsCommand extends BaseCommand {
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
     for (String jobId : jobIds) {
-      Job job = getJob(genomics, jobId, pollForStatus);
-      System.out.println(job.toPrettyString());
+      printJob(getJob(genomics, jobId, pollForStatus));
     }
 
     // TODO: Should we look up readsets/variants?
