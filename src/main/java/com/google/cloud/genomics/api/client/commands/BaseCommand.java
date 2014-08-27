@@ -30,7 +30,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -90,18 +89,18 @@ public abstract class BaseCommand {
 
 
   protected void addItemToHistory(String datastore, String key, String value) throws IOException {
-    DataStore<Serializable> history = dataStoreFactory.getDataStore(datastore);
+    DataStore<String> history = dataStoreFactory.getDataStore(datastore);
     history.set(key, value);
   }
 
   protected Map<String, String> getHistoryItems(String datastore) throws IOException {
-    DataStore<Serializable> jobHistory = dataStoreFactory.getDataStore(datastore);
+    DataStore<String> jobHistory = dataStoreFactory.getDataStore(datastore);
 
     Map<String, String> items = Maps.newHashMap();
 
     Set<String> keys = jobHistory.keySet();
     for (String key : keys) {
-      items.put(key, (String) jobHistory.get(key));
+      items.put(key, jobHistory.get(key));
     }
 
     return items;

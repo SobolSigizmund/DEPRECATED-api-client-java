@@ -63,7 +63,8 @@ public class GenomicsSample {
         return;
       }
 
-      command.setDataStoreFactory(genomicsFactory.getDataStoreFactory());
+      File dataStoreFile = new File(System.getProperty("user.home"), ".store/genomics_java_client");
+      command.setDataStoreFactory(new ReadableFileDataStoreFactory(dataStoreFile));
       command.handleRequest(genomicsFactory.fromClientSecretsFile(clientSecrets));
 
     } catch (IllegalArgumentException | ParameterException e) {
