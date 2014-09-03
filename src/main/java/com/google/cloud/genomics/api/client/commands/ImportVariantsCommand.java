@@ -70,7 +70,7 @@ public class ImportVariantsCommand extends BaseCommand {
 
     // Start the import
     Genomics.Variants.GenomicsImport req = genomics.variants().genomicsImport(
-        new ImportVariantsRequest().setDatasetId(datasetId)
+        new ImportVariantsRequest().setVariantsetId(datasetId)
             .setSourceUris(vcfFiles));
     String jobId = req.execute().getJobId();
 
@@ -84,7 +84,7 @@ public class ImportVariantsCommand extends BaseCommand {
     // If the job is finished, get the variant summary
     if (isJobFinished(job)) {
       GetVariantsSummaryResponse summary = genomics.variants().getSummary()
-          .setDatasetId(datasetId).execute();
+          .setVariantsetId(datasetId).execute();
       System.out.println("Imported variant summary: " + summary.toPrettyString() + "\n");
     }
   }

@@ -89,7 +89,7 @@ public class ExportVariantsCommand extends BaseCommand {
 
     // Start the export
     ExportVariantsRequest request = new ExportVariantsRequest()
-        .setDatasetId(datasetId)
+        .setVariantsetId(datasetId)
         .setProjectId(projectId)
         .setCallsetIds(callsetIds)
         .setBigqueryDataset(bigqueryDataset)

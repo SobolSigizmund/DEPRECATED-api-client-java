@@ -91,7 +91,7 @@ public class ListDatasetsCommand extends BaseCommand {
     // Variant summary
     try {
       GetVariantsSummaryResponse summary = genomics.variants().getSummary()
-          .setDatasetId(id).execute();
+          .setVariantsetId(id).execute();
       if (summary != null && summary.getContigBounds() != null) {
         // Only print out a variant summary if one exists
         System.out.println("Variant summary: " + summary.toPrettyString());

@@ -75,7 +75,7 @@ public class ListDatasetsCommandTest extends CommandTest {
 
     // Variant summary
     Mockito.when(variants.getSummary()).thenReturn(variantSummary);
-    Mockito.when(variantSummary.setDatasetId("id1")).thenReturn(variantSummary);
+    Mockito.when(variantSummary.setVariantsetId("id1")).thenReturn(variantSummary);
     Mockito.when(variantSummary.execute()).thenReturn(new GetVariantsSummaryResponse()
         .setContigBounds(Lists.newArrayList(new ContigBound().setContig("contigX"))));
 

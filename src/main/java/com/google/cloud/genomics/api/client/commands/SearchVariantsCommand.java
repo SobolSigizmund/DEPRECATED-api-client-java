@@ -84,7 +84,7 @@ public class SearchVariantsCommand extends SearchCommand {
     }
 
     SearchVariantsRequest request = new SearchVariantsRequest()
-        .setDatasetId(datasetId)
+        .setVariantsetId(datasetId)
         .setPageToken(pageToken)
         .setContig(sequenceName)
         .setStartPosition(sequenceStart)
@@ -108,7 +108,7 @@ public class SearchVariantsCommand extends SearchCommand {
 
     for (String name : callsetNames) {
       SearchCallsetsRequest request = new SearchCallsetsRequest()
-          .setDatasetIds(datasetIds).setName(name);
+          .setVariantsetIds(datasetIds).setName(name);
       List<Callset> callsets = genomics.callsets().search(request).execute().getCallsets();
       if (callsets == null || callsets.isEmpty()) {
         System.out.println("No callsets found with the name " + name);

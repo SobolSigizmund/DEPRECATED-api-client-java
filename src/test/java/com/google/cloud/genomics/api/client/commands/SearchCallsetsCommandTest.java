@@ -45,7 +45,7 @@ public class SearchCallsetsCommandTest extends CommandTest {
     Mockito.when(datasetGet.execute()).thenReturn(new Dataset().setId("id").setName("1kg"));
 
     Mockito.when(callsets.search(new SearchCallsetsRequest()
-        .setDatasetIds(Lists.newArrayList("dataset"))
+        .setVariantsetIds(Lists.newArrayList("dataset"))
         .setName("12878")
         .setMaxResults(BigInteger.TEN)))
         .thenReturn(callsetSearch);

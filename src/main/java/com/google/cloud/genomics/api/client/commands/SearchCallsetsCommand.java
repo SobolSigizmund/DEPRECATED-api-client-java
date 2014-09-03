@@ -47,7 +47,7 @@ public class SearchCallsetsCommand extends SearchCommand {
     System.out.println("Getting callsets from: " + dataset.getName());
 
     SearchCallsetsRequest request = new SearchCallsetsRequest()
-        .setDatasetIds(Lists.newArrayList(datasetId))
+        .setVariantsetIds(Lists.newArrayList(datasetId))
         .setName(name)
         .setMaxResults(getMaxResults());
     printResults(Paginator.Callsets.create(genomics), request);

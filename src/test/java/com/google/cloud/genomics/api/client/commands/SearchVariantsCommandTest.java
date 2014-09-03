@@ -69,11 +69,11 @@ public class SearchVariantsCommandTest extends CommandTest {
     Mockito.when(datasetGet.execute()).thenReturn(new Dataset().setId("id").setName("1kg"));
 
     Mockito.when(callsets.search(new SearchCallsetsRequest()
-        .setDatasetIds(Lists.newArrayList("dataset"))
+        .setVariantsetIds(Lists.newArrayList("dataset"))
         .setName("c1")))
         .thenReturn(callsetSearch);
     Mockito.when(callsets.search(new SearchCallsetsRequest()
-        .setDatasetIds(Lists.newArrayList("dataset"))
+        .setVariantsetIds(Lists.newArrayList("dataset"))
         .setName("c2")))
         .thenReturn(callsetSearch);
     Mockito.when(callsetSearch.execute()).thenReturn(
@@ -81,7 +81,7 @@ public class SearchVariantsCommandTest extends CommandTest {
         new SearchCallsetsResponse() /* No callset results for c2 */);
 
     Mockito.when(variants.search(new SearchVariantsRequest()
-        .setDatasetId("dataset")
+        .setVariantsetId("dataset")
         .setPageToken("")
         .setContig("chr1")
         .setStartPosition(1L)

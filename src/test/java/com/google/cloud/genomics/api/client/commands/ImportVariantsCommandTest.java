@@ -61,7 +61,7 @@ public class ImportVariantsCommandTest extends CommandTest {
 
     // Get the variant summayry
     Mockito.when(variants.getSummary()).thenReturn(variantSummary);
-    Mockito.when(variantSummary.setDatasetId("abc")).thenReturn(variantSummary);
+    Mockito.when(variantSummary.setVariantsetId("abc")).thenReturn(variantSummary);
     Mockito.when(variantSummary.execute()).thenReturn(new GetVariantsSummaryResponse()
         .setContigBounds(Lists.newArrayList(new ContigBound().setContig("contigX"))));
 
