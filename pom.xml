@@ -105,7 +105,7 @@
     <dependency>
       <groupId>com.google.cloud.genomics</groupId>
       <artifactId>google-genomics-utils</artifactId>
-      <version>0.7</version>
+      <version>0.9</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
