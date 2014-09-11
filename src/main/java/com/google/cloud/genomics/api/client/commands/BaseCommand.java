@@ -203,7 +203,14 @@ public abstract class BaseCommand {
           Thread.currentThread().interrupt();
         }
         System.out.print(".");
-        job = jobRequest.execute();
+        try {
+          job = jobRequest.execute();
+        } catch (GoogleJsonResponseException e) {
+          // Occasionally the API will fail when getting job status.
+          // We'll just ignore and retry in a bit
+          // We know the Job itself should be valid because the very first job fetch isn't
+          // in a special catch block.
+        }
       }
       System.out.println();
     }

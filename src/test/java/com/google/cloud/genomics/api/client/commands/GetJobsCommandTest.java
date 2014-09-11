@@ -15,6 +15,7 @@ limitations under the License.
 */
 package com.google.cloud.genomics.api.client.commands;
 
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.genomics.model.Job;
 import com.google.common.collect.Lists;
 import org.junit.Test;
@@ -57,7 +58,8 @@ public class GetJobsCommandTest extends CommandTest {
     Mockito.when(jobs.get("j1")).thenReturn(jobGet);
     Mockito.when(jobGet.execute()).thenReturn(
         new Job().setStatus("started").setId("j1"),
-        new Job().setStatus("started"),
+        new Job().setStatus("started"))
+        .thenThrow(GoogleJsonResponseException.class).thenReturn(
         new Job().setStatus("pending").setDescription("pending-description"),
         new Job().setStatus("pending"),
         new Job().setStatus("success").setDescription("description-done"));
