@@ -72,6 +72,7 @@ public abstract class CommandTest {
 
     Mockito.when(readsetGet.setFields(Mockito.anyString())).thenReturn(readsetGet);
     Mockito.when(readsetSearch.setFields(Mockito.anyString())).thenReturn(readsetSearch);
+    Mockito.when(variantSummary.setFields(Mockito.anyString())).thenReturn(variantSummary);
   }
 
   @Before
