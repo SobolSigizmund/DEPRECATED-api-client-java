@@ -17,13 +17,17 @@ package com.google.cloud.genomics.api.client.commands;
 
 import com.beust.jcommander.internal.Lists;
 import com.google.api.client.util.store.MemoryDataStoreFactory;
-import com.google.api.services.genomics.model.*;
+import com.google.api.services.genomics.model.CallSet;
+import com.google.api.services.genomics.model.Dataset;
+import com.google.api.services.genomics.model.SearchCallSetsRequest;
+import com.google.api.services.genomics.model.SearchCallSetsResponse;
+import com.google.api.services.genomics.model.SearchVariantsRequest;
+import com.google.api.services.genomics.model.SearchVariantsResponse;
+import com.google.api.services.genomics.model.Variant;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
-
-import java.math.BigInteger;
 
 import static org.junit.Assert.assertTrue;
 
@@ -68,30 +72,30 @@ public class SearchVariantsCommandTest extends CommandTest {
     Mockito.when(datasets.get("dataset")).thenReturn(datasetGet);
     Mockito.when(datasetGet.execute()).thenReturn(new Dataset().setId("id").setName("1kg"));
 
-    Mockito.when(callsets.search(new SearchCallsetsRequest()
-        .setVariantsetIds(Lists.newArrayList("dataset"))
+    Mockito.when(callsets.search(new SearchCallSetsRequest()
+        .setVariantSetIds(Lists.newArrayList("dataset"))
         .setName("c1")))
         .thenReturn(callsetSearch);
-    Mockito.when(callsets.search(new SearchCallsetsRequest()
-        .setVariantsetIds(Lists.newArrayList("dataset"))
+    Mockito.when(callsets.search(new SearchCallSetsRequest()
+        .setVariantSetIds(Lists.newArrayList("dataset"))
         .setName("c2")))
         .thenReturn(callsetSearch);
     Mockito.when(callsetSearch.execute()).thenReturn(
-        new SearchCallsetsResponse().setCallsets(Lists.newArrayList(new Callset().setId("id1"))),
-        new SearchCallsetsResponse() /* No callset results for c2 */);
+        new SearchCallSetsResponse().setCallSets(Lists.newArrayList(new CallSet().setId("id1"))),
+        new SearchCallSetsResponse() /* No callset results for c2 */);
 
     Mockito.when(variants.search(new SearchVariantsRequest()
-        .setVariantsetId("dataset")
+        .setVariantSetIds(Lists.newArrayList("dataset"))
         .setPageToken("")
-        .setContig("chr1")
-        .setStartPosition(1L)
-        .setEndPosition(5L)
-        .setCallsetIds(Lists.newArrayList("id1"))
-        .setMaxResults(BigInteger.TEN)))
+        .setReferenceName("chr1")
+        .setStart(1L)
+        .setEnd(5L)
+        .setCallSetIds(Lists.newArrayList("id1"))
+        .setPageSize(10)))
         .thenReturn(variantSearch);
     Mockito.when(variantSearch.execute()).thenReturn(
         new SearchVariantsResponse().setVariants(
-            Lists.newArrayList(new Variant().setContig("contig"))));
+            Lists.newArrayList(new Variant().setReferenceName("contig"))));
 
     command.handleRequest(genomics);
 

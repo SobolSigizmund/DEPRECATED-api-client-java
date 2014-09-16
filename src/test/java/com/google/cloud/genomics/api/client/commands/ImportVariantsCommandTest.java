@@ -59,11 +59,10 @@ public class ImportVariantsCommandTest extends CommandTest {
     Mockito.when(jobGet.execute()).thenReturn(
         new Job().setDescription("description1").setStatus("success"));
 
-    // Get the variant summayry
-    Mockito.when(variants.getSummary()).thenReturn(variantSummary);
-    Mockito.when(variantSummary.setVariantsetId("abc")).thenReturn(variantSummary);
-    Mockito.when(variantSummary.execute()).thenReturn(new GetVariantsSummaryResponse()
-        .setContigBounds(Lists.newArrayList(new ContigBound().setContig("contigX"))));
+    // Get the variant set
+    Mockito.when(variantSets.get("abc")).thenReturn(variantSetGet);
+    Mockito.when(variantSetGet.execute()).thenReturn(new VariantSet().setReferenceBounds(
+        Lists.newArrayList(new ReferenceBound().setReferenceName("contigX"))));
 
     command.handleRequest(genomics);
 
@@ -71,7 +70,7 @@ public class ImportVariantsCommandTest extends CommandTest {
     assertTrue(output, output.contains("Importing variants into: 1kg"));
     assertTrue(output, output.contains("Import job:"));
     assertTrue(output, output.contains("description1"));
-    assertTrue(output, output.contains("Imported variant summary:"));
+    assertTrue(output, output.contains("Imported variant set:"));
     assertTrue(output, output.contains("contigX"));
   }
 

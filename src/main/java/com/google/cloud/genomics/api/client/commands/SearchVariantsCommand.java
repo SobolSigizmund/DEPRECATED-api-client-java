@@ -84,15 +84,15 @@ public class SearchVariantsCommand extends SearchCommand {
     }
 
     SearchVariantsRequest request = new SearchVariantsRequest()
-        .setVariantsetId(datasetId)
+        .setVariantSetIds(Lists.newArrayList(datasetId))
         .setPageToken(pageToken)
-        .setContig(sequenceName)
-        .setStartPosition(sequenceStart)
-        .setEndPosition(sequenceEnd)
-        .setMaxResults(getMaxResults());
+        .setReferenceName(sequenceName)
+        .setStart(sequenceStart)
+        .setEnd(sequenceEnd)
+        .setPageSize(getMaxResults().intValue());
 
     if (callsetIds != null) {
-      request.setCallsetIds(callsetIds);
+      request.setCallSetIds(callsetIds);
     }
 
     printResults(Paginator.Variants.create(genomics), request);
@@ -107,14 +107,14 @@ public class SearchVariantsCommand extends SearchCommand {
     }
 
     for (String name : callsetNames) {
-      SearchCallsetsRequest request = new SearchCallsetsRequest()
-          .setVariantsetIds(datasetIds).setName(name);
-      List<Callset> callsets = genomics.callsets().search(request).execute().getCallsets();
+      SearchCallSetsRequest request = new SearchCallSetsRequest()
+          .setVariantSetIds(datasetIds).setName(name);
+      List<CallSet> callsets = genomics.callsets().search(request).execute().getCallSets();
       if (callsets == null || callsets.isEmpty()) {
         System.out.println("No callsets found with the name " + name);
         continue;
       }
-      for (Callset callset : callsets) {
+      for (CallSet callset : callsets) {
         callsetIds.add(callset.getId());
       }
     }

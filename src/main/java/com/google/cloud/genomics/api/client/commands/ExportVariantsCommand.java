@@ -89,9 +89,9 @@ public class ExportVariantsCommand extends BaseCommand {
 
     // Start the export
     ExportVariantsRequest request = new ExportVariantsRequest()
-        .setVariantsetId(datasetId)
+        .setVariantSetId(datasetId)
         .setProjectId(projectId)
-        .setCallsetIds(callsetIds)
+        .setCallSetIds(callsetIds)
         .setBigqueryDataset(bigqueryDataset)
         .setBigqueryTable(bigqueryTable);
     String jobId = genomics.variants().export(request).execute().getJobId();

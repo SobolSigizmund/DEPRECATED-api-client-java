@@ -35,8 +35,8 @@ public class GetVariantsCommandTest extends CommandTest {
     Mockito.when(variants.get("v1")).thenReturn(variantGet);
     Mockito.when(variants.get("v2")).thenReturn(variantGet);
     Mockito.when(variantGet.execute()).thenReturn(
-        new Variant().setContig("contig1"),
-        new Variant().setContig("contig2"));
+        new Variant().setReferenceName("contig1"),
+        new Variant().setReferenceName("contig2"));
 
     command.handleRequest(genomics);
 

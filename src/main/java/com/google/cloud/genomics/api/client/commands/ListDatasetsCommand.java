@@ -88,13 +88,12 @@ public class ListDatasetsCommand extends BaseCommand {
     System.out.print("Readsets: ");
     System.out.println(getReadsetCount(genomics, id));
 
-    // Variant summary
+    // Variant set
     try {
-      GetVariantsSummaryResponse summary = genomics.variants().getSummary()
-          .setVariantsetId(id).setFields("contigBounds").execute();
-      if (summary != null && summary.getContigBounds() != null) {
-        // Only print out a variant summary if one exists
-        System.out.println("Variant summary: " + summary.toPrettyString());
+      VariantSet variantSet = genomics.variantsets().get(id).setFields("referenceBounds").execute();
+      if (variantSet != null && variantSet.getReferenceBounds() != null) {
+        // Only print out a variant set if one exists
+        System.out.println("Variant set: " + variantSet.toPrettyString());
       }
     } catch (GoogleJsonResponseException e) {
       if (e.getDetails() != null && e.getDetails().getCode() != 403) {

@@ -73,11 +73,10 @@ public class ListDatasetsCommandTest extends CommandTest {
     Mockito.when(readsetSearch.execute()).thenReturn(new SearchReadsetsResponse()
         .setReadsets(Lists.newArrayList(new Readset(), new Readset())));
 
-    // Variant summary
-    Mockito.when(variants.getSummary()).thenReturn(variantSummary);
-    Mockito.when(variantSummary.setVariantsetId("id1")).thenReturn(variantSummary);
-    Mockito.when(variantSummary.execute()).thenReturn(new GetVariantsSummaryResponse()
-        .setContigBounds(Lists.newArrayList(new ContigBound().setContig("contigX"))));
+    // Variant set
+    Mockito.when(variantSets.get("id1")).thenReturn(variantSetGet);
+    Mockito.when(variantSetGet.execute()).thenReturn(new VariantSet().setReferenceBounds(
+        Lists.newArrayList(new ReferenceBound().setReferenceName("contigX"))));
 
     command.handleRequest(genomics);
 
@@ -85,7 +84,7 @@ public class ListDatasetsCommandTest extends CommandTest {
     assertTrue(output, output.contains("id1: name"));
     assertTrue(output, output.contains("1234"));
     assertTrue(output, output.contains("Readsets: 2"));
-    assertTrue(output, output.contains("Variant summary:"));
+    assertTrue(output, output.contains("Variant set:"));
     assertTrue(output, output.contains("contigX"));
   }
 
@@ -110,8 +109,8 @@ public class ListDatasetsCommandTest extends CommandTest {
         .thenReturn(readsetSearch);
     Mockito.when(readsetSearch.execute()).thenReturn(new SearchReadsetsResponse());
 
-    // Variant summary
-    Mockito.when(variants.getSummary()).thenThrow(GoogleJsonResponseException.class);
+    // Variant set
+    Mockito.when(variantSets.get(Mockito.anyString())).thenThrow(GoogleJsonResponseException.class);
 
     command.handleRequest(genomics);
 

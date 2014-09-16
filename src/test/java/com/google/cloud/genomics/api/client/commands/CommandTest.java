@@ -50,11 +50,13 @@ public abstract class CommandTest {
   @Mock Genomics.Readsets.Get readsetGet;
   @Mock Genomics.Readsets.Search readsetSearch;
 
+  @Mock Genomics.Variantsets variantSets;
+  @Mock Genomics.Variantsets.Get variantSetGet;
+
   @Mock Genomics.Variants variants;
   @Mock Genomics.Variants.Export variantExport;
   @Mock Genomics.Variants.GenomicsImport variantImport;
   @Mock Genomics.Variants.Get variantGet;
-  @Mock Genomics.Variants.GetSummary variantSummary;
   @Mock Genomics.Variants.Search variantSearch;
 
   ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -68,11 +70,12 @@ public abstract class CommandTest {
     Mockito.when(genomics.jobs()).thenReturn(jobs);
     Mockito.when(genomics.reads()).thenReturn(reads);
     Mockito.when(genomics.readsets()).thenReturn(readsets);
+    Mockito.when(genomics.variantsets()).thenReturn(variantSets);
     Mockito.when(genomics.variants()).thenReturn(variants);
 
     Mockito.when(readsetGet.setFields(Mockito.anyString())).thenReturn(readsetGet);
     Mockito.when(readsetSearch.setFields(Mockito.anyString())).thenReturn(readsetSearch);
-    Mockito.when(variantSummary.setFields(Mockito.anyString())).thenReturn(variantSummary);
+    Mockito.when(variantSetGet.setFields(Mockito.anyString())).thenReturn(variantSetGet);
   }
 
   @Before
