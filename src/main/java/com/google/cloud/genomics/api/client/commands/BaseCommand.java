@@ -187,15 +187,16 @@ public abstract class BaseCommand {
       throws IOException {
     Genomics.Jobs.Get jobRequest = genomics.jobs().get(jobId);
     Job job = jobRequest.execute();
-    String oldStatus = job.getStatus();
+    Job oldJob = job.clone();
 
     if (pollForStatus && !isJobFinished(job)) {
       System.out.println("Waiting for job: " + job.getId());
+      System.out.println(job.toPrettyString());
       while (!isJobFinished(job)) {
-        if (!job.getStatus().equals(oldStatus)) {
-          System.out.println("Job status changed: " + job.toPrettyString());
+        if (!job.equals(oldJob)) {
+          System.out.println("\nJob changed: " + job.toPrettyString());
         }
-        oldStatus = job.getStatus();
+        oldJob = job.clone();
 
         try {
           Thread.sleep(pollingDelay);

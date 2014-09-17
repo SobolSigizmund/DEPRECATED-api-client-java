@@ -23,7 +23,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
@@ -58,22 +57,20 @@ public class GetJobsCommandTest extends CommandTest {
     Mockito.when(jobs.get("j1")).thenReturn(jobGet);
     Mockito.when(jobGet.execute()).thenReturn(
         new Job().setStatus("started").setId("j1"),
-        new Job().setStatus("started"))
+        new Job().setStatus("started").setId("j1"))
         .thenThrow(GoogleJsonResponseException.class).thenReturn(
         new Job().setStatus("pending").setDescription("pending-description"),
-        new Job().setStatus("pending"),
+        new Job().setStatus("pending").setDescription("pending-description"),
         new Job().setStatus("success").setDescription("description-done"));
 
     command.handleRequest(genomics);
 
     String output = outContent.toString();
     assertTrue(output, output.contains("Waiting for job: j1"));
-    assertTrue(output, output.contains("..Job status changed: "));
+    assertTrue(output, output.contains("..\nJob changed: "));
     assertTrue(output, output.contains("pending-description"));
     assertTrue(output, output.contains(".."));
     assertTrue(output, output.contains("description-done"));
-
-    assertFalse(output, output.contains("started"));
   }
 
 }
