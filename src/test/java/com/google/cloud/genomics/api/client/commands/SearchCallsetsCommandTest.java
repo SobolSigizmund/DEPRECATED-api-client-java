@@ -26,8 +26,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
-import java.math.BigInteger;
-
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
@@ -47,7 +45,7 @@ public class SearchCallsetsCommandTest extends CommandTest {
     Mockito.when(callsets.search(new SearchCallSetsRequest()
         .setVariantSetIds(Lists.newArrayList("dataset"))
         .setName("12878")
-        .setMaxResults(BigInteger.TEN)))
+        .setPageSize(10)))
         .thenReturn(callsetSearch);
     Mockito.when(callsetSearch.execute()).thenReturn(new SearchCallSetsResponse()
         .setCallSets(Lists.<CallSet>newArrayList()));

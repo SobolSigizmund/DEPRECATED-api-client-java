@@ -18,10 +18,9 @@ package com.google.cloud.genomics.api.client.commands;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.api.services.genomics.Genomics;
-import com.google.api.services.genomics.model.CallSet;
 import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.SearchCallSetsRequest;
-import com.google.api.services.genomics.model.SearchCallSetsResponse;
+import com.google.cloud.genomics.utils.Paginator;
 import com.google.common.collect.Lists;
 
 import java.io.IOException;
@@ -50,15 +49,8 @@ public class SearchCallsetsCommand extends SearchCommand {
     SearchCallSetsRequest request = new SearchCallSetsRequest()
         .setVariantSetIds(Lists.newArrayList(datasetId))
         .setName(name)
-        .setMaxResults(getMaxResults());
+        .setPageSize(getMaxResults().intValue());
 
-
-    SearchCallSetsResponse response = genomics.callsets().search(request).execute();
-    for (CallSet result : response.getCallSets()) {
-      System.out.println(prettyPrint ? result.toPrettyString() : result.toString());
-    }
-
-    // TODO: Update utils-java and bring back the paginator usage
-//    printResults(Paginator.Callsets.create(genomics), request);
+    printResults(Paginator.Callsets.create(genomics), request);
   }
 }
