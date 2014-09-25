@@ -33,32 +33,33 @@ public class SearchVariantsCommand extends SearchCommand {
       required = true)
   public String datasetId;
 
-  @Parameter(names = "--callset_id",
-      description = "Only return calls from these callsets.")
-  public List<String> callsetIds;
+  @Parameter(names = { "--call_set_id", "--callset_id" },
+      description = "Only return calls from these call sets.")
+  public List<String> callSetIds;
 
-  @Parameter(names = "--callset_name",
-      description = "An alternative to callset_id, only return calls from callsets " +
+  @Parameter(names = {"--call_set_name", "--callset_name" },
+      description = "An alternative to call_set_id, only return calls from call sets " +
           "with these names.")
-  public List<String> callsetNames;
+  public List<String> callSetNames;
 
   @Parameter(names = "--page_token",
       description = "Deprecated. Use --count instead.",
       hidden = true)
   public String pageToken = "";
 
-  @Parameter(names = { "--sequence_name", "--contig" },
+  // TODO: Simplify the option names when this code switches to v1beta2
+  @Parameter(names = { "--sequence_name", "--contig", "--reference_name" },
       description = "The sequence name to query over (e.g. 'X', '23')",
       required = true)
   public String sequenceName;
 
-  @Parameter(names = { "--sequence_start", "--start_position" },
-      description = "The start position (1-based) of this query.",
+  @Parameter(names = { "--sequence_start", "--start_position", "--start" },
+      description = "The start position (0-based) of this query.",
       required = true)
   public Long sequenceStart;
 
-  @Parameter(names = {"--sequence_end", "--end_position" },
-      description = "The end position (1-based, inclusive) of this query.",
+  @Parameter(names = {"--sequence_end", "--end_position", "--end" },
+      description = "The end position (0-based, exclusive) of this query.",
       required = true)
   public Long sequenceEnd;
 
@@ -75,10 +76,10 @@ public class SearchVariantsCommand extends SearchCommand {
     }
     System.out.println("Getting variants from: " + dataset.getName());
 
-    if (callsetNames != null) {
-      getCallsetsByName(genomics);
-      if (callsetIds.isEmpty()) {
-        // We couldn't find any valid callsets to query
+    if (callSetNames != null) {
+      getCallSetsByName(genomics);
+      if (callSetIds.isEmpty()) {
+        // We couldn't find any valid call sets to query
         return;
       }
     }
@@ -91,31 +92,31 @@ public class SearchVariantsCommand extends SearchCommand {
         .setEnd(sequenceEnd)
         .setPageSize(getMaxResults().intValue());
 
-    if (callsetIds != null) {
-      request.setCallSetIds(callsetIds);
+    if (callSetIds != null) {
+      request.setCallSetIds(callSetIds);
     }
 
     printResults(Paginator.Variants.create(genomics), request);
   }
 
-  private void getCallsetsByName(Genomics genomics) throws IOException {
+  private void getCallSetsByName(Genomics genomics) throws IOException {
     List<String> datasetIds = Lists.newArrayList();
     datasetIds.add(datasetId);
 
-    if (callsetIds == null) {
-      callsetIds = Lists.newArrayList();
+    if (callSetIds == null) {
+      callSetIds = Lists.newArrayList();
     }
 
-    for (String name : callsetNames) {
+    for (String name : callSetNames) {
       SearchCallSetsRequest request = new SearchCallSetsRequest()
           .setVariantSetIds(datasetIds).setName(name);
-      List<CallSet> callsets = genomics.callsets().search(request).execute().getCallSets();
-      if (callsets == null || callsets.isEmpty()) {
-        System.out.println("No callsets found with the name " + name);
+      List<CallSet> callSets = genomics.callsets().search(request).execute().getCallSets();
+      if (callSets == null || callSets.isEmpty()) {
+        System.out.println("No call sets found with the name " + name);
         continue;
       }
-      for (CallSet callset : callsets) {
-        callsetIds.add(callset.getId());
+      for (CallSet callSet : callSets) {
+        callSetIds.add(callSet.getId());
       }
     }
   }

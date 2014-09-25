@@ -25,16 +25,16 @@ import com.google.common.collect.Lists;
 
 import java.io.IOException;
 
-@Parameters(commandDescription = "Search over callsets")
+@Parameters(commandDescription = "Search over call sets")
 public class SearchCallsetsCommand extends SearchCommand {
 
   @Parameter(names = "--dataset_id",
-      description = "The Genomics API dataset ID to get callsets for.",
+      description = "The Genomics API dataset ID to get call sets for.",
       required = true)
   public String datasetId;
 
   @Parameter(names = "--name",
-      description = "Only return callsets for which a substring of the name matches this string.")
+      description = "Only return call sets for which a substring of the name matches this string.")
   public String name;
 
   @Override
@@ -44,7 +44,7 @@ public class SearchCallsetsCommand extends SearchCommand {
     if (dataset == null) {
       return;
     }
-    System.out.println("Getting callsets from: " + dataset.getName());
+    System.out.println("Getting call sets from: " + dataset.getName());
 
     SearchCallSetsRequest request = new SearchCallSetsRequest()
         .setVariantSetIds(Lists.newArrayList(datasetId))

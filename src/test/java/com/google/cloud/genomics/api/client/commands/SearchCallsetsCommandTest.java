@@ -53,7 +53,7 @@ public class SearchCallsetsCommandTest extends CommandTest {
     command.handleRequest(genomics);
 
     String output = outContent.toString();
-    assertTrue(output, output.contains("Getting callsets from: 1kg"));
+    assertTrue(output, output.contains("Getting call sets from: 1kg"));
   }
 
 }

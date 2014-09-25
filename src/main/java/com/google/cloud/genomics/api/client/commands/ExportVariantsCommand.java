@@ -34,17 +34,17 @@ public class ExportVariantsCommand extends BaseCommand {
       required = true)
   public String datasetId;
 
-  @Parameter(names = "--project_id",
-      description = "The ID of the project that will be billed for this export.",
+  @Parameter(names = { "--project_number", "--project_id" },
+      description = "The Google Developer's Console project number that owns the BigQuery dataset.",
       required = true)
   public Long projectId;
 
-  @Parameter(names = "--callset_id",
+  @Parameter(names = { "--call_set_id", "--callset_id" },
       description = "If provided, only variant call information from " +
-          "the specified callsets will be exported. By default all " + 
+          "the specified call sets will be exported. By default all " +
           "variant calls are exported.",
       required = false)
-  public List<String> callsetIds;
+  public List<String> callSetIds;
 
   @Parameter(names = "--bigquery_dataset",
       description = "The BigQuery dataset to export data to. " + 
@@ -56,9 +56,8 @@ public class ExportVariantsCommand extends BaseCommand {
 
   @Parameter(names = "--bigquery_table",
       description = "The BigQuery table to export data to. " +
-        "The caller must have WRITE access to this BigQuery table, " +
-        "or WRITE privileges on the BigQuery dataset if the table " +
-        "does not already exist.",
+        "If the table doesn't exists, it will be created." +
+        "If it already exists, it will be overwritten.",
       required = true)
   public String bigqueryTable;
 
@@ -83,15 +82,15 @@ public class ExportVariantsCommand extends BaseCommand {
     }
 
     System.out.println("Exporting variants for dataset " + dataset.getName());
-    if (callsetIds != null && !callsetIds.isEmpty()) {
-      System.out.println(Joiner.on(',').join(callsetIds));
+    if (callSetIds != null && !callSetIds.isEmpty()) {
+      System.out.println(Joiner.on(',').join(callSetIds));
     }
 
     // Start the export
     ExportVariantsRequest request = new ExportVariantsRequest()
         .setVariantSetId(datasetId)
         .setProjectId(projectId)
-        .setCallSetIds(callsetIds)
+        .setCallSetIds(callSetIds)
         .setBigqueryDataset(bigqueryDataset)
         .setBigqueryTable(bigqueryTable);
     String jobId = genomics.variants().export(request).execute().getJobId();

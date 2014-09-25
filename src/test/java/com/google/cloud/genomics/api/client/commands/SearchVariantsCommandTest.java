@@ -67,7 +67,7 @@ public class SearchVariantsCommandTest extends CommandTest {
     command.sequenceName = "chr1";
     command.sequenceStart = 1L;
     command.sequenceEnd = 5L;
-    command.callsetNames = Lists.newArrayList("c1", "c2");
+    command.callSetNames = Lists.newArrayList("c1", "c2");
 
     Mockito.when(datasets.get("dataset")).thenReturn(datasetGet);
     Mockito.when(datasetGet.execute()).thenReturn(new Dataset().setId("id").setName("1kg"));
@@ -100,7 +100,7 @@ public class SearchVariantsCommandTest extends CommandTest {
     command.handleRequest(genomics);
 
     String output = outContent.toString();
-    assertTrue(output, output.contains("No callsets found with the name c2"));
+    assertTrue(output, output.contains("No call sets found with the name c2"));
     assertTrue(output, output.contains("contig"));
   }
 
