@@ -26,10 +26,14 @@ import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.GenomicsScopes;
 import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.Job;
+import com.google.api.services.genomics.model.SearchReadsetsRequest;
+import com.google.api.services.genomics.model.SearchReadsetsResponse;
+import com.google.api.services.genomics.model.VariantSet;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -216,5 +220,58 @@ public abstract class BaseCommand {
       System.out.println();
     }
     return job;
+  }
+
+  protected void printDataset(Genomics genomics, Dataset dataset, boolean includeDetails)
+      throws IOException {
+    printDataset(genomics, dataset.getId(), dataset.getName(), dataset, includeDetails);
+  }
+
+  protected void printDataset(Genomics genomics, String id, String name, Dataset dataset,
+      boolean includeDetails) throws IOException {
+    System.out.println(id + ": " + name);
+    if (!includeDetails) {
+      return;
+    }
+
+    if (dataset == null) {
+      try {
+        dataset = getDataset(genomics, id, false);
+      } catch (GoogleJsonResponseException e) {
+        System.out.println("Dataset not found - it may have been deleted.\n");
+        return;
+      }
+    }
+
+    System.out.println(dataset.toPrettyString());
+    System.out.print("Readsets: ");
+    System.out.println(getReadsetCount(genomics, id));
+
+    // Variant set
+    VariantSet variantSet = genomics.variantsets().get(id).setFields("referenceBounds").execute();
+    if (variantSet != null && variantSet.getReferenceBounds() != null) {
+      // Only print out a variant set if one exists
+      System.out.println("Variant set: " + variantSet.toPrettyString());
+    }
+
+    System.out.println();
+  }
+
+  private String getReadsetCount(Genomics genomics, String datasetId) throws IOException {
+    SearchReadsetsRequest readsetSearch = new SearchReadsetsRequest()
+        .setDatasetIds(com.google.common.collect.Lists.newArrayList(datasetId))
+        .setMaxResults(BigInteger.valueOf(100L));
+
+    SearchReadsetsResponse readsets = genomics.readsets()
+        .search(readsetSearch).setFields("nextPageToken,readsets(id)").execute();
+    if (readsets.getReadsets() == null) {
+      return "0";
+    }
+
+    if (com.google.api.client.repackaged.com.google.common.base.Strings.isNullOrEmpty(readsets.getNextPageToken())) {
+      return String.valueOf(readsets.getReadsets().size());
+    } else {
+      return "More than 100";
+    }
   }
 }

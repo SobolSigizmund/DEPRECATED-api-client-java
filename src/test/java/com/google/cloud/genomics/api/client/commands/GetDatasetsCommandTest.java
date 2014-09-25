@@ -36,6 +36,7 @@ public class GetDatasetsCommandTest extends CommandTest {
     command.setDataStoreFactory(new MemoryDataStoreFactory());
 
     command.datasetIds = Lists.newArrayList("d1", "d2");
+    command.includeDetails = false;
 
     Dataset dataset1 = new Dataset().setId("d1").setName("name1");
     Dataset dataset2 = new Dataset().setId("d2").setName("name2");

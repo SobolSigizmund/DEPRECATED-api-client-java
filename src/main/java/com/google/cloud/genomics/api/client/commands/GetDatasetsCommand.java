@@ -31,12 +31,18 @@ public class GetDatasetsCommand extends BaseCommand {
       required = true)
   public List<String> datasetIds;
 
+  @Parameter(names = "--details",
+      arity = 1,
+      description = "Whether to display the full details of each dataset " +
+          "(besides just name and ID)")
+  public boolean includeDetails = true;
+
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
     for (String datasetId : datasetIds) {
       Dataset dataset = getDataset(genomics, datasetId);
       if (dataset != null) {
-        System.out.println(dataset.toPrettyString() + "\n");
+        printDataset(genomics, dataset, includeDetails);
       }
     }
   }

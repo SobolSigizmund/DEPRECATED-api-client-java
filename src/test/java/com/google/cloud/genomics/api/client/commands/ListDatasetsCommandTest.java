@@ -110,7 +110,8 @@ public class ListDatasetsCommandTest extends CommandTest {
     Mockito.when(readsetSearch.execute()).thenReturn(new SearchReadsetsResponse());
 
     // Variant set
-    Mockito.when(variantSets.get(Mockito.anyString())).thenThrow(GoogleJsonResponseException.class);
+    Mockito.when(variantSets.get(Mockito.anyString())).thenReturn(variantSetGet);
+    Mockito.when(variantSetGet.execute()).thenReturn(new VariantSet());
 
     command.handleRequest(genomics);
 

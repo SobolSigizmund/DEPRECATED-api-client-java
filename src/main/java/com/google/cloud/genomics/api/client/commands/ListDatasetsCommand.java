@@ -17,14 +17,11 @@ package com.google.cloud.genomics.api.client.commands;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
-import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.services.genomics.Genomics;
-import com.google.api.services.genomics.model.*;
-import com.google.common.collect.Lists;
+import com.google.api.services.genomics.model.Dataset;
+import com.google.api.services.genomics.model.ListDatasetsResponse;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.Map;
 
 @Parameters(commandDescription = "List recent datasets used by this command line, or list them " +
@@ -50,7 +47,7 @@ public class ListDatasetsCommand extends BaseCommand {
         return;
       }
       for (Dataset dataset : datasets.getDatasets()) {
-        printDataset(genomics, dataset.getId(), dataset.getName(), dataset);
+        printDataset(genomics, dataset, includeDetails);
       }
 
     } else {
@@ -63,65 +60,8 @@ public class ListDatasetsCommand extends BaseCommand {
       }
 
       for (Map.Entry<String, String> dataset : datasets.entrySet()) {
-        printDataset(genomics, dataset.getKey(), dataset.getValue(), null);
+        printDataset(genomics, dataset.getKey(), dataset.getValue(), null, includeDetails);
       }
-    }
-  }
-
-  private void printDataset(Genomics genomics, String id, String name, Dataset dataset)
-      throws IOException {
-    System.out.println(id + ": " + name);
-    if (!includeDetails) {
-      return;
-    }
-
-    if (dataset == null) {
-      try {
-        dataset = getDataset(genomics, id, false);
-      } catch (GoogleJsonResponseException e) {
-        System.out.println("Dataset not found - it may have been deleted.\n");
-        return;
-      }
-    }
-
-    System.out.println(dataset.toPrettyString());
-    System.out.print("Readsets: ");
-    System.out.println(getReadsetCount(genomics, id));
-
-    // Variant set
-    try {
-      VariantSet variantSet = genomics.variantsets().get(id).setFields("referenceBounds").execute();
-      if (variantSet != null && variantSet.getReferenceBounds() != null) {
-        // Only print out a variant set if one exists
-        System.out.println("Variant set: " + variantSet.toPrettyString());
-      }
-    } catch (GoogleJsonResponseException e) {
-      if (e.getDetails() != null && e.getDetails().getCode() != 403) {
-        // The variants APIs aren't fully public, so 403s are common
-        // Only display errors which aren't an authorization fail
-        // TODO: Remove this if block once the variant APIs are widely available
-        throw e;
-      }
-    }
-
-    System.out.println();
-  }
-
-  private String getReadsetCount(Genomics genomics, String datasetId) throws IOException {
-    SearchReadsetsRequest readsetSearch = new SearchReadsetsRequest()
-        .setDatasetIds(Lists.newArrayList(datasetId))
-        .setMaxResults(BigInteger.valueOf(100L));
-
-    SearchReadsetsResponse readsets = genomics.readsets()
-        .search(readsetSearch).setFields("nextPageToken,readsets(id)").execute();
-    if (readsets.getReadsets() == null) {
-      return "0";
-    }
-
-    if (Strings.isNullOrEmpty(readsets.getNextPageToken())) {
-      return String.valueOf(readsets.getReadsets().size());
-    } else {
-      return "More than 100";
     }
   }
 }
