@@ -38,6 +38,7 @@ public abstract class CommandTest {
   @Mock Genomics.Datasets.Patch datasetPatch;
 
   @Mock Genomics.Jobs jobs;
+  @Mock Genomics.Jobs.Cancel jobCancel;
   @Mock Genomics.Jobs.Get jobGet;
   @Mock Genomics.Jobs.Search jobSearch;
 

@@ -52,6 +52,7 @@ class CommandLine {
 
     addCommand("listjobs", new ListJobsCommand());
     addCommand("getjob", new GetJobsCommand());
+    addCommand("canceljob", new CancelJobCommand());
 
     addCommand("searchreads", new SearchReadsCommand());
 
