@@ -28,8 +28,8 @@ import java.util.List;
 @Parameters(commandDescription = "Search over variants")
 public class SearchVariantsCommand extends SearchCommand {
 
-  @Parameter(names = "--dataset_id",
-      description = "The Genomics API dataset ID to get variants for.",
+  @Parameter(names = { "--variant_set_id", "--dataset_id" },
+      description = "The Genomics API variant set ID to get variants for.",
       required = true)
   public String datasetId;
 

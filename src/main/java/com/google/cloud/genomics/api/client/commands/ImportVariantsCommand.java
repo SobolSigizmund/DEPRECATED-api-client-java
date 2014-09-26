@@ -32,8 +32,8 @@ import java.util.List;
 @Parameters(commandDescription = "Import variants from Google Cloud Storage")
 public class ImportVariantsCommand extends BaseCommand {
 
-  @Parameter(names = "--dataset_id",
-      description = "The Genomics API dataset ID to import into.",
+  @Parameter(names = { "--variant_set_id", "--dataset_id" },
+      description = "The Genomics API variant set ID to import into.",
       required = true)
   public String datasetId;
 

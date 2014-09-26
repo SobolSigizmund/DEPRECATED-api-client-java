@@ -28,8 +28,8 @@ import java.io.IOException;
 @Parameters(commandDescription = "Search over call sets")
 public class SearchCallsetsCommand extends SearchCommand {
 
-  @Parameter(names = "--dataset_id",
-      description = "The Genomics API dataset ID to get call sets for.",
+  @Parameter(names = { "--variant_set_id", "--dataset_id" },
+      description = "The Genomics API variant set ID to get call sets for.",
       required = true)
   public String datasetId;
 

@@ -29,8 +29,8 @@ import java.util.List;
 @Parameters(commandDescription = "Export variants from Google Genomics into Google Big Query")
 public class ExportVariantsCommand extends BaseCommand {
 
-  @Parameter(names = "--dataset_id",
-      description = "The Genomics API dataset ID to export from.",
+  @Parameter(names = { "--variant_set_id", "--dataset_id" },
+      description = "The Genomics API variant set ID to export from.",
       required = true)
   public String datasetId;
 
