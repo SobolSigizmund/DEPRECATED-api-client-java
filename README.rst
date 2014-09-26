@@ -29,7 +29,7 @@ command line.
 * You can then perform API queries like fetching readsets or
   reads::
 
-    java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets --dataset_id 376902546192 --fields "readsets(id,name)"
+    java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets --dataset_id 10473108253681171589 --fields "readsets(id,name)"
 
     java -jar target/genomics-tools-client-java-v1beta.jar searchreads --readset_id "CJDmkYn8ChCh4IH4hOf4gacB" --sequence_name 1 --sequence_start 10000 --sequence_end 10000
 
