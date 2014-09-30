@@ -45,6 +45,11 @@ public class ImportVariantsCommand extends BaseCommand {
       required = true)
   public List<String> vcfFiles;
 
+  @Parameter(names = "--format",
+      description = "Set this to \"completeGenomics\" if you are importing " +
+          "Complete Genomics files.")
+  public String fileFormat = "vcf";
+
   @Parameter(names = "--poll",
       description = "If set, the client will query for job status " +
           "until it either finishes or fails.")
@@ -70,8 +75,10 @@ public class ImportVariantsCommand extends BaseCommand {
 
     // Start the import
     Genomics.Variants.GenomicsImport req = genomics.variants().genomicsImport(
-        new ImportVariantsRequest().setVariantSetId(datasetId)
-            .setSourceUris(vcfFiles));
+        new ImportVariantsRequest()
+            .setVariantSetId(datasetId)
+            .setSourceUris(vcfFiles)
+            .setFormat(fileFormat));
     String jobId = req.execute().getJobId();
 
     // Get the resulting job
