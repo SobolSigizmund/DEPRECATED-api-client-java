@@ -56,6 +56,8 @@ class CommandLine {
 
     addCommand("searchreads", new SearchReadsCommand());
 
+    addCommand("getvariantset", new GetVariantSetsCommand());
+
     addCommand("searchvariants", new SearchVariantsCommand());
     addCommand("getvariant", new GetVariantsCommand());
     addCommand("importvariants", new ImportVariantsCommand());
