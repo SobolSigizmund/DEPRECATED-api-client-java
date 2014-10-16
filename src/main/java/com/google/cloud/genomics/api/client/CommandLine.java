@@ -64,6 +64,7 @@ class CommandLine {
     addCommand("exportvariants", new ExportVariantsCommand());
 
     addCommand("searchcallsets", new SearchCallsetsCommand());
+    addCommand("updatecallset", new UpdateCallSetCommand());
 
     // Custom escape hatch
     addCommand("custom", new CustomCommand());

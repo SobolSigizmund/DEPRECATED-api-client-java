@@ -30,6 +30,7 @@ public abstract class CommandTest {
 
   @Mock Genomics.Callsets callsets;
   @Mock Genomics.Callsets.Search callsetSearch;
+  @Mock Genomics.Callsets.Patch callsetPatch;
 
   @Mock Genomics.Datasets datasets;
   @Mock Genomics.Datasets.Create datasetCreate;
