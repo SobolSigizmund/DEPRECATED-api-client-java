@@ -55,7 +55,8 @@ public class ListDatasetsCommand extends BaseCommand {
       if (datasets.isEmpty()) {
         System.out.println("There aren't any recently used datasets. " +
             "Specify a --project_id flag to get datasets for a specific project, or use the " +
-            "'createdataset' command to make a new dataset.");
+            "'createdataset' command to make a new dataset.\n" +
+            "You can find Google Genomics Public Data in project 761052378059");
         return;
       }
 

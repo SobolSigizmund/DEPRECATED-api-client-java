@@ -77,6 +77,10 @@ public class ReadableFileDataStoreFactory extends FileDataStoreFactory {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
         String line = reader.readLine();
+        if (line == null) {
+          return;
+        }
+
         if (!line.contains(SEPARATOR)) {
           loadLegacyFile();
           return;
