@@ -23,7 +23,7 @@ command line.
 * Then, follow the `sign up instructions`_ to generate a valid
   ``client_secrets.json`` file.
 
-* Move the ``client_secrets.json`` file into the client-java directory.
+* Move the ``client_secrets.json`` file into the api-client-java directory.
   (Authentication will take place the first time you make an API call.)
 
 * You can then perform API queries like fetching readsets or
@@ -31,7 +31,7 @@ command line.
 
     java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets --dataset_id 10473108253681171589 --fields "readsets(id,name)"
 
-    java -jar target/genomics-tools-client-java-v1beta.jar searchreads --readset_id "CMvnhpKTFhD04eLE-q2yxnU" --sequence_name 1 --sequence_start 10000 --sequence_end 10000
+    java -jar target/genomics-tools-client-java-v1beta.jar searchreads --readset_id "CMvnhpKTFhD04eLE-q2yxnU" --sequence_name chr1 --sequence_start 10000 --sequence_end 10000
 
 
 Troubleshooting
