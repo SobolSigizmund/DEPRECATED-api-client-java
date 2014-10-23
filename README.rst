@@ -31,7 +31,7 @@ command line.
 
     java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets --dataset_id 10473108253681171589 --fields "readsets(id,name)"
 
-    java -jar target/genomics-tools-client-java-v1beta.jar searchreads --readset_id "CMvnhpKTFhD04eLE-q2yxnU" --sequence_name chr1 --sequence_start 10000 --sequence_end 10000
+    java -jar target/genomics-tools-client-java-v1beta.jar searchreads --readset_id "CMvnhpKTFhD04eLE-q2yxnU" --sequence_name 1 --sequence_start 10000 --sequence_end 10000
 
 
 Troubleshooting
