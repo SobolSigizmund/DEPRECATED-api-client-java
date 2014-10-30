@@ -31,17 +31,17 @@ import org.mockito.Mockito;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
-public class ExportReadsetsCommandTest extends CommandTest {
+public class ExportReadsCommandTest extends CommandTest {
 
   @Test
   public void testScopes() throws Exception {
-    assertTrue(new ExportReadsetsCommand().getScopes()
+    assertTrue(new ExportReadsCommand().getScopes()
         .contains(GenomicsScopes.DEVSTORAGE_READ_WRITE));
   }
 
   @Test
   public void testExportReadsets() throws Exception {
-    ExportReadsetsCommand command = new ExportReadsetsCommand();
+    ExportReadsCommand command = new ExportReadsCommand();
     command.setDataStoreFactory(new MemoryDataStoreFactory());
 
     command.readGroupSetIds = Lists.newArrayList("r1", "r2");
@@ -75,7 +75,7 @@ public class ExportReadsetsCommandTest extends CommandTest {
 
   @Test
   public void testExportReadsets_badIds() throws Exception {
-    ExportReadsetsCommand command = new ExportReadsetsCommand();
+    ExportReadsCommand command = new ExportReadsCommand();
     command.readGroupSetIds = Lists.newArrayList("bad");
 
     // Get the readsets

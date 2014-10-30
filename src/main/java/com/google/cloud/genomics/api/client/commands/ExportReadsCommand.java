@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Parameters(commandDescription = "Export readsets from Google Genomics into Google Cloud Storage")
-public class ExportReadsetsCommand extends BaseCommand {
+public class ExportReadsCommand extends BaseCommand {
 
   private static final Function<ReadGroupSet,String> GET_NAME
       = new Function<ReadGroupSet, String>() {

@@ -27,17 +27,17 @@ import org.mockito.Mockito;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
-public class ImportReadsetsCommandTest extends CommandTest {
+public class ImportReadsCommandTest extends CommandTest {
 
   @Test
   public void testScopes() throws Exception {
-    assertTrue(new ImportReadsetsCommand().getScopes()
+    assertTrue(new ImportReadsCommand().getScopes()
         .contains(GenomicsScopes.DEVSTORAGE_READ_WRITE));
   }
 
   @Test
   public void testImportReadsets() throws Exception {
-    ImportReadsetsCommand command = new ImportReadsetsCommand();
+    ImportReadsCommand command = new ImportReadsCommand();
     command.setDataStoreFactory(new MemoryDataStoreFactory());
 
     command.bamFiles = Lists.newArrayList("uri1", "uri2");

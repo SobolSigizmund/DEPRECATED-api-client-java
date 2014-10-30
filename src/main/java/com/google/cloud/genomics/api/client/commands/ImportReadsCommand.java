@@ -34,7 +34,7 @@ import java.util.List;
  * Fetches the imported read group sets if the job completes.
 */
 @Parameters(commandDescription = "Import read group sets from Google Cloud Storage")
-public class ImportReadsetsCommand extends BaseCommand {
+public class ImportReadsCommand extends BaseCommand {
 
   @Parameter(names = "--dataset_id",
       description = "The Genomics API dataset ID to import into.",

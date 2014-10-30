@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Parameters(commandDescription = "Get read group sets by ID")
-public class GetReadsetsCommand extends SimpleCommand {
+public class GetReadGroupSetsCommand extends SimpleCommand {
 
   @Parameter(names = {"--id", "--read_group_set_id"},
       description = "The Genomics API read group set ID.",

@@ -25,11 +25,11 @@ import org.mockito.Mockito;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
-public class GetReadsetsCommandTest extends CommandTest {
+public class GetReadGroupSetsCommandTest extends CommandTest {
 
   @Test
   public void testGetReadsets() throws Exception {
-    GetReadsetsCommand command = new GetReadsetsCommand();
+    GetReadGroupSetsCommand command = new GetReadGroupSetsCommand();
     command.readGroupSetIds = Lists.newArrayList("r1", "r2");
 
     Mockito.when(readsets.get("r1")).thenReturn(readsetGet);

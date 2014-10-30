@@ -26,7 +26,7 @@ import com.google.common.collect.Lists;
 import java.io.IOException;
 
 @Parameters(commandDescription = "Search over read group sets")
-public class SearchReadsetsCommand extends SearchCommand {
+public class SearchReadGroupSetsCommand extends SearchCommand {
 
   @Parameter(names = "--dataset_id",
       description = "The Genomics API dataset ID to get read group sets for.",

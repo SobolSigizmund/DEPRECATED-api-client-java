@@ -26,7 +26,7 @@ import com.google.common.collect.Lists;
 import java.io.IOException;
 
 @Parameters(commandDescription = "Search over call sets")
-public class SearchCallsetsCommand extends SearchCommand {
+public class SearchCallSetsCommand extends SearchCommand {
 
   @Parameter(names = "--variant_set_id",
       description = "The Genomics API variant set ID to get call sets for.",

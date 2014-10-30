@@ -45,16 +45,12 @@ class CommandLine {
     addCommand("createdataset", new CreateDatasetCommand());
     addCommand("updatedataset", new UpdateDatasetCommand());
 
-    addCommand("searchreadsets", new SearchReadsetsCommand());
-    addCommand("getreadset", new GetReadsetsCommand());
-    addCommand("importreadsets", new ImportReadsetsCommand());
-    addCommand("exportreadsets", new ExportReadsetsCommand());
-
-    addCommand("listjobs", new ListJobsCommand());
-    addCommand("getjob", new GetJobsCommand());
-    addCommand("canceljob", new CancelJobCommand());
+    addCommand("searchreadgroupsets", new SearchReadGroupSetsCommand());
+    addCommand("getreadgroupset", new GetReadGroupSetsCommand());
 
     addCommand("searchreads", new SearchReadsCommand());
+    addCommand("importreads", new ImportReadsCommand());
+    addCommand("exportreads", new ExportReadsCommand());
 
     addCommand("getvariantset", new GetVariantSetsCommand());
 
@@ -63,8 +59,12 @@ class CommandLine {
     addCommand("importvariants", new ImportVariantsCommand());
     addCommand("exportvariants", new ExportVariantsCommand());
 
-    addCommand("searchcallsets", new SearchCallsetsCommand());
+    addCommand("searchcallsets", new SearchCallSetsCommand());
     addCommand("updatecallset", new UpdateCallSetCommand());
+
+    addCommand("listjobs", new ListJobsCommand());
+    addCommand("getjob", new GetJobsCommand());
+    addCommand("canceljob", new CancelJobCommand());
 
     // Custom escape hatch
     addCommand("custom", new CustomCommand());

@@ -29,11 +29,11 @@ import org.mockito.Mockito;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
-public class SearchCallsetsCommandTest extends CommandTest {
+public class SearchCallSetsCommandTest extends CommandTest {
 
   @Test
   public void testCommand() throws Exception {
-    SearchCallsetsCommand command = new SearchCallsetsCommand();
+    SearchCallSetsCommand command = new SearchCallSetsCommand();
     command.setDataStoreFactory(new MemoryDataStoreFactory());
 
     command.datasetId = "dataset";
