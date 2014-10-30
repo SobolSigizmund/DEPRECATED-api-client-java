@@ -29,9 +29,9 @@ command line.
 * You can then perform API queries like fetching readsets or
   reads::
 
-    java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets --dataset_id 10473108253681171589 --fields "readsets(id,name)"
+    java -jar target/genomics-tools-client-java-v1beta2.jar searchreadgroupsets --dataset_id 10473108253681171589 --fields "readGroupSets(id,name)"
 
-    java -jar target/genomics-tools-client-java-v1beta.jar searchreads --readset_id "CMvnhpKTFhD04eLE-q2yxnU" --sequence_name 1 --sequence_start 10000 --sequence_end 10000
+    java -jar target/genomics-tools-client-java-v1beta2.jar searchreads --id "CMvnhpKTFhD04eLE-q2yxnU" --reference_name 1 --start 10000 --end 10001
 
 
 Troubleshooting
@@ -39,17 +39,17 @@ Troubleshooting
     
 * You can get a list of valid commands by running::
 
-   java -jar target/genomics-tools-client-java-v1beta.jar
+   java -jar target/genomics-tools-client-java-v1beta2.jar
 
 * Or get help on a specific command with::
 
-   java -jar target/genomics-tools-client-java-v1beta.jar searchreadsets
+   java -jar target/genomics-tools-client-java-v1beta2.jar searchreadgroupsets
 
 * If your environment isn’t capable of running a local server, and then
   seeing that server on `localhost` with a browser, then you can use the ``--nolocalserver``
   flag to go back to the more manual auth process::
   
-    java -jar target/genomics-tools-client-java-v1beta.jar listjobs --nolocalserver 
+    java -jar target/genomics-tools-client-java-v1beta2.jar listjobs --nolocalserver
 
 * Note that not all of Google's APIs are callable at this time. The docs have 
   `a list <http://google-genomics.readthedocs.org/en/latest/auth_requirements.html>`_ 
@@ -91,7 +91,7 @@ To update the jar, we use a different set of maven commands::
   cd api-client-java
   mvn clean
   mvn assembly:assembly
-  cp target/genomics-tools-client-java-v1beta-jar-with-dependencies.jar genomics-tools-client-java-v1beta.jar
+  cp target/genomics-tools-client-java-v1beta2-jar-with-dependencies.jar genomics-tools-client-java-v1beta2.jar
 
 
 
