@@ -28,48 +28,37 @@ import java.util.List;
 @Parameters(commandDescription = "Search over variants")
 public class SearchVariantsCommand extends SearchCommand {
 
-  @Parameter(names = { "--variant_set_id", "--dataset_id" },
+  @Parameter(names = {"--id", "--variant_set_id"},
       description = "The Genomics API variant set ID to get variants for.",
       required = true)
   public String datasetId;
 
-  @Parameter(names = { "--call_set_id", "--callset_id" },
+  @Parameter(names = "--call_set_id",
       description = "Only return calls from these call sets.")
   public List<String> callSetIds;
 
-  @Parameter(names = {"--call_set_name", "--callset_name" },
+  @Parameter(names = "--call_set_name",
       description = "An alternative to call_set_id, only return calls from call sets " +
           "with these names.")
   public List<String> callSetNames;
 
-  @Parameter(names = "--page_token",
-      description = "Deprecated. Use --count instead.",
-      hidden = true)
-  public String pageToken = "";
-
-  // TODO: Simplify the option names when this code switches to v1beta2
-  @Parameter(names = { "--sequence_name", "--contig", "--reference_name" },
+  @Parameter(names = "--reference_name",
       description = "The sequence name to query over (e.g. 'X', '23')",
       required = true)
-  public String sequenceName;
+  public String referenceName;
 
-  @Parameter(names = { "--sequence_start", "--start_position", "--start" },
+  @Parameter(names = "--start",
       description = "The start position (0-based) of this query.",
       required = true)
-  public Long sequenceStart;
+  public Long start;
 
-  @Parameter(names = {"--sequence_end", "--end_position", "--end" },
+  @Parameter(names = "--end",
       description = "The end position (0-based, exclusive) of this query.",
       required = true)
-  public Long sequenceEnd;
+  public Long end;
 
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
-    if (!pageToken.isEmpty()) {
-      System.out.println("--page_token is now deprecated. Use --count instead.");
-      return;
-    }
-
     Dataset dataset = getDataset(genomics, datasetId);
     if (dataset == null) {
       return;
@@ -86,11 +75,10 @@ public class SearchVariantsCommand extends SearchCommand {
 
     SearchVariantsRequest request = new SearchVariantsRequest()
         .setVariantSetIds(Lists.newArrayList(datasetId))
-        .setPageToken(pageToken)
-        .setReferenceName(sequenceName)
-        .setStart(sequenceStart)
-        .setEnd(sequenceEnd)
-        .setPageSize(getMaxResults().intValue());
+        .setReferenceName(referenceName)
+        .setStart(start)
+        .setEnd(end)
+        .setPageSize(getMaxResults());
 
     if (callSetIds != null) {
       request.setCallSetIds(callSetIds);

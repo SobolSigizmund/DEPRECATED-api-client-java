@@ -72,9 +72,9 @@ public class ListJobsCommandTest extends CommandTest {
     command.setDataStoreFactory(new MemoryDataStoreFactory());
     command.addJobToHistory("previousJob", "previousDescription");
 
-    command.projectId = 9L;
+    command.projectNumber = 9L;
 
-    Mockito.when(jobs.search(new SearchJobsRequest().setProjectId(9L))).thenReturn(jobSearch);
+    Mockito.when(jobs.search(new SearchJobsRequest().setProjectNumber(9L))).thenReturn(jobSearch);
     Mockito.when(jobSearch.execute()).thenReturn(new SearchJobsResponse().setJobs(
         Lists.newArrayList(new Job().setId("previousJob"), new Job().setId("newjob"))));
 
@@ -90,11 +90,11 @@ public class ListJobsCommandTest extends CommandTest {
     ListJobsCommand command = new ListJobsCommand();
     command.setDataStoreFactory(new MemoryDataStoreFactory());
 
-    command.projectId = 9L;
+    command.projectNumber = 9L;
     command.createdAfter = new Date(123L);
     command.createdBefore = new Date(456L);
 
-    Mockito.when(jobs.search(new SearchJobsRequest().setProjectId(9L)
+    Mockito.when(jobs.search(new SearchJobsRequest().setProjectNumber(9L)
         .setCreatedAfter(123L).setCreatedBefore(456L))).thenReturn(jobSearch);
     Mockito.when(jobSearch.execute()).thenReturn(new SearchJobsResponse());
 
@@ -127,7 +127,7 @@ public class ListJobsCommandTest extends CommandTest {
 
     Mockito.when(jobs.get("jobid")).thenReturn(jobGet);
     Mockito.when(jobGet.execute()).thenReturn(new Job()
-        .setStatus("pending").setDescription(""));
+        .setStatus("pending").setDetailedStatus(""));
 
     command.handleRequest(genomics);
 

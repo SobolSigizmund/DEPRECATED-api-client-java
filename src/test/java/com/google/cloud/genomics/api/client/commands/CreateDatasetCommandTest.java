@@ -35,10 +35,11 @@ public class CreateDatasetCommandTest extends CommandTest {
     CreateDatasetCommand command = new CreateDatasetCommand();
     command.setDataStoreFactory(new MemoryDataStoreFactory());
 
-    command.projectId = 5L;
+    command.projectNumber = 5L;
     command.name = "dataset";
 
-    Dataset expectedDataset = new Dataset().setName("dataset").setProjectId(5L).setIsPublic(false);
+    Dataset expectedDataset = new Dataset().setName("dataset")
+        .setProjectNumber(5L).setIsPublic(false);
 
     Mockito.when(datasets.create(expectedDataset)).thenReturn(datasetCreate);
     Mockito.when(datasetCreate.execute()).thenReturn(expectedDataset.clone().setId("id"));

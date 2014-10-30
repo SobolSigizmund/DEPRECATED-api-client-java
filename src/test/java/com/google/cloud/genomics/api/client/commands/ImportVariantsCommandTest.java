@@ -41,7 +41,7 @@ public class ImportVariantsCommandTest extends CommandTest {
     command.setDataStoreFactory(new MemoryDataStoreFactory());
 
     command.vcfFiles = Lists.newArrayList("uri1", "uri2");
-    command.datasetId = "abc";
+    command.variantSetId = "abc";
 
     // Get the dataset
     Mockito.when(datasets.get("abc")).thenReturn(datasetGet);
@@ -49,7 +49,8 @@ public class ImportVariantsCommandTest extends CommandTest {
         new Dataset().setId("abc").setName("1kg"));
 
     // Import them
-    Mockito.when(variants.genomicsImport(Mockito.any(ImportVariantsRequest.class)))
+    Mockito.when(variantSets.importVariants(
+        Mockito.anyString(), Mockito.any(ImportVariantsRequest.class)))
         .thenReturn(variantImport);
     Mockito.when(variantImport.execute()).thenReturn(
         new ImportVariantsResponse().setJobId("8675309"));
@@ -57,7 +58,7 @@ public class ImportVariantsCommandTest extends CommandTest {
     // Get the job
     Mockito.when(jobs.get("8675309")).thenReturn(jobGet);
     Mockito.when(jobGet.execute()).thenReturn(
-        new Job().setDescription("description1").setStatus("success"));
+        new Job().setDetailedStatus("description1").setStatus("success"));
 
     // Get the variant set
     Mockito.when(variantSets.get("abc")).thenReturn(variantSetGet);

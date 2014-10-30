@@ -17,16 +17,14 @@ package com.google.cloud.genomics.api.client.commands;
 
 import com.google.api.client.util.store.MemoryDataStoreFactory;
 import com.google.api.services.genomics.model.Dataset;
-import com.google.api.services.genomics.model.Readset;
-import com.google.api.services.genomics.model.SearchReadsetsRequest;
-import com.google.api.services.genomics.model.SearchReadsetsResponse;
+import com.google.api.services.genomics.model.ReadGroupSet;
+import com.google.api.services.genomics.model.SearchReadGroupSetsRequest;
+import com.google.api.services.genomics.model.SearchReadGroupSetsResponse;
 import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
-
-import java.math.BigInteger;
 
 import static org.junit.Assert.assertTrue;
 
@@ -44,18 +42,18 @@ public class SearchReadsetsCommandTest extends CommandTest {
     Mockito.when(datasets.get("dataset")).thenReturn(datasetGet);
     Mockito.when(datasetGet.execute()).thenReturn(new Dataset().setId("id").setName("1kg"));
 
-    Mockito.when(readsets.search(new SearchReadsetsRequest()
+    Mockito.when(readsets.search(new SearchReadGroupSetsRequest()
         .setDatasetIds(Lists.newArrayList("dataset"))
         .setName("12878")
-        .setMaxResults(BigInteger.TEN)))
+        .setPageSize(10)))
         .thenReturn(readsetSearch);
-    Mockito.when(readsetSearch.execute()).thenReturn(new SearchReadsetsResponse()
-        .setReadsets(Lists.<Readset>newArrayList()));
+    Mockito.when(readsetSearch.execute()).thenReturn(new SearchReadGroupSetsResponse()
+        .setReadGroupSets(Lists.<ReadGroupSet>newArrayList()));
 
     command.handleRequest(genomics);
 
     String output = outContent.toString();
-    assertTrue(output, output.contains("Getting readsets from: 1kg"));
+    assertTrue(output, output.contains("Getting read group sets from: 1kg"));
   }
 
 }

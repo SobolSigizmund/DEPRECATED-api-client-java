@@ -40,9 +40,9 @@ public class SearchVariantsCommandTest extends CommandTest {
     command.setDataStoreFactory(new MemoryDataStoreFactory());
 
     command.datasetId = "dataset";
-    command.sequenceName = "chr1";
-    command.sequenceStart = 1L;
-    command.sequenceEnd = 5L;
+    command.referenceName = "chr1";
+    command.start = 1L;
+    command.end = 5L;
 
     Mockito.when(datasets.get("dataset")).thenReturn(datasetGet);
     Mockito.when(datasetGet.execute()).thenReturn(new Dataset().setId("id").setName("1kg"));
@@ -64,9 +64,9 @@ public class SearchVariantsCommandTest extends CommandTest {
     command.setDataStoreFactory(new MemoryDataStoreFactory());
 
     command.datasetId = "dataset";
-    command.sequenceName = "chr1";
-    command.sequenceStart = 1L;
-    command.sequenceEnd = 5L;
+    command.referenceName = "chr1";
+    command.start = 1L;
+    command.end = 5L;
     command.callSetNames = Lists.newArrayList("c1", "c2");
 
     Mockito.when(datasets.get("dataset")).thenReturn(datasetGet);
@@ -86,7 +86,6 @@ public class SearchVariantsCommandTest extends CommandTest {
 
     Mockito.when(variants.search(new SearchVariantsRequest()
         .setVariantSetIds(Lists.newArrayList("dataset"))
-        .setPageToken("")
         .setReferenceName("chr1")
         .setStart(1L)
         .setEnd(5L)
@@ -103,15 +102,4 @@ public class SearchVariantsCommandTest extends CommandTest {
     assertTrue(output, output.contains("No call sets found with the name c2"));
     assertTrue(output, output.contains("contig"));
   }
-
-  @Test
-  public void testDeprecationWarning() throws Exception {
-    SearchVariantsCommand command = new SearchVariantsCommand();
-    command.pageToken = "xyz";
-
-    command.handleRequest(null);
-    String output = outContent.toString();
-    assertTrue(output, output.contains("--page_token is now deprecated"));
-  }
-
 }

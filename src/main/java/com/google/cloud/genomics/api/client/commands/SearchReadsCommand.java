@@ -28,45 +28,34 @@ import java.util.List;
 @Parameters(commandDescription = "Search over reads")
 public class SearchReadsCommand extends SearchCommand {
 
-  @Parameter(names = "--readset_id",
-      description = "The IDs of readsets you want to get reads for.",
+  @Parameter(names = {"--id", "--read_group_set_id"},
+      description = "The IDs of read group sets you want to get reads for.",
       required = true)
-  public List<String> readsetIds;
+  public List<String> readGroupSetIds;
 
-  @Parameter(names = "--page_token",
-      description = "Deprecated. Use --count instead.",
-      hidden = true)
-  public String pageToken = "";
+  @Parameter(names = "--reference_name",
+      description = "The reference name to query over (e.g. 'X', '23')")
+  public String referenceName;
 
-  @Parameter(names = { "--sequence_name", "--contig" },
-      description = "The sequence name to query over (e.g. 'X', '23')")
-  public String sequenceName;
+  @Parameter(names = "--start",
+      description = "The start position (0-based) of this query.")
+  public Integer start;
 
-  @Parameter(names = { "--sequence_start", "--start_position" },
-      description = "The start position (1-based) of this query.")
-  public Integer sequenceStart;
-
-  @Parameter(names = {"--sequence_end", "--end_position" },
-      description = "The end position (1-based, inclusive) of this query.")
-  public Integer sequenceEnd;
+  @Parameter(names = "--end",
+      description = "The end position (0-based, exclusive) of this query.")
+  public Integer end;
 
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
-    if (!pageToken.isEmpty()) {
-      System.out.println("--page_token is now deprecated. Use --count instead.");
-      return;
-    }
-
     SearchReadsRequest request = new SearchReadsRequest()
-        .setReadsetIds(readsetIds)
-        .setPageToken(pageToken)
-        .setSequenceName(sequenceName)
-        .setMaxResults(getMaxResults());
-    if (sequenceStart != null) {
-        request.setSequenceStart(BigInteger.valueOf(sequenceStart));
+        .setReadGroupSetIds(readGroupSetIds)
+        .setReferenceName(referenceName)
+        .setPageSize(getMaxResults());
+    if (start != null) {
+      request.setStart(BigInteger.valueOf(start));
     }
-    if (sequenceEnd != null) {
-        request.setSequenceEnd(BigInteger.valueOf(sequenceEnd));
+    if (end != null) {
+      request.setEnd(BigInteger.valueOf(end));
     }
 
     printResults(Paginator.Reads.create(genomics), request);

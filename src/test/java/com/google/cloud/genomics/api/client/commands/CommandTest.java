@@ -46,18 +46,18 @@ public abstract class CommandTest {
   @Mock Genomics.Reads reads;
   @Mock Genomics.Reads.Search readSearch;
 
-  @Mock Genomics.Readsets readsets;
-  @Mock Genomics.Readsets.Export readsetExport;
-  @Mock Genomics.Readsets.GenomicsImport readsetImport;
-  @Mock Genomics.Readsets.Get readsetGet;
-  @Mock Genomics.Readsets.Search readsetSearch;
+  @Mock Genomics.Readgroupsets readsets;
+  @Mock Genomics.Readgroupsets.Export readsetExport;
+  @Mock Genomics.Readgroupsets.GenomicsImport readsetImport;
+  @Mock Genomics.Readgroupsets.Get readsetGet;
+  @Mock Genomics.Readgroupsets.Search readsetSearch;
 
   @Mock Genomics.Variantsets variantSets;
   @Mock Genomics.Variantsets.Get variantSetGet;
+  @Mock Genomics.Variantsets.Export variantExport;
+  @Mock Genomics.Variantsets.ImportVariants variantImport;
 
   @Mock Genomics.Variants variants;
-  @Mock Genomics.Variants.Export variantExport;
-  @Mock Genomics.Variants.GenomicsImport variantImport;
   @Mock Genomics.Variants.Get variantGet;
   @Mock Genomics.Variants.Search variantSearch;
 
@@ -71,7 +71,7 @@ public abstract class CommandTest {
     Mockito.when(genomics.datasets()).thenReturn(datasets);
     Mockito.when(genomics.jobs()).thenReturn(jobs);
     Mockito.when(genomics.reads()).thenReturn(reads);
-    Mockito.when(genomics.readsets()).thenReturn(readsets);
+    Mockito.when(genomics.readgroupsets()).thenReturn(readsets);
     Mockito.when(genomics.variantsets()).thenReturn(variantSets);
     Mockito.when(genomics.variants()).thenReturn(variants);
 

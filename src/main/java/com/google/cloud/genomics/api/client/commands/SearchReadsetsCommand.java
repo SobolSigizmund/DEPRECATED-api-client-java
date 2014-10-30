@@ -19,22 +19,23 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.model.Dataset;
-import com.google.api.services.genomics.model.SearchReadsetsRequest;
+import com.google.api.services.genomics.model.SearchReadGroupSetsRequest;
 import com.google.cloud.genomics.utils.Paginator;
 import com.google.common.collect.Lists;
 
 import java.io.IOException;
 
-@Parameters(commandDescription = "Search over readsets")
+@Parameters(commandDescription = "Search over read group sets")
 public class SearchReadsetsCommand extends SearchCommand {
 
   @Parameter(names = "--dataset_id",
-      description = "The Genomics API dataset ID to get readsets for.",
+      description = "The Genomics API dataset ID to get read group sets for.",
       required = true)
   public String datasetId;
 
-  @Parameter(names = "--readset_name",
-      description = "Only return readsets for which a substring of the name matches this string.")
+  @Parameter(names = "--name",
+      description = "Only return read group sets for which a substring of the " +
+          "name matches this string.")
   public String name;
 
   @Override
@@ -44,12 +45,12 @@ public class SearchReadsetsCommand extends SearchCommand {
     if (dataset == null) {
       return;
     }
-    System.out.println("Getting readsets from: " + dataset.getName());
+    System.out.println("Getting read group sets from: " + dataset.getName());
 
-    SearchReadsetsRequest request = new SearchReadsetsRequest()
+    SearchReadGroupSetsRequest request = new SearchReadGroupSetsRequest()
         .setDatasetIds(Lists.newArrayList(datasetId))
         .setName(name)
-        .setMaxResults(getMaxResults());
-    printResults(Paginator.Readsets.create(genomics), request);
+        .setPageSize(getMaxResults());
+    printResults(Paginator.ReadGroupSets.create(genomics), request);
   }
 }

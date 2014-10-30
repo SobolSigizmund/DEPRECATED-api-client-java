@@ -28,7 +28,7 @@ import java.io.IOException;
 @Parameters(commandDescription = "Search over call sets")
 public class SearchCallsetsCommand extends SearchCommand {
 
-  @Parameter(names = { "--variant_set_id", "--dataset_id" },
+  @Parameter(names = "--variant_set_id",
       description = "The Genomics API variant set ID to get call sets for.",
       required = true)
   public String datasetId;
@@ -49,7 +49,7 @@ public class SearchCallsetsCommand extends SearchCommand {
     SearchCallSetsRequest request = new SearchCallSetsRequest()
         .setVariantSetIds(Lists.newArrayList(datasetId))
         .setName(name)
-        .setPageSize(getMaxResults().intValue());
+        .setPageSize(getMaxResults());
 
     printResults(Paginator.Callsets.create(genomics), request);
   }

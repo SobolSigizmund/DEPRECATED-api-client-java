@@ -26,14 +26,13 @@ import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.GenomicsScopes;
 import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.Job;
-import com.google.api.services.genomics.model.SearchReadsetsRequest;
-import com.google.api.services.genomics.model.SearchReadsetsResponse;
+import com.google.api.services.genomics.model.SearchReadGroupSetsRequest;
+import com.google.api.services.genomics.model.SearchReadGroupSetsResponse;
 import com.google.api.services.genomics.model.VariantSet;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -56,7 +55,7 @@ public abstract class BaseCommand {
   @Parameter(names = "--root_url",
       description = "set the Genomics API root URL",
       hidden = true)
-  public String rootUrl = "https://www.googleapis.com/genomics/v1beta";
+  public String rootUrl = "https://www.googleapis.com/genomics/v1beta2";
 
   @Parameter(names = "--nolocalserver",
       description = "Disable the starting up of a local server for the auth flows",
@@ -175,12 +174,6 @@ public abstract class BaseCommand {
   }
 
   protected void printJob(Job job) throws IOException {
-    // Description is a confusing field. If it's an empty string, we null it out so
-    // that it doesn't get displayed to the user.
-    if (Strings.isNullOrEmpty(job.getDescription())) {
-      job.setDescription(null);
-    }
-
     if (job.getCreated() != null) {
       job.set("createdString", DATE_FORMAT.format(new Date(job.getCreated())));
     }
@@ -229,7 +222,7 @@ public abstract class BaseCommand {
 
   protected void printDataset(Genomics genomics, String id, String name, Dataset dataset,
       boolean includeDetails) throws IOException {
-    System.out.println(id + ": " + name);
+    System.out.println(name + " (ID: " + id + ")");
     if (!includeDetails) {
       return;
     }
@@ -244,7 +237,7 @@ public abstract class BaseCommand {
     }
 
     System.out.println(dataset.toPrettyString());
-    System.out.print("Readsets: ");
+    System.out.print("Read group sets: ");
     System.out.println(getReadsetCount(genomics, id));
 
     // Variant set
@@ -258,18 +251,18 @@ public abstract class BaseCommand {
   }
 
   private String getReadsetCount(Genomics genomics, String datasetId) throws IOException {
-    SearchReadsetsRequest readsetSearch = new SearchReadsetsRequest()
+    SearchReadGroupSetsRequest readsetSearch = new SearchReadGroupSetsRequest()
         .setDatasetIds(com.google.common.collect.Lists.newArrayList(datasetId))
-        .setMaxResults(BigInteger.valueOf(100L));
+        .setPageSize(100);
 
-    SearchReadsetsResponse readsets = genomics.readsets()
-        .search(readsetSearch).setFields("nextPageToken,readsets(id)").execute();
-    if (readsets.getReadsets() == null) {
+    SearchReadGroupSetsResponse readGroupSets = genomics.readgroupsets()
+        .search(readsetSearch).setFields("nextPageToken,readGroupSets(id)").execute();
+    if (readGroupSets.getReadGroupSets() == null) {
       return "0";
     }
 
-    if (com.google.api.client.repackaged.com.google.common.base.Strings.isNullOrEmpty(readsets.getNextPageToken())) {
-      return String.valueOf(readsets.getReadsets().size());
+    if (Strings.isNullOrEmpty(readGroupSets.getNextPageToken())) {
+      return String.valueOf(readGroupSets.getReadGroupSets().size());
     } else {
       return "More than 100";
     }

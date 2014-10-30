@@ -25,15 +25,15 @@ import java.util.List;
 @Parameters(commandDescription = "Get variants by ID")
 public class GetVariantsCommand extends SimpleCommand {
 
-  @Parameter(names = "--variant_id",
+  @Parameter(names = {"--id", "--variant_id"},
       description = "The Genomics API variant ID.",
       required = true)
   public List<String> variantIds;
 
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
-    for (String variantId : variantIds) {
-      executeAndPrint(genomics.variants().get(variantId));
+    for (String id : variantIds) {
+      executeAndPrint(genomics.variants().get(id));
     }
   }
 }

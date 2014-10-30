@@ -21,18 +21,19 @@ import com.google.api.client.util.Joiner;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.GenomicsScopes;
 import com.google.api.services.genomics.model.Dataset;
-import com.google.api.services.genomics.model.ImportReadsetsRequest;
+import com.google.api.services.genomics.model.ImportReadGroupSetsRequest;
 import com.google.api.services.genomics.model.Job;
-import com.google.api.services.genomics.model.Readset;
+import com.google.api.services.genomics.model.ReadGroupSet;
 
 import java.io.IOException;
 import java.util.List;
 
 /**
- * Imports readsets from bam files, fetches the resulting job, and optionally polls for its status.
- * Fetches the imported readsets if the job completes.
+ * Imports read group sets from bam files, fetches the resulting job, and optionally
+ * polls for its status.
+ * Fetches the imported read group sets if the job completes.
 */
-@Parameters(commandDescription = "Import readsets from Google Cloud Storage")
+@Parameters(commandDescription = "Import read group sets from Google Cloud Storage")
 public class ImportReadsetsCommand extends BaseCommand {
 
   @Parameter(names = "--dataset_id",
@@ -69,16 +70,16 @@ public class ImportReadsetsCommand extends BaseCommand {
     if (dataset == null) {
       return;
     }
-    System.out.println("Importing readsets into: " + dataset.getName());
+    System.out.println("Importing read group sets into: " + dataset.getName());
 
     // Start the import
-    Genomics.Readsets.GenomicsImport req = genomics.readsets().genomicsImport(
-        new ImportReadsetsRequest().setDatasetId(datasetId)
+    Genomics.Readgroupsets.GenomicsImport req = genomics.readgroupsets().genomicsImport(
+        new ImportReadGroupSetsRequest().setDatasetId(datasetId)
             .setSourceUris(bamFiles));
     String jobId = req.execute().getJobId();
 
     // Get the resulting job
-    addJobToHistory(jobId, "Import readsets to " + dataset.getName() + " from "
+    addJobToHistory(jobId, "Import read group sets to " + dataset.getName() + " from "
         + Joiner.on(',').join(bamFiles));
     Job job = getJob(genomics, jobId, pollForStatus);
     System.out.println("Import job: ");
@@ -86,10 +87,10 @@ public class ImportReadsetsCommand extends BaseCommand {
 
     // If the job is finished, get the imported ids
     if (job.getImportedIds() != null) {
-      for (String readsetId : job.getImportedIds()) {
-        Readset readset = genomics.readsets().get(readsetId)
-            .setFields("id,name,fileData(fileUri)").execute();
-        System.out.println("Imported readset: " + readset.toPrettyString());
+      for (String id : job.getImportedIds()) {
+        ReadGroupSet readGroupSet = genomics.readgroupsets().get(id)
+            .setFields("id,name,filename").execute();
+        System.out.println("Imported read group set: " + readGroupSet.toPrettyString());
       }
     }
   }

@@ -24,8 +24,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertTrue;
-
 @RunWith(JUnit4.class)
 public class SearchReadsCommandTest extends CommandTest {
 
@@ -35,7 +33,7 @@ public class SearchReadsCommandTest extends CommandTest {
 
     Mockito.when(reads.search(Mockito.any(SearchReadsRequest.class))).thenReturn(readSearch);
     Mockito.when(readSearch.execute()).thenReturn(new SearchReadsResponse()
-        .setReads(Lists.<Read>newArrayList()));
+        .setAlignments(Lists.<Read>newArrayList()));
 
     command.handleRequest(genomics);
   }
@@ -43,24 +41,14 @@ public class SearchReadsCommandTest extends CommandTest {
   @Test
   public void testCommand_withRange() throws Exception {
     SearchReadsCommand command = new SearchReadsCommand();
-    command.sequenceStart = 1;
-    command.sequenceEnd = 10;
+    command.start = 1;
+    command.end = 10;
 
     Mockito.when(reads.search(Mockito.any(SearchReadsRequest.class))).thenReturn(readSearch);
     Mockito.when(readSearch.execute()).thenReturn(new SearchReadsResponse()
-        .setReads(Lists.<Read>newArrayList()));
+        .setAlignments(Lists.<Read>newArrayList()));
 
     command.handleRequest(genomics);
-  }
-
-  @Test
-  public void testDeprecationWarning() throws Exception {
-    SearchReadsCommand command = new SearchReadsCommand();
-    command.pageToken = "xyz";
-
-    command.handleRequest(null);
-    String output = outContent.toString();
-    assertTrue(output, output.contains("--page_token is now deprecated"));
   }
 
 }

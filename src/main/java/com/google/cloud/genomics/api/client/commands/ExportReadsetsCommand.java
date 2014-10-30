@@ -21,8 +21,8 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.util.Joiner;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.GenomicsScopes;
-import com.google.api.services.genomics.model.ExportReadsetsRequest;
-import com.google.api.services.genomics.model.Readset;
+import com.google.api.services.genomics.model.ExportReadGroupSetsRequest;
+import com.google.api.services.genomics.model.ReadGroupSet;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
@@ -32,22 +32,24 @@ import java.util.List;
 @Parameters(commandDescription = "Export readsets from Google Genomics into Google Cloud Storage")
 public class ExportReadsetsCommand extends BaseCommand {
 
-  private static final Function<Readset,String> GET_NAME = new Function<Readset, String>() {
+  private static final Function<ReadGroupSet,String> GET_NAME
+      = new Function<ReadGroupSet, String>() {
     @Override
-    public String apply(Readset readset) {
+    public String apply(ReadGroupSet readset) {
       return readset.getName();
     }
   };
 
-  @Parameter(names = "--project_id",
-      description = "The ID of the project that will be billed for this export.",
+  @Parameter(names = "--project_number",
+      description = "The Google Developer's Console project number that " +
+          "will be billed for this export.",
       required = true)
-  public Long projectId;
+  public Long projectNumber;
 
-  @Parameter(names = "--readset_id",
-      description = "The IDs of the readsets to export.",
+  @Parameter(names = "--read_groupset_id",
+      description = "The IDs of the read group sets to export.",
       required = true)
-  public List<String> readsetIds;
+  public List<String> readGroupSetIds;
 
   @Parameter(names = "--export_uri",
       description = "A Google Cloud Storage gs:// URL where the exported readset BAM file " +
@@ -71,30 +73,30 @@ public class ExportReadsetsCommand extends BaseCommand {
   public void handleRequest(Genomics genomics) throws IOException {
     // TODO: Validate the project ID
 
-    // Validate the readsets
-    List<Readset> readsets = Lists.newArrayList();
-    for (String readsetId : readsetIds) {
+    // Validate the read group sets
+    List<ReadGroupSet> readGroupSets = Lists.newArrayList();
+    for (String id : readGroupSetIds) {
       try {
-        readsets.add(genomics.readsets().get(readsetId).execute());
+        readGroupSets.add(genomics.readgroupsets().get(id).execute());
       } catch (GoogleJsonResponseException e) {
         String message = e.getDetails() == null ? "" : e.getDetails().getMessage();
-        System.out.println("The readset ID " + readsetId + " won't work: "
+        System.out.println("The read group set ID " + id + " won't work: "
             + message + "\n");
         return;
       }
     }
 
-    String readsetNames = Joiner.on(',').join(Lists.transform(readsets, GET_NAME));
-    System.out.println("Exporting readsets " + readsetNames);
+    String readsetNames = Joiner.on(',').join(Lists.transform(readGroupSets, GET_NAME));
+    System.out.println("Exporting read group sets " + readsetNames);
 
-    ExportReadsetsRequest request = new ExportReadsetsRequest()
+    ExportReadGroupSetsRequest request = new ExportReadGroupSetsRequest()
         .setExportUri(exportUri)
-        .setReadsetIds(readsetIds)
-        .setProjectId(projectId);
-    String jobId = genomics.readsets().export(request).execute().getJobId();
+        .setReadGroupSetIds(readGroupSetIds)
+        .setProjectNumber(projectNumber);
+    String jobId = genomics.readgroupsets().export(request).execute().getJobId();
 
     // Get the resulting job
-    addJobToHistory(jobId, "Exporting readsets: " + readsetNames + " to "
+    addJobToHistory(jobId, "Exporting read group sets: " + readsetNames + " to "
         + exportUri);
     System.out.println("Export job: ");
     printJob(getJob(genomics, jobId, pollForStatus));

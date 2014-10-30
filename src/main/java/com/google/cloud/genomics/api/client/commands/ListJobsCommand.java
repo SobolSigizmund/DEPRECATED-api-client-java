@@ -35,10 +35,10 @@ public class ListJobsCommand extends BaseCommand {
       description = "Whether to look up the Job statuses")
   public boolean includeStatus = false;
 
-  @Parameter(names = {"--project_number", "--project_id"},
+  @Parameter(names = "--project_number",
       description = "Get jobs for a specific Google Developer's Console project number " +
           "(By default only jobs created from this command line will be shown)")
-  public Long projectId;
+  public Long projectNumber;
 
   @Parameter(names = {"--created_after", "--after"},
       description = "When searching by project, get jobs created after this date " +
@@ -54,8 +54,8 @@ public class ListJobsCommand extends BaseCommand {
   public void handleRequest(Genomics genomics) throws IOException {
     Map<String, String> launchedJobs = getLaunchedJobs();
 
-    if (projectId != null) {
-      SearchJobsRequest request = new SearchJobsRequest().setProjectId(projectId);
+    if (projectNumber != null) {
+      SearchJobsRequest request = new SearchJobsRequest().setProjectNumber(projectNumber);
       if (createdAfter != null) {
         request.setCreatedAfter(createdAfter.getTime());
       }

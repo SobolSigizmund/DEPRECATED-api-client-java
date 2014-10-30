@@ -39,8 +39,8 @@ public class ExportVariantsCommandTest extends CommandTest {
     ExportVariantsCommand command = new ExportVariantsCommand();
     command.setDataStoreFactory(new MemoryDataStoreFactory());
 
-    command.datasetId = "abc";
-    command.projectId = 3L;
+    command.variantSetId = "abc";
+    command.projectNumber = 3L;
     command.bigqueryDataset = "bigqueryDataset";
     command.bigqueryTable = "bigqueryTable";
 
@@ -50,19 +50,20 @@ public class ExportVariantsCommandTest extends CommandTest {
         new Dataset().setId("abc").setName("1kg"));
 
     // Export them
-    Mockito.when(variants.export(Mockito.any(ExportVariantsRequest.class)))
+    Mockito.when(variantSets.export(
+        Mockito.anyString(), Mockito.any(ExportVariantSetRequest.class)))
         .thenReturn(variantExport);
     Mockito.when(variantExport.execute()).thenReturn(
-        new ExportVariantsResponse().setJobId("8675309"));
+        new ExportVariantSetResponse().setJobId("8675309"));
 
     // Get the job
     Mockito.when(jobs.get("8675309")).thenReturn(jobGet);
-    Mockito.when(jobGet.execute()).thenReturn(new Job().setDescription("description1"));
+    Mockito.when(jobGet.execute()).thenReturn(new Job().setDetailedStatus("description1"));
 
     command.handleRequest(genomics);
 
     String output = outContent.toString();
-    assertTrue(output, output.contains("Exporting variants for dataset 1kg"));
+    assertTrue(output, output.contains("Exporting variants for variant set 1kg"));
     assertTrue(output, output.contains("Export job:"));
     assertTrue(output, output.contains("description1"));
   }

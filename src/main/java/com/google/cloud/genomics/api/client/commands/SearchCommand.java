@@ -21,7 +21,6 @@ import com.google.api.services.genomics.GenomicsRequest;
 import com.google.cloud.genomics.utils.Paginator;
 
 import java.io.IOException;
-import java.math.BigInteger;
 
 /**
  * This class is used for commands that have not yet been refactored to support complex flows,
@@ -42,8 +41,8 @@ public abstract class SearchCommand extends BaseCommand {
           "Use -1 for all (this may result in a lot of data!)")
   public Integer resultCount = 10;
 
-  protected BigInteger getMaxResults() {
-    return resultCount < 0 ? BigInteger.valueOf(1024) : BigInteger.valueOf(resultCount);
+  protected int getMaxResults() {
+    return resultCount < 0 ? 1024 : resultCount;
   }
 
   protected <A,

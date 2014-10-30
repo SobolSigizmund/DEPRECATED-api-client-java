@@ -16,7 +16,7 @@ limitations under the License.
 package com.google.cloud.genomics.api.client.commands;
 
 import com.beust.jcommander.internal.Lists;
-import com.google.api.services.genomics.model.Readset;
+import com.google.api.services.genomics.model.ReadGroupSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -30,13 +30,13 @@ public class GetReadsetsCommandTest extends CommandTest {
   @Test
   public void testGetReadsets() throws Exception {
     GetReadsetsCommand command = new GetReadsetsCommand();
-    command.readsetIds = Lists.newArrayList("r1", "r2");
+    command.readGroupSetIds = Lists.newArrayList("r1", "r2");
 
     Mockito.when(readsets.get("r1")).thenReturn(readsetGet);
     Mockito.when(readsets.get("r2")).thenReturn(readsetGet);
     Mockito.when(readsetGet.execute()).thenReturn(
-        new Readset().setName("name1"),
-        new Readset().setName("name2"));
+        new ReadGroupSet().setName("name1"),
+        new ReadGroupSet().setName("name2"));
 
     command.handleRequest(genomics);
 

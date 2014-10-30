@@ -19,10 +19,10 @@ import com.beust.jcommander.internal.Lists;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.util.store.MemoryDataStoreFactory;
 import com.google.api.services.genomics.GenomicsScopes;
-import com.google.api.services.genomics.model.ExportReadsetsRequest;
-import com.google.api.services.genomics.model.ExportReadsetsResponse;
+import com.google.api.services.genomics.model.ExportReadGroupSetsRequest;
+import com.google.api.services.genomics.model.ExportReadGroupSetsResponse;
 import com.google.api.services.genomics.model.Job;
-import com.google.api.services.genomics.model.Readset;
+import com.google.api.services.genomics.model.ReadGroupSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -44,31 +44,31 @@ public class ExportReadsetsCommandTest extends CommandTest {
     ExportReadsetsCommand command = new ExportReadsetsCommand();
     command.setDataStoreFactory(new MemoryDataStoreFactory());
 
-    command.readsetIds = Lists.newArrayList("r1", "r2");
-    command.projectId = 3L;
+    command.readGroupSetIds = Lists.newArrayList("r1", "r2");
+    command.projectNumber = 3L;
     command.exportUri = "exportme";
 
     // Get the readsets
     Mockito.when(readsets.get("r1")).thenReturn(readsetGet);
     Mockito.when(readsets.get("r2")).thenReturn(readsetGet);
     Mockito.when(readsetGet.execute()).thenReturn(
-        new Readset().setName("name1"),
-        new Readset().setName("name2"));
+        new ReadGroupSet().setName("name1"),
+        new ReadGroupSet().setName("name2"));
 
     // Export them
-    Mockito.when(readsets.export(Mockito.any(ExportReadsetsRequest.class)))
+    Mockito.when(readsets.export(Mockito.any(ExportReadGroupSetsRequest.class)))
         .thenReturn(readsetExport);
     Mockito.when(readsetExport.execute()).thenReturn(
-        new ExportReadsetsResponse().setJobId("8675309"));
+        new ExportReadGroupSetsResponse().setJobId("8675309"));
 
     // Get the job
     Mockito.when(jobs.get("8675309")).thenReturn(jobGet);
-    Mockito.when(jobGet.execute()).thenReturn(new Job().setDescription("description1"));
+    Mockito.when(jobGet.execute()).thenReturn(new Job().setDetailedStatus("description1"));
 
     command.handleRequest(genomics);
 
     String output = outContent.toString();
-    assertTrue(output, output.contains("Exporting readsets name1,name2"));
+    assertTrue(output, output.contains("Exporting read group sets name1,name2"));
     assertTrue(output, output.contains("Export job:"));
     assertTrue(output, output.contains("description1"));
   }
@@ -76,14 +76,14 @@ public class ExportReadsetsCommandTest extends CommandTest {
   @Test
   public void testExportReadsets_badIds() throws Exception {
     ExportReadsetsCommand command = new ExportReadsetsCommand();
-    command.readsetIds = Lists.newArrayList("bad");
+    command.readGroupSetIds = Lists.newArrayList("bad");
 
     // Get the readsets
     Mockito.when(readsets.get(Mockito.anyString())).thenThrow(GoogleJsonResponseException.class);
     command.handleRequest(genomics);
 
     String output = outContent.toString();
-    assertTrue(output, output.contains("The readset ID bad won't work"));
+    assertTrue(output, output.contains("The read group set ID bad won't work"));
   }
 
 }

@@ -22,18 +22,18 @@ import com.google.api.services.genomics.Genomics;
 import java.io.IOException;
 import java.util.List;
 
-@Parameters(commandDescription = "Get readsets by ID")
+@Parameters(commandDescription = "Get read group sets by ID")
 public class GetReadsetsCommand extends SimpleCommand {
 
-  @Parameter(names = "--readset_id",
-      description = "The Genomics API readset ID.",
+  @Parameter(names = {"--id", "--read_group_set_id"},
+      description = "The Genomics API read group set ID.",
       required = true)
-  public List<String> readsetIds;
+  public List<String> readGroupSetIds;
 
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
-    for (String readsetId : readsetIds) {
-      executeAndPrint(genomics.readsets().get(readsetId));
+    for (String id : readGroupSetIds) {
+      executeAndPrint(genomics.readgroupsets().get(id));
     }
   }
 }

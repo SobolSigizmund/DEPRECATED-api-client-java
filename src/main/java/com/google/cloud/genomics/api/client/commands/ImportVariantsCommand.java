@@ -32,10 +32,10 @@ import java.util.List;
 @Parameters(commandDescription = "Import variants from Google Cloud Storage")
 public class ImportVariantsCommand extends BaseCommand {
 
-  @Parameter(names = { "--variant_set_id", "--dataset_id" },
+  @Parameter(names = "--variant_set_id",
       description = "The Genomics API variant set ID to import into.",
       required = true)
-  public String datasetId;
+  public String variantSetId;
 
   @Parameter(names = "--vcf_file",
       description = "A VCF file (as Google Cloud Storage gs:// URL) to be be imported." +
@@ -67,16 +67,15 @@ public class ImportVariantsCommand extends BaseCommand {
     // TODO: Validate the GCS files first?
 
     // Validate the dataset
-    Dataset dataset = getDataset(genomics, datasetId);
+    Dataset dataset = getDataset(genomics, variantSetId);
     if (dataset == null) {
       return;
     }
     System.out.println("Importing variants into: " + dataset.getName());
 
     // Start the import
-    Genomics.Variants.GenomicsImport req = genomics.variants().genomicsImport(
+    Genomics.Variantsets.ImportVariants req = genomics.variantsets().importVariants(variantSetId,
         new ImportVariantsRequest()
-            .setVariantSetId(datasetId)
             .setSourceUris(vcfFiles)
             .setFormat(fileFormat));
     String jobId = req.execute().getJobId();
@@ -90,7 +89,7 @@ public class ImportVariantsCommand extends BaseCommand {
 
     // If the job is finished, get the variant summary
     if (isJobFinished(job)) {
-      VariantSet variantSet = genomics.variantsets().get(datasetId)
+      VariantSet variantSet = genomics.variantsets().get(variantSetId)
           .setFields("referenceBounds").execute();
       System.out.println("Imported variant set: " + variantSet.toPrettyString() + "\n");
     }

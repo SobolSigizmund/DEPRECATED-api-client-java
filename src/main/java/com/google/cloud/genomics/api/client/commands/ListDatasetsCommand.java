@@ -33,16 +33,17 @@ public class ListDatasetsCommand extends BaseCommand {
           "(besides just name and ID)")
   public boolean includeDetails = false;
 
-  @Parameter(names = {"--project_number", "--project_id"},
+  @Parameter(names = "--project_number",
       description = "Get datasets for a specific Google Developer's Console project number " +
           "(By default only recently used datasets will be shown)")
-  public Long projectId;
+  public Long projectNumber;
 
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
 
-    if (projectId != null) {
-      ListDatasetsResponse datasets = genomics.datasets().list().setProjectId(projectId).execute();
+    if (projectNumber != null) {
+      ListDatasetsResponse datasets = genomics.datasets().list()
+          .setProjectNumber(projectNumber).execute();
       if (datasets.getDatasets() == null) {
         return;
       }
@@ -54,7 +55,7 @@ public class ListDatasetsCommand extends BaseCommand {
       Map<String, String> datasets = getPreviousDatasets();
       if (datasets.isEmpty()) {
         System.out.println("There aren't any recently used datasets. " +
-            "Specify a --project_id flag to get datasets for a specific project, or use the " +
+            "Specify a --project_number flag to get datasets for a specific project, or use the " +
             "'createdataset' command to make a new dataset.\n" +
             "You can find Google Genomics Public Data in project 761052378059");
         return;

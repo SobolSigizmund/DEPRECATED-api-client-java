@@ -25,7 +25,7 @@ import java.io.IOException;
 @Parameters(commandDescription = "Change the fields of an existing dataset")
 public class UpdateDatasetCommand extends BaseCommand {
 
-  @Parameter(names = "--dataset_id",
+  @Parameter(names = {"--id", "--dataset_id"},
       description = "The ID of the dataset that will be changed",
       required = true)
   public String datasetId;

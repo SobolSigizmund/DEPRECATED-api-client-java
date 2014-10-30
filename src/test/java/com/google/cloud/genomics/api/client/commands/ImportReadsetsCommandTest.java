@@ -49,28 +49,28 @@ public class ImportReadsetsCommandTest extends CommandTest {
         new Dataset().setId("abc").setName("1kg"));
 
     // Import them
-    Mockito.when(readsets.genomicsImport(Mockito.any(ImportReadsetsRequest.class)))
+    Mockito.when(readsets.genomicsImport(Mockito.any(ImportReadGroupSetsRequest.class)))
         .thenReturn(readsetImport);
     Mockito.when(readsetImport.execute()).thenReturn(
-        new ImportReadsetsResponse().setJobId("8675309"));
+        new ImportReadGroupSetsResponse().setJobId("8675309"));
 
     // Get the job
     Mockito.when(jobs.get("8675309")).thenReturn(jobGet);
     Mockito.when(jobGet.execute()).thenReturn(
-        new Job().setDescription("description1").setImportedIds(Lists.newArrayList("r1")));
+        new Job().setDetailedStatus("description1").setImportedIds(Lists.newArrayList("r1")));
 
     // Get the readset
     Mockito.when(readsets.get("r1")).thenReturn(readsetGet);
     Mockito.when(readsetGet.execute()).thenReturn(
-        new Readset().setName("name1"));
+        new ReadGroupSet().setName("name1"));
 
     command.handleRequest(genomics);
 
     String output = outContent.toString();
-    assertTrue(output, output.contains("Importing readsets into: 1kg"));
+    assertTrue(output, output.contains("Importing read group sets into: 1kg"));
     assertTrue(output, output.contains("Import job:"));
     assertTrue(output, output.contains("description1"));
-    assertTrue(output, output.contains("Imported readset:"));
+    assertTrue(output, output.contains("Imported read group set:"));
     assertTrue(output, output.contains("name1"));
   }
 

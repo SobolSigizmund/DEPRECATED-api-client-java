@@ -30,10 +30,10 @@ public class CreateDatasetCommand extends BaseCommand {
       required = true)
   public String name;
 
-  @Parameter(names = {"--project_number", "--project_id"},
+  @Parameter(names = "--project_number",
       description = "The Google Developer's Console project number that will own the new dataset",
       required = true)
-  public Long projectId;
+  public Long projectNumber;
 
   @Parameter(names = "--public",
       description = "Whether the new dataset should be public (by default the dataset is private)")
@@ -42,7 +42,7 @@ public class CreateDatasetCommand extends BaseCommand {
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
     Dataset dataset = new Dataset().setName(name)
-        .setProjectId(projectId).setIsPublic(isPublic);
+        .setProjectNumber(projectNumber).setIsPublic(isPublic);
     dataset = genomics.datasets().create(dataset).execute();
 
     addDatasetToHistory(dataset);

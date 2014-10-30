@@ -21,7 +21,7 @@ import com.google.api.client.util.Joiner;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.GenomicsScopes;
 import com.google.api.services.genomics.model.Dataset;
-import com.google.api.services.genomics.model.ExportVariantsRequest;
+import com.google.api.services.genomics.model.ExportVariantSetRequest;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,17 +29,17 @@ import java.util.List;
 @Parameters(commandDescription = "Export variants from Google Genomics into Google Big Query")
 public class ExportVariantsCommand extends BaseCommand {
 
-  @Parameter(names = { "--variant_set_id", "--dataset_id" },
+  @Parameter(names = "--variant_set_id",
       description = "The Genomics API variant set ID to export from.",
       required = true)
-  public String datasetId;
+  public String variantSetId;
 
-  @Parameter(names = { "--project_number", "--project_id" },
+  @Parameter(names = "--project_number",
       description = "The Google Developer's Console project number that owns the BigQuery dataset.",
       required = true)
-  public Long projectId;
+  public Long projectNumber;
 
-  @Parameter(names = { "--call_set_id", "--callset_id" },
+  @Parameter(names = "--call_set_id",
       description = "If provided, only variant call information from " +
           "the specified call sets will be exported. By default all " +
           "variant calls are exported.",
@@ -76,24 +76,23 @@ public class ExportVariantsCommand extends BaseCommand {
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
     // Validate the dataset
-    Dataset dataset = getDataset(genomics, datasetId);
+    Dataset dataset = getDataset(genomics, variantSetId);
     if (dataset == null) {
       return;
     }
 
-    System.out.println("Exporting variants for dataset " + dataset.getName());
+    System.out.println("Exporting variants for variant set " + dataset.getName());
     if (callSetIds != null && !callSetIds.isEmpty()) {
       System.out.println(Joiner.on(',').join(callSetIds));
     }
 
     // Start the export
-    ExportVariantsRequest request = new ExportVariantsRequest()
-        .setVariantSetId(datasetId)
-        .setProjectId(projectId)
+    ExportVariantSetRequest request = new ExportVariantSetRequest()
+        .setProjectNumber(projectNumber)
         .setCallSetIds(callSetIds)
         .setBigqueryDataset(bigqueryDataset)
         .setBigqueryTable(bigqueryTable);
-    String jobId = genomics.variants().export(request).execute().getJobId();
+    String jobId = genomics.variantsets().export(variantSetId, request).execute().getJobId();
 
     // Get the resulting job
     addJobToHistory(jobId, "Exporting variants: from " + dataset.getName() +

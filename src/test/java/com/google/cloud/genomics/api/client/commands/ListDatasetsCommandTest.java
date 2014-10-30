@@ -18,13 +18,17 @@ package com.google.cloud.genomics.api.client.commands;
 import com.beust.jcommander.internal.Lists;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.util.store.MemoryDataStoreFactory;
-import com.google.api.services.genomics.model.*;
+import com.google.api.services.genomics.model.Dataset;
+import com.google.api.services.genomics.model.ListDatasetsResponse;
+import com.google.api.services.genomics.model.ReadGroupSet;
+import com.google.api.services.genomics.model.ReferenceBound;
+import com.google.api.services.genomics.model.SearchReadGroupSetsRequest;
+import com.google.api.services.genomics.model.SearchReadGroupSetsResponse;
+import com.google.api.services.genomics.model.VariantSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
-
-import java.math.BigInteger;
 
 import static org.junit.Assert.assertTrue;
 
@@ -51,27 +55,27 @@ public class ListDatasetsCommandTest extends CommandTest {
     command.handleRequest(null /* should be unused */);
 
     String output = outContent.toString();
-    assertTrue(output, output.contains("id: name"));
+    assertTrue(output, output.contains("name (ID: id)"));
   }
 
   @Test
   public void testListDatasets_withDetails() throws Exception {
     ListDatasetsCommand command = new ListDatasetsCommand();
-    command.projectId = 10L;
+    command.projectNumber = 10L;
     command.includeDetails = true;
 
     Mockito.when(datasets.list()).thenReturn(datasetList);
-    Mockito.when(datasetList.setProjectId(10L)).thenReturn(datasetList);
+    Mockito.when(datasetList.setProjectNumber(10L)).thenReturn(datasetList);
     Mockito.when(datasetList.execute()).thenReturn(new ListDatasetsResponse()
         .setDatasets(Lists.newArrayList(
-            new Dataset().setId("id1").setName("name").setProjectId(1234L))));
+            new Dataset().setId("id1").setName("name").setProjectNumber(1234L))));
 
     // Readset summary
-    Mockito.when(readsets.search(new SearchReadsetsRequest()
-        .setDatasetIds(Lists.newArrayList("id1")).setMaxResults(BigInteger.valueOf(100L))))
+    Mockito.when(readsets.search(new SearchReadGroupSetsRequest()
+        .setDatasetIds(Lists.newArrayList("id1")).setPageSize(100)))
         .thenReturn(readsetSearch);
-    Mockito.when(readsetSearch.execute()).thenReturn(new SearchReadsetsResponse()
-        .setReadsets(Lists.newArrayList(new Readset(), new Readset())));
+    Mockito.when(readsetSearch.execute()).thenReturn(new SearchReadGroupSetsResponse()
+        .setReadGroupSets(Lists.newArrayList(new ReadGroupSet(), new ReadGroupSet())));
 
     // Variant set
     Mockito.when(variantSets.get("id1")).thenReturn(variantSetGet);
@@ -81,9 +85,9 @@ public class ListDatasetsCommandTest extends CommandTest {
     command.handleRequest(genomics);
 
     String output = outContent.toString();
-    assertTrue(output, output.contains("id1: name"));
+    assertTrue(output, output.contains("name (ID: id1)"));
     assertTrue(output, output.contains("1234"));
-    assertTrue(output, output.contains("Readsets: 2"));
+    assertTrue(output, output.contains("Read group sets: 2"));
     assertTrue(output, output.contains("Variant set:"));
     assertTrue(output, output.contains("contigX"));
   }
@@ -105,9 +109,9 @@ public class ListDatasetsCommandTest extends CommandTest {
         .thenThrow(GoogleJsonResponseException.class);
 
     // Readset summary
-    Mockito.when(readsets.search(Mockito.any(SearchReadsetsRequest.class)))
+    Mockito.when(readsets.search(Mockito.any(SearchReadGroupSetsRequest.class)))
         .thenReturn(readsetSearch);
-    Mockito.when(readsetSearch.execute()).thenReturn(new SearchReadsetsResponse());
+    Mockito.when(readsetSearch.execute()).thenReturn(new SearchReadGroupSetsResponse());
 
     // Variant set
     Mockito.when(variantSets.get(Mockito.anyString())).thenReturn(variantSetGet);
@@ -116,18 +120,18 @@ public class ListDatasetsCommandTest extends CommandTest {
     command.handleRequest(genomics);
 
     String output = outContent.toString();
-    assertTrue(output, output.contains("id: name1"));
-    assertTrue(output, output.contains("deleted: name2"));
+    assertTrue(output, output.contains("name1 (ID: id)"));
+    assertTrue(output, output.contains("name2 (ID: deleted)"));
     assertTrue(output, output.contains("Dataset not found"));
   }
 
   @Test
-  public void testLisDatasets_fromEmptyProject() throws Exception {
+  public void testListDatasets_fromEmptyProject() throws Exception {
     ListDatasetsCommand command = new ListDatasetsCommand();
-    command.projectId = 10L;
+    command.projectNumber = 10L;
 
     Mockito.when(datasets.list()).thenReturn(datasetList);
-    Mockito.when(datasetList.setProjectId(10L)).thenReturn(datasetList);
+    Mockito.when(datasetList.setProjectNumber(10L)).thenReturn(datasetList);
     Mockito.when(datasetList.execute()).thenReturn(new ListDatasetsResponse());
     command.handleRequest(genomics);
   }

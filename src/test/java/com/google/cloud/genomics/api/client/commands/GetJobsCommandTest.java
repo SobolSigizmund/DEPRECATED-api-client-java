@@ -36,8 +36,8 @@ public class GetJobsCommandTest extends CommandTest {
     Mockito.when(jobs.get("j1")).thenReturn(jobGet);
     Mockito.when(jobs.get("j2")).thenReturn(jobGet);
     Mockito.when(jobGet.execute()).thenReturn(
-        new Job().setDescription("description1"),
-        new Job().setDescription("description2").setCreated(1405719531000L));
+        new Job().setDetailedStatus("description1"),
+        new Job().setDetailedStatus("description2").setCreated(1405719531000L));
 
     command.handleRequest(genomics);
 
@@ -59,9 +59,9 @@ public class GetJobsCommandTest extends CommandTest {
         new Job().setStatus("started").setId("j1"),
         new Job().setStatus("started").setId("j1"))
         .thenThrow(GoogleJsonResponseException.class).thenReturn(
-        new Job().setStatus("pending").setDescription("pending-description"),
-        new Job().setStatus("pending").setDescription("pending-description"),
-        new Job().setStatus("success").setDescription("description-done"));
+        new Job().setStatus("pending").setDetailedStatus("pending-description"),
+        new Job().setStatus("pending").setDetailedStatus("pending-description"),
+        new Job().setStatus("success").setDetailedStatus("description-done"));
 
     command.handleRequest(genomics);
 
