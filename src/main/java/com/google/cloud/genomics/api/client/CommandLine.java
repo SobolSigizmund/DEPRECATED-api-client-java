@@ -58,6 +58,7 @@ class CommandLine {
     addCommand("alignbam", new AlignBamsCommand());
     addCommand("alignfastq", new AlignInterleavedFastqsCommand());
     addCommand("alignpairedfastq", new AlignPairedFastqsCommand());
+    addCommand("callvariants", new CallVariantsCommand());
 
     addCommand("getvariantset", new GetVariantSetsCommand());
 

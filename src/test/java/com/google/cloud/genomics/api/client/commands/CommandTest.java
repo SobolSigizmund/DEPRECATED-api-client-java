@@ -48,6 +48,7 @@ public abstract class CommandTest {
 
   @Mock protected Genomics.Readgroupsets readsets;
   @Mock protected Genomics.Readgroupsets.Align readsetAlign;
+  @Mock protected Genomics.Readgroupsets.Call readsetCall;
   @Mock protected Genomics.Readgroupsets.Export readsetExport;
   @Mock protected Genomics.Readgroupsets.GenomicsImport readsetImport;
   @Mock protected Genomics.Readgroupsets.Get readsetGet;
