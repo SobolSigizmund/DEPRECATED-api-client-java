@@ -41,8 +41,8 @@ public class SearchReadsCommandTest extends CommandTest {
   @Test
   public void testCommand_withRange() throws Exception {
     SearchReadsCommand command = new SearchReadsCommand();
-    command.start = 1;
-    command.end = 10;
+    command.start = 1L;
+    command.end = 10L;
 
     Mockito.when(reads.search(Mockito.any(SearchReadsRequest.class))).thenReturn(readSearch);
     Mockito.when(readSearch.execute()).thenReturn(new SearchReadsResponse()

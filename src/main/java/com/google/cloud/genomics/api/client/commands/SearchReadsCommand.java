@@ -22,7 +22,6 @@ import com.google.api.services.genomics.model.SearchReadsRequest;
 import com.google.cloud.genomics.utils.Paginator;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.List;
 
 @Parameters(commandDescription = "Search over reads")
@@ -39,11 +38,11 @@ public class SearchReadsCommand extends SearchCommand {
 
   @Parameter(names = "--start",
       description = "The start position (0-based) of this query.")
-  public Integer start;
+  public Long start;
 
   @Parameter(names = "--end",
       description = "The end position (0-based, exclusive) of this query.")
-  public Integer end;
+  public Long end;
 
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
@@ -52,10 +51,10 @@ public class SearchReadsCommand extends SearchCommand {
         .setReferenceName(referenceName)
         .setPageSize(getMaxResults());
     if (start != null) {
-      request.setStart(BigInteger.valueOf(start));
+      request.setStart(start);
     }
     if (end != null) {
-      request.setEnd(BigInteger.valueOf(end));
+      request.setEnd(end);
     }
 
     printResults(Paginator.Reads.create(genomics), request);

@@ -42,7 +42,7 @@ public class ImportReadsCommand extends BaseCommand {
   public String datasetId;
 
   @Parameter(names = "--bam_file",
-      description = "A BAM file (as Google Cloud Storage gs:// URL) to be be imported." +
+      description = "A BAM file (as Google Cloud Storage gs:// URL) to be imported." +
           " You can use a wildcard in this flag to specify multiple files at once" +
           " (e.g. gs://mybucket/myfiles/*.bam) or use the flag multiple times if a wildcard" +
           " won't work.",
