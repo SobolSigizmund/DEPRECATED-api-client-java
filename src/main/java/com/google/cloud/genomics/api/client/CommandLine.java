@@ -21,6 +21,9 @@ import com.beust.jcommander.internal.Lists;
 import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.client.util.Maps;
 import com.google.cloud.genomics.api.client.commands.*;
+import com.google.cloud.genomics.api.client.commands.align.AlignBamsCommand;
+import com.google.cloud.genomics.api.client.commands.align.AlignInterleavedFastqsCommand;
+import com.google.cloud.genomics.api.client.commands.align.AlignPairedFastqsCommand;
 
 import java.io.IOException;
 import java.util.List;
@@ -51,6 +54,10 @@ class CommandLine {
     addCommand("searchreads", new SearchReadsCommand());
     addCommand("importreads", new ImportReadsCommand());
     addCommand("exportreads", new ExportReadsCommand());
+
+    addCommand("alignbam", new AlignBamsCommand());
+    addCommand("alignfastq", new AlignInterleavedFastqsCommand());
+    addCommand("alignpairedfastq", new AlignPairedFastqsCommand());
 
     addCommand("getvariantset", new GetVariantSetsCommand());
 

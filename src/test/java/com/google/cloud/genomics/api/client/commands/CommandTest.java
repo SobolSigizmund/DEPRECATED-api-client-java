@@ -26,42 +26,43 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 public abstract class CommandTest {
-  @Mock Genomics genomics;
+  @Mock protected Genomics genomics;
 
-  @Mock Genomics.Callsets callsets;
-  @Mock Genomics.Callsets.Search callsetSearch;
-  @Mock Genomics.Callsets.Patch callsetPatch;
+  @Mock protected Genomics.Callsets callsets;
+  @Mock protected Genomics.Callsets.Search callsetSearch;
+  @Mock protected Genomics.Callsets.Patch callsetPatch;
 
-  @Mock Genomics.Datasets datasets;
-  @Mock Genomics.Datasets.Create datasetCreate;
-  @Mock Genomics.Datasets.Get datasetGet;
-  @Mock Genomics.Datasets.List datasetList;
-  @Mock Genomics.Datasets.Patch datasetPatch;
+  @Mock protected Genomics.Datasets datasets;
+  @Mock protected Genomics.Datasets.Create datasetCreate;
+  @Mock protected Genomics.Datasets.Get datasetGet;
+  @Mock protected Genomics.Datasets.List datasetList;
+  @Mock protected Genomics.Datasets.Patch datasetPatch;
 
-  @Mock Genomics.Jobs jobs;
-  @Mock Genomics.Jobs.Cancel jobCancel;
-  @Mock Genomics.Jobs.Get jobGet;
-  @Mock Genomics.Jobs.Search jobSearch;
+  @Mock protected Genomics.Jobs jobs;
+  @Mock protected Genomics.Jobs.Cancel jobCancel;
+  @Mock protected Genomics.Jobs.Get jobGet;
+  @Mock protected Genomics.Jobs.Search jobSearch;
 
-  @Mock Genomics.Reads reads;
-  @Mock Genomics.Reads.Search readSearch;
+  @Mock protected Genomics.Reads reads;
+  @Mock protected Genomics.Reads.Search readSearch;
 
-  @Mock Genomics.Readgroupsets readsets;
-  @Mock Genomics.Readgroupsets.Export readsetExport;
-  @Mock Genomics.Readgroupsets.GenomicsImport readsetImport;
-  @Mock Genomics.Readgroupsets.Get readsetGet;
-  @Mock Genomics.Readgroupsets.Search readsetSearch;
+  @Mock protected Genomics.Readgroupsets readsets;
+  @Mock protected Genomics.Readgroupsets.Align readsetAlign;
+  @Mock protected Genomics.Readgroupsets.Export readsetExport;
+  @Mock protected Genomics.Readgroupsets.GenomicsImport readsetImport;
+  @Mock protected Genomics.Readgroupsets.Get readsetGet;
+  @Mock protected Genomics.Readgroupsets.Search readsetSearch;
 
-  @Mock Genomics.Variantsets variantSets;
-  @Mock Genomics.Variantsets.Get variantSetGet;
-  @Mock Genomics.Variantsets.Export variantExport;
-  @Mock Genomics.Variantsets.ImportVariants variantImport;
+  @Mock protected Genomics.Variantsets variantSets;
+  @Mock protected Genomics.Variantsets.Get variantSetGet;
+  @Mock protected Genomics.Variantsets.Export variantExport;
+  @Mock protected Genomics.Variantsets.ImportVariants variantImport;
 
-  @Mock Genomics.Variants variants;
-  @Mock Genomics.Variants.Get variantGet;
-  @Mock Genomics.Variants.Search variantSearch;
+  @Mock protected Genomics.Variants variants;
+  @Mock protected Genomics.Variants.Get variantGet;
+  @Mock protected Genomics.Variants.Search variantSearch;
 
-  ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+  protected ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 
   @Before
   public void initMocks() {
