@@ -26,7 +26,7 @@ import com.google.api.services.genomics.model.ExportVariantSetRequest;
 import java.io.IOException;
 import java.util.List;
 
-@Parameters(commandDescription = "Export variants from Google Genomics into Google Big Query")
+@Parameters(commandDescription = "Export variants into Google Big Query")
 public class ExportVariantsCommand extends BaseCommand {
 
   @Parameter(names = "--variant_set_id",

@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.List;
 
-@Parameters(commandDescription = "Export readsets from Google Genomics into Google Cloud Storage")
+@Parameters(commandDescription = "Export read group sets into Google Cloud Storage")
 public class ExportReadsCommand extends BaseCommand {
 
   private static final Function<ReadGroupSet,String> GET_NAME
@@ -46,7 +46,7 @@ public class ExportReadsCommand extends BaseCommand {
       required = true)
   public Long projectNumber;
 
-  @Parameter(names = "--read_groupset_id",
+  @Parameter(names = "--read_group_set_id",
       description = "The IDs of the read group sets to export.",
       required = true)
   public List<String> readGroupSetIds;
