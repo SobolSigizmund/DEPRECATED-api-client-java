@@ -33,6 +33,8 @@ import java.util.Map;
  * Command line options handler for GenomicsSample
  */
 class CommandLine {
+  private static final String JAR_COMMAND
+      = "java -jar genomics-tools-client-java-v1beta2.jar ";
 
   private JCommander parser;
   private BaseCommand command;
@@ -40,7 +42,6 @@ class CommandLine {
 
   public CommandLine() {
     parser = new JCommander();
-    parser.setProgramName("genomics-tools-client-java");
 
     // The ordering of these commands is preserved in help messages
     addCommand("listdatasets", new ListDatasetsCommand());
@@ -99,13 +100,17 @@ class CommandLine {
 
   public void printHelp(String headline, Appendable out) throws IOException {
     out.append(headline).append("\n");
-    if (Strings.isNullOrEmpty(parser.getParsedCommand())) {
+    String parsedCommand = parser.getParsedCommand();
+    if (Strings.isNullOrEmpty(parsedCommand)) {
+      out.append("Usage: " + JAR_COMMAND + "<command> <options>")
+          .append("\n\n");
       out.append("Valid commands are:\n");
       describeCommands(out);
       out.append("\n");
     } else {
       StringBuilder sb = new StringBuilder();
-      parser.usage(parser.getParsedCommand(), sb);
+      parser.getCommands().get(parsedCommand).setProgramName(JAR_COMMAND + parsedCommand);
+      parser.usage(parsedCommand, sb);
       out.append(sb.toString());
     }
   }
