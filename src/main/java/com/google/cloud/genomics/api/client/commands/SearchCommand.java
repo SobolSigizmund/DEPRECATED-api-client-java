@@ -34,7 +34,7 @@ public abstract class SearchCommand extends BaseCommand {
   @Parameter(names = "--fields",
       description = "The fields to be returned with this query. " +
           "Leaving this blank returns all fields.")
-  public String fields = "";
+  public String fields = null;
 
   @Parameter(names = "--count",
       description = "The number of results to return for search requests. " +
