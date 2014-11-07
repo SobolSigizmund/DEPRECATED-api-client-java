@@ -43,6 +43,14 @@ public abstract class CommandTest {
   @Mock protected Genomics.Jobs.Get jobGet;
   @Mock protected Genomics.Jobs.Search jobSearch;
 
+  @Mock protected Genomics.Referencesets referenceSets;
+  @Mock protected Genomics.Referencesets.Search referenceSetSearch;
+
+  @Mock protected Genomics.References references;
+  @Mock protected Genomics.References.Search referencesSearch;
+  @Mock protected Genomics.References.Bases referenceBases;
+  @Mock protected Genomics.References.Bases.List referenceBasesList;
+
   @Mock protected Genomics.Reads reads;
   @Mock protected Genomics.Reads.Search readSearch;
 
@@ -72,6 +80,8 @@ public abstract class CommandTest {
     Mockito.when(genomics.callsets()).thenReturn(callsets);
     Mockito.when(genomics.datasets()).thenReturn(datasets);
     Mockito.when(genomics.jobs()).thenReturn(jobs);
+    Mockito.when(genomics.referencesets()).thenReturn(referenceSets);
+    Mockito.when(genomics.references()).thenReturn(references);
     Mockito.when(genomics.reads()).thenReturn(reads);
     Mockito.when(genomics.readgroupsets()).thenReturn(readsets);
     Mockito.when(genomics.variantsets()).thenReturn(variantSets);

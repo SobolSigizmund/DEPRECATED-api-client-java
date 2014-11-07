@@ -49,6 +49,10 @@ class CommandLine {
     addCommand("createdataset", new CreateDatasetCommand());
     addCommand("updatedataset", new UpdateDatasetCommand());
 
+    addCommand("searchreferencesets", new SearchReferenceSetsCommand());
+    addCommand("searchreferences", new SearchReferencesCommand());
+    addCommand("getreferencebases", new GetReferenceBasesCommand());
+
     addCommand("searchreadgroupsets", new SearchReadGroupSetsCommand());
     addCommand("getreadgroupset", new GetReadGroupSetsCommand());
 
