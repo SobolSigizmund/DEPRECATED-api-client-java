@@ -27,6 +27,7 @@ import java.io.IOException;
  * most likely it will become obsolete.
  */
 public abstract class SearchCommand extends BaseCommand {
+  private static final String NEXT_PAGE_TOKEN = "nextPageToken";
   @Parameter(names = "--pretty_print",
       description = "pretty print json output")
   public boolean prettyPrint = false;
@@ -45,6 +46,18 @@ public abstract class SearchCommand extends BaseCommand {
     return resultCount < 0 ? 1024 : resultCount;
   }
 
+  protected String getFields() {
+    if (fields == null || fields.isEmpty()) {
+      return null;
+    }
+
+    if (fields.contains(NEXT_PAGE_TOKEN)) {
+      return fields;
+    }
+
+    return fields += "," + NEXT_PAGE_TOKEN;
+  }
+
   protected <A,
       B extends GenericJson,
       C extends GenomicsRequest<D>,
@@ -53,7 +66,7 @@ public abstract class SearchCommand extends BaseCommand {
       throws IOException {
 
     int resultsSeen = 0;
-    for (E result : paginator.search(request, fields)) {
+    for (E result : paginator.search(request, getFields())) {
       prepareResult(result);
       System.out.println(prettyPrint ? result.toPrettyString() : result.toString());
       resultsSeen++;

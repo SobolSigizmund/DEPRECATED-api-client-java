@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
@@ -54,6 +55,20 @@ public class SearchReadGroupSetsCommandTest extends CommandTest {
 
     String output = outContent.toString();
     assertTrue(output, output.contains("Getting read group sets from: 1kg"));
+  }
+
+  @Test
+  public void testGetFields() throws Exception {
+    SearchReadGroupSetsCommand command = new SearchReadGroupSetsCommand();
+
+    command.fields = "";
+    assertEquals(null, command.getFields());
+
+    command.fields = "nextPageToken,x";
+    assertEquals("nextPageToken,x", command.getFields());
+
+    command.fields = "y";
+    assertEquals("y,nextPageToken", command.getFields());
   }
 
 }
