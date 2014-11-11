@@ -17,22 +17,22 @@ package com.google.cloud.genomics.api.client.commands;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.json.GenericJson;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.model.Job;
 import com.google.api.services.genomics.model.SearchJobsRequest;
+import com.google.cloud.genomics.utils.Paginator;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 @Parameters(commandDescription = "List past jobs run by this command line, or list them " +
     "by project number")
-public class ListJobsCommand extends BaseCommand {
+public class ListJobsCommand extends SearchCommand {
 
   @Parameter(names = "--status",
-      description = "Whether to look up the Job statuses")
+      description = "This field is deprecated. The value is ignored.")
   public boolean includeStatus = false;
 
   @Parameter(names = "--project_number",
@@ -51,11 +51,22 @@ public class ListJobsCommand extends BaseCommand {
   public Date createdBefore;
 
   @Override
-  public void handleRequest(Genomics genomics) throws IOException {
-    Map<String, String> launchedJobs = getLaunchedJobs();
+  protected <E extends GenericJson> void prepareResult(E job) {
+    if (job instanceof Job) {
+      // TODO: Generify this
+      Long created = ((Job) job).getCreated();
+      if (created != null) {
+        job.set("createdString", DATE_FORMAT.format(new Date(created)));
+      }
+    }
+  }
 
+  @Override
+  public void handleRequest(Genomics genomics) throws IOException {
     if (projectNumber != null) {
-      SearchJobsRequest request = new SearchJobsRequest().setProjectNumber(projectNumber);
+      SearchJobsRequest request = new SearchJobsRequest()
+          .setProjectNumber(projectNumber)
+          .setPageSize(getMaxResults());
       if (createdAfter != null) {
         request.setCreatedAfter(createdAfter.getTime());
       }
@@ -63,53 +74,29 @@ public class ListJobsCommand extends BaseCommand {
         request.setCreatedBefore(createdBefore.getTime());
       }
 
-      List<Job> jobs = genomics.jobs().search(request).execute().getJobs();
-      if (jobs == null || jobs.isEmpty()) {
-        System.out.println("No jobs found");
-        return;
-      }
-
-      for (Job job : jobs) {
-        printJob(genomics, job.getId(), getDescription(job, launchedJobs), job);
-      }
+      printResults(Paginator.Jobs.create(genomics), request);
 
     } else {
+      System.out.println("Listing jobs recently run by this command line. " +
+          "Use --project_number to get more specific details on jobs and to search by date.\n");
+
       if (createdAfter != null || createdBefore != null) {
         System.out.println("Filtering jobs by date is only supported when searching by project.");
         return;
+      } else if (fields != null) {
+        System.out.println("--fields is only supported when searching by project.");
+        return;
+      }
+
+      Map<String, String> launchedJobs = getLaunchedJobs();
+      if (launchedJobs.isEmpty()) {
+        System.out.println("No recent jobs found. Try searching by project instead.");
       }
 
       for (Map.Entry<String, String> job : launchedJobs.entrySet()) {
-        printJob(genomics, job.getKey(), job.getValue(), null);
+        System.out.println(job.getKey() + ": " + job.getValue());
       }
     }
   }
 
-  private String getDescription(Job job, Map<String, String> launchedJobs) {
-    if (launchedJobs != null && launchedJobs.containsKey(job.getId())) {
-      return launchedJobs.get(job.getId());
-    }
-
-    // TODO: Do a better job of describing a job via the API
-    return "Unknown job type";
-  }
-
-  private void printJob(Genomics genomics, String id, String description, Job job)
-      throws IOException {
-    System.out.println(id + ": " + description);
-    if (!includeStatus) {
-      return;
-    }
-
-    if (job == null) {
-      try {
-        job = getJob(genomics, id, false);
-      } catch (GoogleJsonResponseException e) {
-        System.out.println("Couldn't fetch job: " + getErrorMessage(e) + "\n");
-        return;
-      }
-    }
-
-    printJob(job);
-  }
 }

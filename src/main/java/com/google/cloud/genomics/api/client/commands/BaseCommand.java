@@ -50,7 +50,7 @@ public abstract class BaseCommand {
   public static final String JOB_HISTORY_ID = "JobHistory";
   public static final String DATASET_HISTORY_ID = "DatasetHistory";
 
-  private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+  protected static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
   @Parameter(names = "--root_url",
       description = "set the Genomics API root URL",

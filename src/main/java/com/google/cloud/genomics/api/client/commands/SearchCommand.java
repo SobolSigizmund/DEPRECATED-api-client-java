@@ -54,6 +54,7 @@ public abstract class SearchCommand extends BaseCommand {
 
     int resultsSeen = 0;
     for (E result : paginator.search(request, fields)) {
+      prepareResult(result);
       System.out.println(prettyPrint ? result.toPrettyString() : result.toString());
       resultsSeen++;
 
@@ -61,5 +62,12 @@ public abstract class SearchCommand extends BaseCommand {
         break;
       }
     }
+    if (resultsSeen == 0) {
+      System.out.println("No results found");
+    }
+  }
+
+  protected <E extends GenericJson> void prepareResult(E result) {
+    // Subclasses can override to change the result before printing
   }
 }

@@ -68,6 +68,6 @@ public class CommandLineTest {
     commandLine.printHelp("test", new PrintStream(out));
 
     String output = out.toString();
-    assertTrue(output, output.contains("Whether to look up the Job statuses"));
+    assertTrue(output, output.contains("Get jobs"));
   }
 }

@@ -28,7 +28,6 @@ import org.mockito.Mockito;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
@@ -49,24 +48,6 @@ public class ListJobsCommandTest extends CommandTest {
   }
 
   @Test
-  public void testListJobs_withStatus() throws Exception {
-    ListJobsCommand command = new ListJobsCommand();
-    command.setDataStoreFactory(new MemoryDataStoreFactory());
-
-    command.addJobToHistory("jobid", "description");
-    command.includeStatus = true;
-
-    Mockito.when(jobs.get("jobid")).thenReturn(jobGet);
-    Mockito.when(jobGet.execute()).thenReturn(new Job().setStatus("pending"));
-
-    command.handleRequest(genomics);
-
-    String output = outContent.toString();
-    assertTrue(output, output.contains("jobid: description"));
-    assertTrue(output, output.contains("pending"));
-  }
-
-  @Test
   public void testListJobs_byProjectId() throws Exception {
     ListJobsCommand command = new ListJobsCommand();
     command.setDataStoreFactory(new MemoryDataStoreFactory());
@@ -74,15 +55,16 @@ public class ListJobsCommandTest extends CommandTest {
 
     command.projectNumber = 9L;
 
-    Mockito.when(jobs.search(new SearchJobsRequest().setProjectNumber(9L))).thenReturn(jobSearch);
+    Mockito.when(jobs.search(new SearchJobsRequest().setProjectNumber(9L).setPageSize(10)))
+        .thenReturn(jobSearch);
     Mockito.when(jobSearch.execute()).thenReturn(new SearchJobsResponse().setJobs(
         Lists.newArrayList(new Job().setId("previousJob"), new Job().setId("newjob"))));
 
     command.handleRequest(genomics);
 
     String output = outContent.toString();
-    assertTrue(output, output.contains("previousJob: previousDescription"));
-    assertTrue(output, output.contains("newjob: Unknown job type"));
+    assertTrue(output, output.contains("previousJob"));
+    assertTrue(output, output.contains("newjob"));
   }
 
   @Test
@@ -95,13 +77,14 @@ public class ListJobsCommandTest extends CommandTest {
     command.createdBefore = new Date(456L);
 
     Mockito.when(jobs.search(new SearchJobsRequest().setProjectNumber(9L)
-        .setCreatedAfter(123L).setCreatedBefore(456L))).thenReturn(jobSearch);
-    Mockito.when(jobSearch.execute()).thenReturn(new SearchJobsResponse());
+        .setCreatedAfter(123L).setCreatedBefore(456L).setPageSize(10))).thenReturn(jobSearch);
+    Mockito.when(jobSearch.execute()).thenReturn(new SearchJobsResponse().setJobs(
+        Lists.newArrayList(new Job().setId("myJob"))));
 
     command.handleRequest(genomics);
 
     String output = outContent.toString();
-    assertTrue(output, output.contains("No jobs found"));
+    assertTrue(output, output.contains("myJob"));
   }
 
   @Test
@@ -116,25 +99,4 @@ public class ListJobsCommandTest extends CommandTest {
     assertTrue(output, output.contains("Filtering jobs by date is only supported " +
         "when searching by project."));
   }
-
-  @Test
-  public void testListJobs_withEmptyDescription() throws Exception {
-    ListJobsCommand command = new ListJobsCommand();
-    command.setDataStoreFactory(new MemoryDataStoreFactory());
-
-    command.addJobToHistory("jobid", "");
-    command.includeStatus = true;
-
-    Mockito.when(jobs.get("jobid")).thenReturn(jobGet);
-    Mockito.when(jobGet.execute()).thenReturn(new Job()
-        .setStatus("pending").setDetailedStatus(""));
-
-    command.handleRequest(genomics);
-
-    String output = outContent.toString();
-    assertTrue(output, output.contains("jobid: "));
-    // The empty description field tag should not be shown
-    assertFalse(output, output.contains("description"));
-  }
-
 }
