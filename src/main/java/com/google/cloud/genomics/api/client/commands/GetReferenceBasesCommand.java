@@ -19,6 +19,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.api.services.genomics.Genomics;
 import com.google.cloud.genomics.utils.Paginator;
+import com.google.cloud.genomics.utils.RetryPolicy;
 
 import java.io.IOException;
 
@@ -50,7 +51,7 @@ public class GetReferenceBasesCommand extends BaseCommand {
       }
     };
 
-    for (String bases : paginator.search(referenceId, initializer)) {
+    for (String bases : paginator.search(referenceId, initializer, RetryPolicy.defaultPolicy())) {
       System.out.print(bases);
     }
     System.out.println();
