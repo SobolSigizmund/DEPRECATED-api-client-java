@@ -74,6 +74,7 @@ class CommandLine {
 
     addCommand("searchcallsets", new SearchCallSetsCommand());
     addCommand("updatecallset", new UpdateCallSetCommand());
+    addCommand("deletecallset", new DeleteCallSetCommand());
 
     addCommand("listjobs", new ListJobsCommand());
     addCommand("getjob", new GetJobsCommand());
