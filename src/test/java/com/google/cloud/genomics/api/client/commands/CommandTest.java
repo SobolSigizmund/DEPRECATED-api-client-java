@@ -31,7 +31,8 @@ public abstract class CommandTest {
   @Mock protected Genomics.Callsets callsets;
   @Mock protected Genomics.Callsets.Search callsetSearch;
   @Mock protected Genomics.Callsets.Patch callsetPatch;
-
+  @Mock protected Genomics.Callsets.Delete callsetDelete;
+  
   @Mock protected Genomics.Datasets datasets;
   @Mock protected Genomics.Datasets.Create datasetCreate;
   @Mock protected Genomics.Datasets.Get datasetGet;
