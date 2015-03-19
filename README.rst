@@ -52,7 +52,7 @@ Troubleshooting
     java -jar target/genomics-tools-client-java-v1beta2.jar listjobs --nolocalserver
 
 * Note that not all of Google's APIs are callable at this time. The docs have 
-  `a list <http://google-genomics.readthedocs.org/en/latest/auth_requirements.html>`_ 
+  `a list <http://googlegenomics.readthedocs.org/en/latest/auth_requirements.html>`_ 
   of which APIs are available.
   
 * If you wish to call an API that has not yet been fully integrated into 
