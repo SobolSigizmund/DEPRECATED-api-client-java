@@ -58,9 +58,9 @@ Troubleshooting
 * If you wish to call an API that has not yet been fully integrated into 
   the command line, use the ``custom`` command.
 
-.. _Google Genomics API: https://developers.google.com/genomics
+.. _Google Genomics API: https://cloud.google.com/genomics/what-is-google-genomics
 .. _Apache Maven: http://maven.apache.org/download.cgi
-.. _sign up instructions: https://developers.google.com/genomics
+.. _sign up instructions: https://cloud.google.com/genomics/install-genomics-tools#authenticate
 
 
 Code layout
