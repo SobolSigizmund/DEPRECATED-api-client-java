@@ -20,6 +20,7 @@ import com.beust.jcommander.Parameters;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.model.SearchReadsRequest;
 import com.google.cloud.genomics.utils.Paginator;
+import com.google.cloud.genomics.utils.Paginator.ShardBoundary;
 
 import java.io.IOException;
 import java.util.List;
@@ -57,6 +58,7 @@ public class SearchReadsCommand extends SearchCommand {
       request.setEnd(end);
     }
 
-    printResults(Paginator.Reads.create(genomics), request);
+    printResults(Paginator.Reads.create(genomics, ShardBoundary.OVERLAPS),
+                 request);
   }
 }
