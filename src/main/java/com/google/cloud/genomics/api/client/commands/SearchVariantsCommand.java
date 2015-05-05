@@ -21,6 +21,7 @@ import com.beust.jcommander.internal.Lists;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.model.*;
 import com.google.cloud.genomics.utils.Paginator;
+import com.google.cloud.genomics.utils.Paginator.ShardBoundary;
 
 import java.io.IOException;
 import java.util.List;
@@ -84,7 +85,8 @@ public class SearchVariantsCommand extends SearchCommand {
       request.setCallSetIds(callSetIds);
     }
 
-    printResults(Paginator.Variants.create(genomics), request);
+    printResults(Paginator.Variants.create(genomics, ShardBoundary.OVERLAPS),
+                 request);
   }
 
   private void getCallSetsByName(Genomics genomics) throws IOException {
