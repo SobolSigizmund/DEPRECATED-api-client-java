@@ -55,7 +55,7 @@ public class CallVariantsCommandTest extends CommandTest {
     CallVariantsCommand command = new CallVariantsCommand();
     command.setDataStoreFactory(new MemoryDataStoreFactory());
     command.datasetId = "abc";
-    command.readGroupSetIds = Lists.newArrayList("rgs");
+    command.readGroupSetId = "rgs";
     command.bamFiles = Lists.newArrayList("uri1");
 
     command.handleRequest(genomics);
