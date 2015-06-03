@@ -49,6 +49,16 @@ public class ImportReadsCommand extends BaseCommand {
       required = true)
   public List<String> bamFiles;
 
+  @Parameter(names = "--partition_strategy",
+      description = "Acceptable values are:" +
+          "MERGE_ALL: Includes all read groups in all imported files into a " +
+          "single read group set. Requires that the headers for all " +
+          "imported files are equivalent." +
+          "PER_FILE_PER_SAMPLE: In most cases, this strategy yields one " +
+          "read group set per file. This is the default behavior.",
+      required = false)
+  public String partitionStrategy;
+
   @Parameter(names = "--poll",
       description = "If set, the client will query for job status " +
           "until it either finishes or fails.")
@@ -74,8 +84,10 @@ public class ImportReadsCommand extends BaseCommand {
 
     // Start the import
     Genomics.Readgroupsets.GenomicsImport req = genomics.readgroupsets().genomicsImport(
-        new ImportReadGroupSetsRequest().setDatasetId(datasetId)
-            .setSourceUris(bamFiles));
+        new ImportReadGroupSetsRequest()
+            .setDatasetId(datasetId)
+            .setSourceUris(bamFiles)
+            .setPartitionStrategy(partitionStrategy));
     String jobId = req.execute().getJobId();
 
     // Get the resulting job

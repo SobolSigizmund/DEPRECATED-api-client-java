@@ -27,7 +27,7 @@ import com.google.api.services.genomics.model.Job;
 import java.io.IOException;
 import java.util.List;
 
-@Parameters(commandDescription = "Call variants on existing read group sets or" +
+@Parameters(commandDescription = "Call variants on an existing read group set or" +
     " BAM files from Google Cloud Storage")
 public class CallVariantsCommand extends BaseCommand {
 
@@ -37,8 +37,8 @@ public class CallVariantsCommand extends BaseCommand {
   public String datasetId;
 
   @Parameter(names = "--read_group_set_id",
-      description = "The IDs of the read group sets to call variants on.")
-  public List<String> readGroupSetIds;
+      description = "The ID of the read group set to call variants on.")
+  public String readGroupSetId;
 
   @Parameter(names = "--bam_file",
       description = "A BAM file (as Google Cloud Storage gs:// URL) to call variants on." +
@@ -61,10 +61,10 @@ public class CallVariantsCommand extends BaseCommand {
 
   @Override
   public void handleRequest(Genomics genomics) throws IOException {
-    if (readGroupSetIds == null && bamFiles == null) {
+    if (readGroupSetId == null && bamFiles == null) {
       System.out.println("One of --read_group_set_id or --bam_file must be provided.");
       return;
-    } else if (readGroupSetIds != null && bamFiles != null) {
+    } else if (readGroupSetId != null && bamFiles != null) {
       System.out.println("You can not provide both --read_group_set_id and --bam_file.");
       return;
     }
@@ -80,13 +80,13 @@ public class CallVariantsCommand extends BaseCommand {
     Genomics.Readgroupsets.Call req = genomics.readgroupsets().call(
         new CallReadGroupSetsRequest()
             .setDatasetId(datasetId)
-            .setReadGroupSetIds(readGroupSetIds)
+            .setReadGroupSetId(readGroupSetId)
             .setSourceUris(bamFiles));
     String jobId = req.execute().getJobId();
 
     // Get the resulting job
     addJobToHistory(jobId, "Saving called variants into " + dataset.getName() + " from "
-        + Joiner.on(',').join(bamFiles == null ? readGroupSetIds : bamFiles));
+        + (bamFiles == null ? readGroupSetId : Joiner.on(',').join(bamFiles)));
     Job job = getJob(genomics, jobId, pollForStatus);
     System.out.println("Variant calling job: ");
     printJob(job);
