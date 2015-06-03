@@ -25,10 +25,9 @@ import com.google.api.services.genomics.model.Dataset;
 import com.google.api.services.genomics.model.Job;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
-@Parameters(commandDescription = "Call variants on existing read group sets or" +
+@Parameters(commandDescription = "Call variants on an existing read group set or" +
     " BAM files from Google Cloud Storage")
 public class CallVariantsCommand extends BaseCommand {
 
@@ -87,7 +86,7 @@ public class CallVariantsCommand extends BaseCommand {
 
     // Get the resulting job
     addJobToHistory(jobId, "Saving called variants into " + dataset.getName() + " from "
-        + Joiner.on(',').join(bamFiles == null ? Arrays.asList(readGroupSetId) : bamFiles));
+        + (bamFiles == null ? readGroupSetId : Joiner.on(',').join(bamFiles)));
     Job job = getJob(genomics, jobId, pollForStatus);
     System.out.println("Variant calling job: ");
     printJob(job);
