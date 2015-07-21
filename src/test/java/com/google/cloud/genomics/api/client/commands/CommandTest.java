@@ -64,6 +64,7 @@ public abstract class CommandTest {
   @Mock protected Genomics.Readgroupsets.Search readsetSearch;
 
   @Mock protected Genomics.Variantsets variantSets;
+  @Mock protected Genomics.Variantsets.Create variantSetCreate;
   @Mock protected Genomics.Variantsets.Get variantSetGet;
   @Mock protected Genomics.Variantsets.Export variantExport;
   @Mock protected Genomics.Variantsets.ImportVariants variantImport;
