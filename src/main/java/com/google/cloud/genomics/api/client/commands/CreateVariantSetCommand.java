@@ -15,12 +15,9 @@ limitations under the License.
 */
 package com.google.cloud.genomics.api.client.commands;
 
-import com.google.api.client.util.Joiner;
 import com.google.api.services.genomics.Genomics;
 import com.google.api.services.genomics.GenomicsScopes;
 import com.google.api.services.genomics.model.Dataset;
-import com.google.api.services.genomics.model.ImportVariantsRequest;
-import com.google.api.services.genomics.model.Job;
 import com.google.api.services.genomics.model.VariantSet;
 
 import com.beust.jcommander.Parameter;
@@ -36,7 +33,7 @@ import java.util.List;
 public class CreateVariantSetCommand extends BaseCommand {
 
   @Parameter(names = "--dataset_id",
-      description = "The Genomics API dataset ID to create into.",
+      description = "The dataset ID in which to create the new variant set.",
       required = true)
   public String datasetId;
 
@@ -55,7 +52,7 @@ public class CreateVariantSetCommand extends BaseCommand {
     if (dataset == null) {
       return;
     }
-    System.out.println("Creating variant set into: " + dataset.getName() +" (id: " + datasetId + ")");
+    System.out.println("Creating variant set in dataset: " + dataset.getName() +" (id: " + datasetId + ")");
 
     VariantSet variantSet = new VariantSet().setDatasetId(datasetId);
 
