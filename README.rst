@@ -9,6 +9,8 @@ api-client-java |Build Status|_ |Build Coverage|_
 .. _Build Coverage: https://coveralls.io/r/googlegenomics/api-client-java?branch=master
 
 
+**api-client-java is deprecated.**  `gcloud genomics <https://cloud.google.com/genomics/install-genomics-tools>`_ has taken the place of api-client-java as the up-to-date command line client for the GoogleGenomics API.  **This repository will be deleted on March 10, 2016.**
+
 Getting started
 ---------------
 
